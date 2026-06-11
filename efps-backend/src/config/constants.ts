@@ -1,0 +1,48 @@
+export const COMMODITIES = ['Rice', 'Wheat', 'Sugar', 'Kerosene', 'Oil', 'Pulses'] as const;
+
+export const COMMODITY_UNITS: Record<string, string> = {
+  Rice: 'kg',
+  Wheat: 'kg',
+  Sugar: 'kg',
+  Kerosene: 'litre',
+  Oil: 'litre',
+  Pulses: 'kg',
+};
+
+export const BENEFICIARY_CATEGORIES = ['APL', 'BPL', 'AAY', 'PHH'] as const;
+
+export const TRANSACTION_MODES = ['pos', 'manual', 'otg'] as const;
+
+export const NOTIFICATION_TYPES = ['info', 'warning', 'alert'] as const;
+
+export const PAGINATION_DEFAULTS = {
+  limit: 20,
+  maxLimit: 100,
+} as const;
+
+export const ONLINE_TTL_SECONDS = 900;
+
+export const ERROR_CODES = {
+  INVALID_CREDENTIALS: 'INVALID_CREDENTIALS',
+  TOKEN_EXPIRED: 'TOKEN_EXPIRED',
+  TOKEN_INVALID: 'TOKEN_INVALID',
+  SESSION_NOT_FOUND: 'SESSION_NOT_FOUND',
+  ACCOUNT_SUSPENDED: 'ACCOUNT_SUSPENDED',
+  OTP_INVALID: 'OTP_INVALID',
+  OTP_EXPIRED: 'OTP_EXPIRED',
+  OTP_MAX_ATTEMPTS: 'OTP_MAX_ATTEMPTS',
+  OTP_RATE_LIMITED: 'OTP_RATE_LIMITED',
+  FPS_ID_NOT_FOUND: 'FPS_ID_NOT_FOUND',
+  FPS_ID_TAKEN: 'FPS_ID_TAKEN',
+  MOBILE_TAKEN: 'MOBILE_TAKEN',
+  DEALER_NOT_FOUND: 'DEALER_NOT_FOUND',
+  VALIDATION_ERROR: 'VALIDATION_ERROR',
+  NOT_FOUND: 'NOT_FOUND',
+  FORBIDDEN: 'FORBIDDEN',
+  RATE_LIMITED: 'RATE_LIMITED',
+  INTERNAL_ERROR: 'INTERNAL_ERROR',
+  BENEFICIARY_NOT_FOUND: 'BENEFICIARY_NOT_FOUND',
+  STOCK_INSUFFICIENT: 'STOCK_INSUFFICIENT',
+  DUPLICATE_TRANSACTION: 'DUPLICATE_TRANSACTION',
+  ALLOCATION_NOT_FOUND: 'ALLOCATION_NOT_FOUND',
+} as const;

@@ -1,0 +1,95 @@
+import { query } from '../../config/database.js';
+import { parsePaginationParams, buildPaginationMeta } from '../../shared/utils/pagination.js';
+import type { IncomeInput, ExpenseInput, FinanceQueryInput } from './finance.schema.js';
+
+export class FinanceService {
+  async addIncome(dealerId: string, input: IncomeInput) {
+    const date = input.entry_date ?? new Date().toISOString().split('T')[0];
+    const result = await query(
+      `INSERT INTO income_entries (dealer_id, source, amount, entry_date, description)
+       VALUES ($1, $2, $3, $4, $5) RETURNING *`,
+      [dealerId, input.source, input.amount, date, input.description ?? null]
+    );
+    return result.rows[0];
+  }
+
+  async addExpense(dealerId: string, input: ExpenseInput) {
+    const date = input.entry_date ?? new Date().toISOString().split('T')[0];
+    const result = await query(
+      `INSERT INTO expense_entries (dealer_id, category, amount, entry_date, description, bill_reference)
+       VALUES ($1, $2, $3, $4, $5, $6) RETURNING *`,
+      [dealerId, input.category, input.amount, date, input.description ?? null, input.bill_reference ?? null]
+    );
+    return result.rows[0];
+  }
+
+  async listIncome(dealerId: string, params: FinanceQueryInput) {
+    const { offset, limit, page } = parsePaginationParams(params);
+    const values: unknown[] = [dealerId];
+    let idx = 2;
+    let where = 'dealer_id = $1';
+
+    if (params.month) { where += ` AND DATE_TRUNC('month', entry_date) = $${idx}::date`; values.push(params.month); idx++; }
+    if (params.start_date) { where += ` AND entry_date >= $${idx}`; values.push(params.start_date); idx++; }
+    if (params.end_date) { where += ` AND entry_date <= $${idx}`; values.push(params.end_date); idx++; }
+
+    const count = await query(`SELECT COUNT(*) FROM income_entries WHERE ${where}`, values);
+    const total = Number(count.rows[0]?.count ?? 0);
+
+    const data = await query(
+      `SELECT * FROM income_entries WHERE ${where} ORDER BY entry_date DESC LIMIT $${idx} OFFSET $${idx + 1}`,
+      [...values, limit, offset]
+    );
+    return buildPaginationMeta(data.rows, total, page, limit);
+  }
+
+  async listExpenses(dealerId: string, params: FinanceQueryInput) {
+    const { offset, limit, page } = parsePaginationParams(params);
+    const values: unknown[] = [dealerId];
+    let idx = 2;
+    let where = 'dealer_id = $1';
+
+    if (params.month) { where += ` AND DATE_TRUNC('month', entry_date) = $${idx}::date`; values.push(params.month); idx++; }
+    if (params.start_date) { where += ` AND entry_date >= $${idx}`; values.push(params.start_date); idx++; }
+    if (params.end_date) { where += ` AND entry_date <= $${idx}`; values.push(params.end_date); idx++; }
+
+    const count = await query(`SELECT COUNT(*) FROM expense_entries WHERE ${where}`, values);
+    const total = Number(count.rows[0]?.count ?? 0);
+
+    const data = await query(
+      `SELECT * FROM expense_entries WHERE ${where} ORDER BY entry_date DESC LIMIT $${idx} OFFSET $${idx + 1}`,
+      [...values, limit, offset]
+    );
+    return buildPaginationMeta(data.rows, total, page, limit);
+  }
+
+  async getProfitLoss(dealerId: string, month?: string) {
+    const m = month ?? (() => { const d = new Date(); d.setDate(1); return d.toISOString().split('T')[0]; })();
+
+    const income = await query(
+      `SELECT COALESCE(SUM(amount), 0) as total FROM income_entries
+       WHERE dealer_id = $1 AND DATE_TRUNC('month', entry_date) = $2::date`,
+      [dealerId, m]
+    );
+
+    const commission = await query(
+      `SELECT COALESCE(SUM(net_commission), 0) as total FROM commissions
+       WHERE dealer_id = $1 AND month = $2 AND status = 'settled'`,
+      [dealerId, m]
+    );
+
+    const expenses = await query(
+      `SELECT COALESCE(SUM(amount), 0) as total FROM expense_entries
+       WHERE dealer_id = $1 AND DATE_TRUNC('month', entry_date) = $2::date`,
+      [dealerId, m]
+    );
+
+    const totalIncome = Number(income.rows[0]?.total ?? 0) + Number(commission.rows[0]?.total ?? 0);
+    const totalExpense = Number(expenses.rows[0]?.total ?? 0);
+    const netProfit = totalIncome - totalExpense;
+
+    return { month: m, total_income: totalIncome, commission: Number(commission.rows[0]?.total ?? 0), total_expenses: totalExpense, net_profit: netProfit };
+  }
+}
+
+export const financeService = new FinanceService();
