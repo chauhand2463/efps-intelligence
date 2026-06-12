@@ -7,11 +7,17 @@ const pool = new pg.Pool({
   max: config.DATABASE_POOL_MAX,
   connectionTimeoutMillis: 5000,
   idleTimeoutMillis: 30000,
-  maxLifetimeSeconds: 3600,
+  maxUses: 100,
 });
 
 pool.on('error', (err) => {
   console.error('Unexpected database pool error:', err);
+});
+
+pool.on('connect', (client) => {
+  client.query('SET statement_timeout = 10000').catch((err) => {
+    console.error('Failed to set statement_timeout:', err);
+  });
 });
 
 export async function query(text: string, params?: unknown[]) {

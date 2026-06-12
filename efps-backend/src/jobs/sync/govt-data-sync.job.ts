@@ -39,40 +39,66 @@ export async function enqueueGovtSync(data: GovtSyncPayload) {
   });
 }
 
-export async function enqueueFullStateSync() {
-  const dealers = await query(
-    `SELECT id as dealer_id, fps_id, district, taluka FROM dealers WHERE is_active = TRUE AND role = 'dealer'`
-  );
+const SYNC_BATCH_SIZE = 1000;
 
-  for (const dealer of dealers.rows) {
-    await enqueueGovtSync({
-      dealerId: dealer.dealer_id,
-      fpsId: dealer.fps_id,
-      district: dealer.district ?? '',
-      taluka: dealer.taluka ?? '',
-    });
+export async function enqueueFullStateSync() {
+  let total = 0;
+  let offset = 0;
+
+  while (true) {
+    const dealers = await query(
+      `SELECT id as dealer_id, fps_id, district, taluka FROM dealers
+       WHERE is_active = TRUE AND role = 'dealer'
+       ORDER BY id LIMIT $1 OFFSET $2`,
+      [SYNC_BATCH_SIZE, offset]
+    );
+
+    if (dealers.rows.length === 0) break;
+
+    for (const dealer of dealers.rows) {
+      await enqueueGovtSync({
+        dealerId: dealer.dealer_id,
+        fpsId: dealer.fps_id,
+        district: dealer.district ?? '',
+        taluka: dealer.taluka ?? '',
+      });
+    }
+
+    total += dealers.rows.length;
+    offset += SYNC_BATCH_SIZE;
   }
 
-  return { queued: dealers.rows.length };
+  return { queued: total };
 }
 
 export async function enqueueDistrictSync(district: string) {
-  const dealers = await query(
-    `SELECT id as dealer_id, fps_id, district, taluka FROM dealers
-     WHERE is_active = TRUE AND district = $1`,
-    [district]
-  );
+  let total = 0;
+  let offset = 0;
 
-  for (const dealer of dealers.rows) {
-    await enqueueGovtSync({
-      dealerId: dealer.dealer_id,
-      fpsId: dealer.fps_id,
-      district: dealer.district ?? '',
-      taluka: dealer.taluka ?? '',
-    });
+  while (true) {
+    const dealers = await query(
+      `SELECT id as dealer_id, fps_id, district, taluka FROM dealers
+       WHERE is_active = TRUE AND district = $1
+       ORDER BY id LIMIT $2 OFFSET $3`,
+      [district, SYNC_BATCH_SIZE, offset]
+    );
+
+    if (dealers.rows.length === 0) break;
+
+    for (const dealer of dealers.rows) {
+      await enqueueGovtSync({
+        dealerId: dealer.dealer_id,
+        fpsId: dealer.fps_id,
+        district: dealer.district ?? '',
+        taluka: dealer.taluka ?? '',
+      });
+    }
+
+    total += dealers.rows.length;
+    offset += SYNC_BATCH_SIZE;
   }
 
-  return { district, queued: dealers.rows.length };
+  return { district, queued: total };
 }
 
 const worker = new Worker<GovtSyncPayload>(

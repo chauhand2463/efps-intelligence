@@ -3,13 +3,13 @@ import { buildApp } from './app.js';
 import { getRedis, closeRedis } from './config/redis.js';
 import pool from './config/database.js';
 
-import './jobs/audit-flush.job.js';
-import './jobs/sms-otp.job.js';
-import './jobs/daily-report.job.js';
-import './jobs/session-cleanup.job.js';
-import './jobs/sync/govt-data-sync.job.js';
-import './jobs/sync/sync-scheduler.job.js';
-import './jobs/sync/efps-sync.worker.js';
+import { auditFlushWorker } from './jobs/audit-flush.job.js';
+import { smsOtpWorker } from './jobs/sms-otp.job.js';
+import { dailyReportWorker } from './jobs/daily-report.job.js';
+import { sessionCleanupWorker } from './jobs/session-cleanup.job.js';
+import { govtDataSyncWorker } from './jobs/sync/govt-data-sync.job.js';
+import { syncSchedulerWorker } from './jobs/sync/sync-scheduler.job.js';
+import { efpsSyncWorker } from './jobs/sync/efps-sync.worker.js';
 
 async function main() {
   const app = await buildApp();
@@ -38,10 +38,18 @@ async function main() {
     const forceExit = setTimeout(() => {
       console.error('Forced exit after timeout');
       process.exit(1);
-    }, 10000);
+    }, 15000);
 
     try {
       await app.close();
+
+      const workers = [
+        auditFlushWorker, smsOtpWorker, dailyReportWorker,
+        sessionCleanupWorker, govtDataSyncWorker, syncSchedulerWorker,
+        efpsSyncWorker,
+      ];
+      await Promise.all(workers.map(w => w.close()));
+
       await closeRedis();
       await pool.end();
       clearTimeout(forceExit);
@@ -63,6 +71,7 @@ async function main() {
 
   process.on('unhandledRejection', (reason) => {
     console.error('Unhandled rejection:', reason);
+    process.exit(1);
   });
 }
 

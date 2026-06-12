@@ -46,7 +46,7 @@ export async function registerRateLimit(app: FastifyInstance) {
         },
       };
     }
-    if (routeOptions.url?.includes('/sync')) {
+    if (routeOptions.url?.includes('/sync') && routeOptions.method === 'POST') {
       routeOptions.config = {
         ...routeOptions.config,
         rateLimit: {
