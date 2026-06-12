@@ -7,6 +7,7 @@ import {
   importCsvHandler, importSingleRowHandler,
   syncAllDealersHandler, syncDistrictHandler,
   getImportBatchesHandler, getChangeLogHandler,
+  triggerSelfSyncHandler, getSelfSyncStatusHandler,
 } from './sync.controller.js';
 
 export async function syncRoutes(app: FastifyInstance) {
@@ -18,6 +19,9 @@ export async function syncRoutes(app: FastifyInstance) {
 
   app.post('/sync/trigger', { preHandler: adminGuard }, triggerSyncHandler);
   app.get('/sync/history', { preHandler: adminGuard }, getSyncHistoryHandler);
+
+  app.post('/sync/self/trigger', { preHandler: authGuard }, triggerSelfSyncHandler);
+  app.get('/sync/self/status', { preHandler: authGuard }, getSelfSyncStatusHandler);
 
   app.post('/sync/import/csv', { preHandler: authGuard }, importCsvHandler);
   app.post('/sync/import/row', { preHandler: authGuard }, importSingleRowHandler);

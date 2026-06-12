@@ -49,3 +49,8 @@ export async function lookupFpsIdHandler(request: FastifyRequest, reply: Fastify
   const result = await dealerService.lookupByFpsId(fpsId);
   return sendSuccess(reply, result);
 }
+
+export async function heartbeatHandler(request: FastifyRequest, reply: FastifyReply) {
+  const result = await dealerService.heartbeat(request.user!.id);
+  return sendSuccess(reply, result);
+}

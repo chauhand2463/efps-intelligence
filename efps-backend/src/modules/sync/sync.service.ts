@@ -1,10 +1,16 @@
 import { query } from '../../config/database.js';
 import { getRedis } from '../../config/redis.js';
 import { eventBus, EventTypes } from '../../shared/events/index.js';
+import { enqueueEfpsSync } from '../../jobs/sync/efps-sync.worker.js';
+import { enqueueGovtSync } from '../../jobs/sync/govt-data-sync.job.js';
 import type { TriggerSyncInput, UpdateBankInfoInput } from './sync.schema.js';
 
 export class SyncService {
   async triggerSync(input: TriggerSyncInput) {
+    if (input.dealer_id) {
+      return this.triggerDealerSync(input.dealer_id, input.sync_type);
+    }
+
     const log = await query(
       `INSERT INTO sync_logs (sync_type, direction, status, entity, started_at)
        VALUES ($1, 'export', 'in_progress', $2, NOW())
@@ -57,6 +63,66 @@ export class SyncService {
       );
       throw err;
     }
+  }
+
+  async triggerDealerSync(dealerId: string, syncType?: string) {
+    const dealer = await query(
+      `SELECT id, fps_id, sync_enabled FROM dealers WHERE id = $1 AND is_active = TRUE`,
+      [dealerId]
+    );
+
+    if (!dealer.rows.length) {
+      throw new Error('Dealer not found or inactive');
+    }
+
+    const d = dealer.rows[0] as { id: string; fps_id: string; sync_enabled: boolean };
+
+    await query(
+      `INSERT INTO sync_jobs (dealer_id, status, triggered_by)
+       VALUES ($1, 'pending', 'manual')`,
+      [dealerId]
+    );
+
+    const hasCredentials = await query(
+      `SELECT id FROM dealer_credentials WHERE dealer_id = $1`,
+      [dealerId]
+    );
+
+    if (hasCredentials.rows.length > 0) {
+      await enqueueEfpsSync({
+        dealerId: d.id,
+        fpsId: d.fps_id,
+        triggeredBy: 'manual',
+      });
+    } else {
+      await enqueueGovtSync({
+        dealerId: d.id,
+        fpsId: d.fps_id,
+        district: '',
+        taluka: '',
+      });
+    }
+
+    return { message: 'Sync triggered', dealer_id: dealerId, has_playwright_creds: hasCredentials.rows.length > 0 };
+  }
+
+  async getSyncStatus(dealerId: string) {
+    const result = await query(
+      `SELECT id, status, triggered_by, started_at, completed_at, error_message, records_synced, created_at
+       FROM sync_jobs WHERE dealer_id = $1
+       ORDER BY created_at DESC LIMIT 10`,
+      [dealerId]
+    );
+
+    const latestJob = result.rows[0] as {
+      status: string; started_at: string; completed_at: string | null;
+    } | undefined;
+
+    return {
+      jobs: result.rows,
+      is_syncing: latestJob?.status === 'running' || latestJob?.status === 'pending',
+      last_sync_at: latestJob?.completed_at ?? null,
+    };
   }
 
   async getSyncHistory() {

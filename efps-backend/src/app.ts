@@ -59,18 +59,43 @@ export async function buildApp() {
     await registerSwagger(app);
   }
 
+  const startTime = Date.now();
+
   app.get('/health', async () => {
-    return { status: 'ok', timestamp: new Date().toISOString() };
+    return {
+      status: 'ok',
+      version: '1.0.0',
+      uptime: Math.floor((Date.now() - startTime) / 1000),
+      timestamp: new Date().toISOString(),
+    };
   });
 
   app.get('/ready', async () => {
+    const checks: Record<string, string> = {};
+    let allReady = true;
+
     try {
       await pool.query('SELECT 1');
-      await getRedis().ping();
-      return { status: 'ready', timestamp: new Date().toISOString() };
+      checks.database = 'ok';
     } catch (err) {
-      return { status: 'not ready', error: String(err), timestamp: new Date().toISOString() };
+      checks.database = `error: ${err}`;
+      allReady = false;
     }
+
+    try {
+      await getRedis().ping();
+      checks.redis = 'ok';
+    } catch (err) {
+      checks.redis = `error: ${err}`;
+      allReady = false;
+    }
+
+    return {
+      status: allReady ? 'ready' : 'degraded',
+      uptime: Math.floor((Date.now() - startTime) / 1000),
+      checks,
+      timestamp: new Date().toISOString(),
+    };
   });
 
   await app.register(async (api) => {

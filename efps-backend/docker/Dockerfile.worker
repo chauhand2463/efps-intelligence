@@ -1,0 +1,19 @@
+FROM mcr.microsoft.com/playwright:v1.52.0-jammy
+
+WORKDIR /app
+
+COPY package*.json ./
+RUN npm ci --only=production
+
+RUN npx playwright install chromium
+
+COPY dist/ ./dist/
+COPY src/database/migrations ./dist/src/database/migrations
+
+ENV NODE_ENV=production
+ENV NODE_OPTIONS="--max-old-space-size=2048"
+
+RUN addgroup --system appgroup && adduser --system --ingroup appgroup appuser
+USER appuser
+
+CMD ["node", "dist/src/jobs/sync/efps-sync.worker.js"]

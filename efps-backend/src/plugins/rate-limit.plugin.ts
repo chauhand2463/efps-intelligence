@@ -37,12 +37,30 @@ export async function registerRateLimit(app: FastifyInstance) {
         },
       };
     }
-    if (routeOptions.url?.includes('/forgot')) {
+    if (routeOptions.url?.includes('/otp') || routeOptions.url?.includes('/forgot')) {
       routeOptions.config = {
         ...routeOptions.config,
         rateLimit: {
           max: 3,
           timeWindow: '30 minutes',
+        },
+      };
+    }
+    if (routeOptions.url?.includes('/sync')) {
+      routeOptions.config = {
+        ...routeOptions.config,
+        rateLimit: {
+          max: 10,
+          timeWindow: '1 minute',
+        },
+      };
+    }
+    if (routeOptions.url?.includes('/auth/refresh')) {
+      routeOptions.config = {
+        ...routeOptions.config,
+        rateLimit: {
+          max: 20,
+          timeWindow: '15 minutes',
         },
       };
     }

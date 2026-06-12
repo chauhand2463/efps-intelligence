@@ -228,6 +228,22 @@ export class DealerService {
 
     return { exists: result.rows.length > 0, dealer: result.rows[0] ?? null };
   }
+
+  async heartbeat(dealerId: string) {
+    const redis = getRedis();
+    const key = `dealer:${dealerId}:online`;
+    await redis.set(key, '1', 'EX', 900);
+    await redis.sadd('online_dealers', dealerId);
+    const onlineCount = await redis.scard('online_dealers');
+
+    await query(`UPDATE dealers SET last_login_at = NOW() WHERE id = $1`, [dealerId]);
+
+    return {
+      status: 'online',
+      online_dealers: onlineCount,
+      timestamp: new Date().toISOString(),
+    };
+  }
 }
 
 export const dealerService = new DealerService();

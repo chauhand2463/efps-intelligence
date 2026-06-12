@@ -10,6 +10,7 @@ import {
   getSessionsHandler,
   revokeSessionHandler,
   lookupFpsIdHandler,
+  heartbeatHandler,
 } from './dealer.controller.js';
 
 export async function dealerRoutes(app: FastifyInstance) {
@@ -18,6 +19,10 @@ export async function dealerRoutes(app: FastifyInstance) {
   app.get('/dealers/lookup/:fpsId', {
     preHandler: [validateFpsIdParam],
   }, lookupFpsIdHandler);
+
+  app.post('/dealers/heartbeat', {
+    preHandler: [authenticate],
+  }, heartbeatHandler);
 
   app.get('/dealers/:id', {
     preHandler: [authenticate, authorizeSelf()],

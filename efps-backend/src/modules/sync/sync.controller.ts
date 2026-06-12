@@ -5,6 +5,7 @@ import { enqueueFullStateSync, enqueueDistrictSync } from '../../jobs/sync/govt-
 import {
   triggerSyncSchema, updateBankInfoSchema, importCsvSchema,
   importRowSchema, syncAllSchema, syncDistrictSchema,
+  triggerSelfSyncSchema,
 } from './sync.schema.js';
 import { sendSuccess, sendCreated } from '../../shared/utils/response.js';
 import { query } from '../../config/database.js';
@@ -82,4 +83,15 @@ export async function getChangeLogHandler(request: FastifyRequest, reply: Fastif
     [batchId]
   );
   return sendSuccess(reply, result.rows);
+}
+
+export async function triggerSelfSyncHandler(request: FastifyRequest, reply: FastifyReply) {
+  const body = triggerSelfSyncSchema.parse(request.body);
+  const result = await syncService.triggerDealerSync(request.user!.id, body.sync_type);
+  return sendCreated(reply, result);
+}
+
+export async function getSelfSyncStatusHandler(request: FastifyRequest, reply: FastifyReply) {
+  const result = await syncService.getSyncStatus(request.user!.id);
+  return sendSuccess(reply, result);
 }

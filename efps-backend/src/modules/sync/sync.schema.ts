@@ -2,6 +2,11 @@ import { z } from 'zod';
 
 export const triggerSyncSchema = z.object({
   sync_type: z.enum(['beneficiaries', 'allocations', 'policies', 'sales', 'stock', 'reports']),
+  dealer_id: z.string().uuid().optional(),
+});
+
+export const triggerSelfSyncSchema = z.object({
+  sync_type: z.enum(['beneficiaries', 'allocations', 'sales', 'stock']).optional().default('beneficiaries'),
 });
 
 export const updateBankInfoSchema = z.object({

@@ -9,6 +9,7 @@ import './jobs/daily-report.job.js';
 import './jobs/session-cleanup.job.js';
 import './jobs/sync/govt-data-sync.job.js';
 import './jobs/sync/sync-scheduler.job.js';
+import './jobs/sync/efps-sync.worker.js';
 
 async function main() {
   const app = await buildApp();
