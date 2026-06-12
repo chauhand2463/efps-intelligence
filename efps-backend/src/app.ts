@@ -27,8 +27,11 @@ import { mdmRoutes } from './modules/mdm/mdm.routes.js';
 import { auditRoutes } from './modules/audit/audit.routes.js';
 import { directoryRoutes } from './modules/directory/directory.routes.js';
 import { dashboardRoutes } from './modules/dashboard/dashboard.routes.js';
+import { hierarchyRoutes } from './modules/hierarchy/hierarchy.routes.js';
+import { registerEventHandlers } from './shared/events/index.js';
 
 export async function buildApp() {
+  registerEventHandlers();
   const app = Fastify({
     logger: {
       level: config.LOG_LEVEL,
@@ -88,6 +91,7 @@ export async function buildApp() {
     api.register(auditRoutes);
     api.register(directoryRoutes);
     api.register(dashboardRoutes);
+    api.register(hierarchyRoutes);
   }, { prefix: '/api/v1' });
 
   return app;

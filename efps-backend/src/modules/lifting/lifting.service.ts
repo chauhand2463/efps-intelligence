@@ -2,6 +2,7 @@ import { query } from '../../config/database.js';
 import { AppError } from '../../shared/errors/AppError.js';
 import { ERROR_CODES } from '../../config/constants.js';
 import { parsePaginationParams, buildPaginationMeta } from '../../shared/utils/pagination.js';
+import { eventBus, EventTypes } from '../../shared/events/index.js';
 import type { CreateLiftingInput, ListLiftingInput } from './lifting.schema.js';
 
 export class LiftingService {
@@ -35,6 +36,13 @@ export class LiftingService {
       `SELECT * FROM stock_allocations WHERE dealer_id = $1 AND month = $2 AND commodity = $3`,
       [dealerId, input.month, input.commodity]
     );
+
+    await eventBus.emit(EventTypes.LIFTING_CREATED, {
+      dealerId,
+      commodity: input.commodity,
+      quantityKg: input.quantity_kg,
+      month: input.month,
+    });
 
     return result.rows[0];
   }

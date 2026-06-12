@@ -3,6 +3,7 @@ import { AppError } from '../../shared/errors/AppError.js';
 import { ValidationError } from '../../shared/errors/ValidationError.js';
 import { ERROR_CODES } from '../../config/constants.js';
 import { parsePaginationParams, buildPaginationMeta } from '../../shared/utils/pagination.js';
+import { eventBus, EventTypes } from '../../shared/events/index.js';
 import type { Beneficiary } from '../../shared/types/models.js';
 import type { CreateBeneficiaryInput, UpdateBeneficiaryInput, SearchBeneficiaryInput } from './beneficiary.schema.js';
 
@@ -91,6 +92,11 @@ export class BeneficiaryService {
         input.category ?? null,
       ]
     );
+
+    await eventBus.emit(EventTypes.BENEFICIARY_CREATED, {
+      dealerId,
+      beneficiaryId: result.rows[0]!.id,
+    });
 
     return result.rows[0] as Beneficiary;
   }

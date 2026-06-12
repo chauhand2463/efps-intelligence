@@ -2,6 +2,7 @@ import { query } from '../../config/database.js';
 import { AppError } from '../../shared/errors/AppError.js';
 import { ERROR_CODES } from '../../config/constants.js';
 import { parsePaginationParams, buildPaginationMeta } from '../../shared/utils/pagination.js';
+import { eventBus, EventTypes } from '../../shared/events/index.js';
 import type { SetCommissionRateInput, ListCommissionInput, SettlementInput } from './commission.schema.js';
 
 export class CommissionService {
@@ -129,6 +130,16 @@ export class CommissionService {
 
       await query(`UPDATE commissions SET status = 'settled' WHERE id = $1`, [com.id]);
       results.push(result.rows[0]);
+    }
+
+    if (results.length > 0) {
+      const totalNet = results.reduce((sum, r) => sum + Number(r.net_amount), 0);
+      await eventBus.emit(EventTypes.COMMISSION_SETTLED, {
+        dealerId,
+        month: input.month,
+        netAmount: totalNet,
+        settlementId: results[0]!.id,
+      });
     }
 
     return results;

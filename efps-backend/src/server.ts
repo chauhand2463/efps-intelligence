@@ -3,6 +3,13 @@ import { buildApp } from './app.js';
 import { getRedis, closeRedis } from './config/redis.js';
 import pool from './config/database.js';
 
+import './jobs/audit-flush.job.js';
+import './jobs/sms-otp.job.js';
+import './jobs/daily-report.job.js';
+import './jobs/session-cleanup.job.js';
+import './jobs/sync/govt-data-sync.job.js';
+import './jobs/sync/sync-scheduler.job.js';
+
 async function main() {
   const app = await buildApp();
 

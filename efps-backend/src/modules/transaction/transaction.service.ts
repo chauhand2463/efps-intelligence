@@ -3,6 +3,7 @@ import { AppError } from '../../shared/errors/AppError.js';
 import { ValidationError } from '../../shared/errors/ValidationError.js';
 import { ERROR_CODES } from '../../config/constants.js';
 import { parsePaginationParams, buildPaginationMeta } from '../../shared/utils/pagination.js';
+import { eventBus, EventTypes } from '../../shared/events/index.js';
 import type { Transaction } from '../../shared/types/models.js';
 import type { CreateTransactionInput, ListTransactionsInput } from './transaction.schema.js';
 
@@ -85,6 +86,15 @@ export class TransactionService {
        VALUES ($1, $2, 'sale', $3, $4, 'transaction', 'Ration distribution')`,
       [dealerId, input.commodity, input.quantity_kg, result.rows[0]!.id]
     );
+
+    await eventBus.emit(EventTypes.TRANSACTION_COMPLETED, {
+      dealerId,
+      transactionId: result.rows[0]!.id,
+      beneficiaryId: input.beneficiary_id,
+      commodity: input.commodity,
+      quantityKg: input.quantity_kg,
+      month: input.month,
+    });
 
     return result.rows[0] as Transaction;
   }

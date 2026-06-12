@@ -1,5 +1,6 @@
 import { query } from '../../config/database.js';
 import { getRedis } from '../../config/redis.js';
+import { eventBus, EventTypes } from '../../shared/events/index.js';
 import type { TriggerSyncInput, UpdateBankInfoInput } from './sync.schema.js';
 
 export class SyncService {
@@ -40,6 +41,11 @@ export class SyncService {
          WHERE id = $2`,
         [entityCount, syncId]
       );
+
+      await eventBus.emit(EventTypes.SYNC_COMPLETED, {
+        syncType: input.sync_type,
+        entityCount,
+      } as Record<string, unknown>);
 
       return { id: syncId, sync_type: input.sync_type, status: 'completed', entity_count: entityCount };
     } catch (err: unknown) {

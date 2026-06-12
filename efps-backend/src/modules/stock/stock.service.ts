@@ -2,6 +2,7 @@ import { query } from '../../config/database.js';
 import { AppError } from '../../shared/errors/AppError.js';
 import { ERROR_CODES } from '../../config/constants.js';
 import { parsePaginationParams, buildPaginationMeta } from '../../shared/utils/pagination.js';
+import { eventBus, EventTypes } from '../../shared/events/index.js';
 import type { StockAllocation } from '../../shared/types/models.js';
 import type { ListStockHistoryInput, UpdateAllocationInput } from './stock.schema.js';
 
@@ -83,7 +84,14 @@ export class StockService {
       [input.allocated_kg, allocationId]
     );
 
-    return result.rows[0] as StockAllocation;
+    const updated = result.rows[0] as StockAllocation;
+    await eventBus.emit(EventTypes.ALLOCATION_UPDATED, {
+      dealerId: updated.dealer_id,
+      commodity: updated.commodity,
+      month: updated.month,
+    });
+
+    return updated;
   }
 }
 
