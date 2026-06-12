@@ -14,18 +14,19 @@ async function seed() {
     parallelism: 4,
   });
 
-  const admin = await pool.query(
+  await pool.query(
     `INSERT INTO dealers (fps_id, full_name, mobile, password_hash, role, district, is_active, is_verified)
      VALUES ('00000001', 'State Administrator', '9999999999', $1, 'admin', 'Gandhinagar', TRUE, TRUE)
-     ON CONFLICT (fps_id) DO NOTHING RETURNING id`,
+     ON CONFLICT (mobile) DO NOTHING`,
     [passwordHash]
   );
-  const adminId = admin.rows[0]?.id;
+  const adminResult = await pool.query(`SELECT id FROM dealers WHERE fps_id = '00000001'`);
+  const adminId = adminResult.rows[0]?.id;
 
-  const areaOfficer = await pool.query(
+  await pool.query(
     `INSERT INTO dealers (fps_id, full_name, mobile, password_hash, role, district, taluka, is_active, is_verified)
      VALUES ('00000002', 'District Officer Ahmedabad', '9999999998', $1, 'area_officer', 'Ahmedabad', 'City', TRUE, TRUE)
-     ON CONFLICT (fps_id) DO NOTHING RETURNING id`,
+     ON CONFLICT (mobile) DO NOTHING`,
     [passwordHash]
   );
 
@@ -49,7 +50,7 @@ async function seed() {
     const result = await pool.query(
       `INSERT INTO dealers (fps_id, full_name, mobile, password_hash, role, district, taluka, village, is_active, is_verified)
        VALUES ($1, $2, $3, $4, 'dealer', $5, $6, $7, TRUE, TRUE)
-       ON CONFLICT (fps_id) DO NOTHING RETURNING id`,
+       ON CONFLICT (mobile) DO NOTHING RETURNING id`,
       [d.fps_id, d.name, d.mobile, dealerHash, d.district, d.taluka, d.village]
     );
     if (result.rows[0]) dealerIds.push(result.rows[0].id);

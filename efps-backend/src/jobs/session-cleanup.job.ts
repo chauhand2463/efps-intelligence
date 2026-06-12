@@ -1,11 +1,11 @@
 import { Queue, Worker, type Job } from 'bullmq';
-import { getRedis } from '../config/redis.js';
+import { getRedis, getBullRedis } from '../config/redis.js';
 import { query } from '../config/database.js';
 
 const QUEUE_NAME = 'session-cleanup';
 
 export const sessionCleanupQueue = new Queue(QUEUE_NAME, {
-  connection: getRedis() as any,
+  connection: getBullRedis() as any,
   defaultJobOptions: {
     attempts: 2,
     removeOnComplete: 10,
@@ -40,7 +40,7 @@ const worker = new Worker(
       `${expiredOtp.rowCount} OTPs expired, online dealers cleaned`
     );
   },
-  { connection: getRedis() as any }
+  { connection: getBullRedis() as any }
 );
 
 worker.on('completed', (job) => {

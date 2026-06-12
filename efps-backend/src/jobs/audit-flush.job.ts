@@ -1,11 +1,11 @@
 import { Queue, Worker, type Job } from 'bullmq';
-import { getRedis } from '../config/redis.js';
+import { getBullRedis } from '../config/redis.js';
 import { query } from '../config/database.js';
 
 const QUEUE_NAME = 'audit-flush';
 
 export const auditFlushQueue = new Queue(QUEUE_NAME, {
-  connection: getRedis() as any,
+  connection: getBullRedis() as any,
   defaultJobOptions: {
     attempts: 3,
     backoff: { type: 'exponential', delay: 2000 },
@@ -49,7 +49,7 @@ const worker = new Worker<AuditFlushPayload>(
       ]
     );
   },
-  { connection: getRedis() as any, concurrency: 5 }
+  { connection: getBullRedis() as any, concurrency: 5 }
 );
 
 worker.on('completed', (job) => {

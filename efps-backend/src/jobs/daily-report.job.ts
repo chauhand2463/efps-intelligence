@@ -1,11 +1,11 @@
 import { Queue, Worker, type Job } from 'bullmq';
-import { getRedis } from '../config/redis.js';
+import { getBullRedis } from '../config/redis.js';
 import { query } from '../config/database.js';
 
 const QUEUE_NAME = 'daily-report';
 
 export const dailyReportQueue = new Queue(QUEUE_NAME, {
-  connection: getRedis() as any,
+  connection: getBullRedis() as any,
   defaultJobOptions: {
     attempts: 2,
     removeOnComplete: 30,
@@ -63,7 +63,7 @@ const worker = new Worker<DailyReportPayload>(
 
     console.log(`Daily report generated for dealer ${dealerId} on ${date}`);
   },
-  { connection: getRedis() as any }
+  { connection: getBullRedis() as any }
 );
 
 worker.on('completed', (job) => {

@@ -1,11 +1,11 @@
 import { Queue, Worker, type Job } from 'bullmq';
-import { getRedis } from '../config/redis.js';
+import { getBullRedis } from '../config/redis.js';
 import { config } from '../config/index.js';
 
 const QUEUE_NAME = 'sms-otp';
 
 export const smsOtpQueue = new Queue(QUEUE_NAME, {
-  connection: getRedis() as any,
+  connection: getBullRedis() as any,
   defaultJobOptions: {
     attempts: 3,
     backoff: { type: 'exponential', delay: 1000 },
@@ -74,7 +74,7 @@ const worker = new Worker<SmsOtpPayload>(
 
     await sendSms(mobile, message);
   },
-  { connection: getRedis() as any }
+  { connection: getBullRedis() as any }
 );
 
 worker.on('completed', (job) => {

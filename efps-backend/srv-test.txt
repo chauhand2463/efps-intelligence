@@ -1,0 +1,101 @@
+Error: Redis version needs to be greater or equal than 5.0.0 Current: 3.0.504
+    at RedisConnection.init (E:\efps\efps-backend\node_modules\bullmq\dist\cjs\classes\redis-connection.js:203:27)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+Error: Redis version needs to be greater or equal than 5.0.0 Current: 3.0.504
+    at RedisConnection.init (E:\efps\efps-backend\node_modules\bullmq\dist\cjs\classes\redis-connection.js:203:27)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+Error: Redis version needs to be greater or equal than 5.0.0 Current: 3.0.504
+    at RedisConnection.init (E:\efps\efps-backend\node_modules\bullmq\dist\cjs\classes\redis-connection.js:203:27)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+Error: Redis version needs to be greater or equal than 5.0.0 Current: 3.0.504
+    at RedisConnection.init (E:\efps\efps-backend\node_modules\bullmq\dist\cjs\classes\redis-connection.js:203:27)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+Error: Redis version needs to be greater or equal than 5.0.0 Current: 3.0.504
+    at RedisConnection.init (E:\efps\efps-backend\node_modules\bullmq\dist\cjs\classes\redis-connection.js:203:27)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+Error: Redis version needs to be greater or equal than 5.0.0 Current: 3.0.504
+    at RedisConnection.init (E:\efps\efps-backend\node_modules\bullmq\dist\cjs\classes\redis-connection.js:203:27)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+Error: Redis version needs to be greater or equal than 5.0.0 Current: 3.0.504
+    at RedisConnection.init (E:\efps\efps-backend\node_modules\bullmq\dist\cjs\classes\redis-connection.js:203:27)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+Error: Redis version needs to be greater or equal than 5.0.0 Current: 3.0.504
+    at RedisConnection.init (E:\efps\efps-backend\node_modules\bullmq\dist\cjs\classes\redis-connection.js:203:27)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+Error: Redis version needs to be greater or equal than 5.0.0 Current: 3.0.504
+    at RedisConnection.init (E:\efps\efps-backend\node_modules\bullmq\dist\cjs\classes\redis-connection.js:203:27)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+Error: Redis version needs to be greater or equal than 5.0.0 Current: 3.0.504
+    at RedisConnection.init (E:\efps\efps-backend\node_modules\bullmq\dist\cjs\classes\redis-connection.js:203:27)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+Error: Redis version needs to be greater or equal than 5.0.0 Current: 3.0.504
+    at RedisConnection.init (E:\efps\efps-backend\node_modules\bullmq\dist\cjs\classes\redis-connection.js:203:27)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+Error: Redis version needs to be greater or equal than 5.0.0 Current: 3.0.504
+    at RedisConnection.init (E:\efps\efps-backend\node_modules\bullmq\dist\cjs\classes\redis-connection.js:203:27)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+Error: Redis version needs to be greater or equal than 5.0.0 Current: 3.0.504
+    at RedisConnection.init (E:\efps\efps-backend\node_modules\bullmq\dist\cjs\classes\redis-connection.js:203:27)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+Error: Redis version needs to be greater or equal than 5.0.0 Current: 3.0.504
+    at RedisConnection.init (E:\efps\efps-backend\node_modules\bullmq\dist\cjs\classes\redis-connection.js:203:27)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+Error: Redis version needs to be greater or equal than 5.0.0 Current: 3.0.504
+    at RedisConnection.init (E:\efps\efps-backend\node_modules\bullmq\dist\cjs\classes\redis-connection.js:203:27)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+Error: Redis version needs to be greater or equal than 5.0.0 Current: 3.0.504
+    at RedisConnection.init (E:\efps\efps-backend\node_modules\bullmq\dist\cjs\classes\redis-connection.js:203:27)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+Error: Redis version needs to be greater or equal than 5.0.0 Current: 3.0.504
+    at RedisConnection.init (E:\efps\efps-backend\node_modules\bullmq\dist\cjs\classes\redis-connection.js:203:27)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+Error: Redis version needs to be greater or equal than 5.0.0 Current: 3.0.504
+    at RedisConnection.init (E:\efps\efps-backend\node_modules\bullmq\dist\cjs\classes\redis-connection.js:203:27)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+Error: Redis version needs to be greater or equal than 5.0.0 Current: 3.0.504
+    at RedisConnection.init (E:\efps\efps-backend\node_modules\bullmq\dist\cjs\classes\redis-connection.js:203:27)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+Error: Redis version needs to be greater or equal than 5.0.0 Current: 3.0.504
+    at RedisConnection.init (E:\efps\efps-backend\node_modules\bullmq\dist\cjs\classes\redis-connection.js:203:27)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+Error: Redis version needs to be greater or equal than 5.0.0 Current: 3.0.504
+    at RedisConnection.init (E:\efps\efps-backend\node_modules\bullmq\dist\cjs\classes\redis-connection.js:203:27)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+Error: Redis version needs to be greater or equal than 5.0.0 Current: 3.0.504
+    at RedisConnection.init (E:\efps\efps-backend\node_modules\bullmq\dist\cjs\classes\redis-connection.js:203:27)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+Error: Redis version needs to be greater or equal than 5.0.0 Current: 3.0.504
+    at RedisConnection.init (E:\efps\efps-backend\node_modules\bullmq\dist\cjs\classes\redis-connection.js:203:27)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+Error: Redis version needs to be greater or equal than 5.0.0 Current: 3.0.504
+    at RedisConnection.init (E:\efps\efps-backend\node_modules\bullmq\dist\cjs\classes\redis-connection.js:203:27)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+Error: Redis version needs to be greater or equal than 5.0.0 Current: 3.0.504
+    at RedisConnection.init (E:\efps\efps-backend\node_modules\bullmq\dist\cjs\classes\redis-connection.js:203:27)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+Error: Redis version needs to be greater or equal than 5.0.0 Current: 3.0.504
+    at RedisConnection.init (E:\efps\efps-backend\node_modules\bullmq\dist\cjs\classes\redis-connection.js:203:27)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+Error: Redis version needs to be greater or equal than 5.0.0 Current: 3.0.504
+    at RedisConnection.init (E:\efps\efps-backend\node_modules\bullmq\dist\cjs\classes\redis-connection.js:203:27)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+Error: Redis version needs to be greater or equal than 5.0.0 Current: 3.0.504
+    at RedisConnection.init (E:\efps\efps-backend\node_modules\bullmq\dist\cjs\classes\redis-connection.js:203:27)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+Error: Redis version needs to be greater or equal than 5.0.0 Current: 3.0.504
+    at RedisConnection.init (E:\efps\efps-backend\node_modules\bullmq\dist\cjs\classes\redis-connection.js:203:27)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+Error: Redis version needs to be greater or equal than 5.0.0 Current: 3.0.504
+    at RedisConnection.init (E:\efps\efps-backend\node_modules\bullmq\dist\cjs\classes\redis-connection.js:203:27)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+Failed to start server: Error: listen EADDRINUSE: address already in use ::1:3000
+    at Server.setupListenHandle [as _listen2] (node:net:1940:16)
+    at listenInCluster (node:net:1997:12)
+    at GetAddrInfoReqWrap.callback (node:net:2206:7)
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:134:8) {
+  code: 'EADDRINUSE',
+  errno: -4091,
+  syscall: 'listen',
+  address: '::1',
+  port: 3000
+}

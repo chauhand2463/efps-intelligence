@@ -1,12 +1,12 @@
 import { Queue, Worker, type Job } from 'bullmq';
-import { getRedis } from '../../config/redis.js';
+import { getBullRedis } from '../../config/redis.js';
 import { query } from '../../config/database.js';
 import { enqueueGovtSync } from './govt-data-sync.job.js';
 
 const QUEUE_NAME = 'sync-scheduler';
 
 export const syncSchedulerQueue = new Queue(QUEUE_NAME, {
-  connection: getRedis() as any,
+  connection: getBullRedis() as any,
   defaultJobOptions: {
     attempts: 2,
     removeOnComplete: 50,
@@ -47,7 +47,7 @@ const worker = new Worker(
 
     return { processed: pendingSyncs.rows.length };
   },
-  { connection: getRedis() as any }
+  { connection: getBullRedis() as any }
 );
 
 worker.on('completed', (job) => {

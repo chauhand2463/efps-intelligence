@@ -1,5 +1,5 @@
 import { Queue, Worker, type Job } from 'bullmq';
-import { getRedis } from '../../config/redis.js';
+import { getBullRedis } from '../../config/redis.js';
 import { query } from '../../config/database.js';
 import { govtImporterService } from '../../modules/sync/govt-importer.service.js';
 import { eventBus, EventTypes } from '../../shared/events/index.js';
@@ -7,7 +7,7 @@ import { eventBus, EventTypes } from '../../shared/events/index.js';
 const QUEUE_NAME = 'govt-data-sync';
 
 export const govtDataSyncQueue = new Queue(QUEUE_NAME, {
-  connection: getRedis() as any,
+  connection: getBullRedis() as any,
   defaultJobOptions: {
     attempts: 3,
     backoff: { type: 'exponential', delay: 5000 },
@@ -139,7 +139,7 @@ const worker = new Worker<GovtSyncPayload>(
     };
   },
   {
-    connection: getRedis() as any,
+    connection: getBullRedis() as any,
     concurrency: 10,
     limiter: { max: 5, duration: 1000 },
   }
