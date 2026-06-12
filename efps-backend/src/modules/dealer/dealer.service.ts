@@ -1,6 +1,7 @@
 import { query } from '../../config/database.js';
 import { getRedis } from '../../config/redis.js';
 import { hashPassword } from '../../shared/utils/hash.js';
+import { encrypt, encryptMany } from '../../shared/utils/encrypt.js';
 import { AppError } from '../../shared/errors/AppError.js';
 import { ERROR_CODES } from '../../config/constants.js';
 import type { RegisterDealerInput, UpdateDealerInput } from './dealer.schema.js';
@@ -20,10 +21,12 @@ export class DealerService {
 
     const passwordHash = await hashPassword(input.password);
 
+    const hasCredentials = input.efps_username && input.efps_password;
+
     const result = await query(
-      `INSERT INTO dealers (fps_id, full_name, mobile, password_hash, address, district, taluka, village, area_id)
-       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
-       RETURNING id, fps_id, full_name, mobile, role, is_active, is_verified, created_at`,
+      `INSERT INTO dealers (fps_id, full_name, mobile, password_hash, address, district, taluka, village, area_id${hasCredentials ? ', sync_enabled' : ''})
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9${hasCredentials ? ', TRUE' : ''})
+       RETURNING id, fps_id, full_name, mobile, role, is_active, is_verified, sync_enabled, created_at`,
       [
         input.fps_id,
         input.full_name,
@@ -37,7 +40,34 @@ export class DealerService {
       ]
     );
 
-    return result.rows[0] as Dealer;
+    const dealer = result.rows[0] as Dealer & { sync_enabled: boolean };
+
+    if (hasCredentials) {
+      const encrypted = encryptMany({
+        efps_username: input.efps_username!,
+        efps_password: input.efps_password!,
+      });
+
+      await query(
+        `INSERT INTO dealer_credentials (dealer_id, efps_username, efps_password, iv, auth_tag)
+         VALUES ($1, $2, $3, $4, $5)`,
+        [
+          dealer.id,
+          encrypted.efps_username!.ciphertext,
+          encrypted.efps_password!.ciphertext,
+          encrypted.efps_username!.iv,
+          encrypted.efps_username!.authTag,
+        ]
+      );
+
+      await query(
+        `INSERT INTO sync_scheduler_config (dealer_id, sync_enabled, next_sync_at)
+         VALUES ($1, TRUE, NOW() + INTERVAL '1 hour')`,
+        [dealer.id]
+      );
+    }
+
+    return dealer;
   }
 
   async getById(id: string) {

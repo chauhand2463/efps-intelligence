@@ -13,6 +13,8 @@ export const registerDealerSchema = z.object({
   taluka: z.string().optional(),
   village: z.string().optional(),
   area_id: z.string().optional(),
+  efps_username: z.string().min(1, 'eFPS username is required for govt sync').optional(),
+  efps_password: z.string().min(1, 'eFPS password is required for govt sync').optional(),
 });
 
 export const updateDealerSchema = z.object({

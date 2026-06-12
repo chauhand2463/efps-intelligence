@@ -7,6 +7,7 @@ import {
   importRowSchema, syncAllSchema, syncDistrictSchema,
 } from './sync.schema.js';
 import { sendSuccess, sendCreated } from '../../shared/utils/response.js';
+import { query } from '../../config/database.js';
 
 export async function triggerSyncHandler(request: FastifyRequest, reply: FastifyReply) {
   const body = triggerSyncSchema.parse(request.body);
@@ -63,8 +64,7 @@ export async function syncDistrictHandler(request: FastifyRequest, reply: Fastif
 }
 
 export async function getImportBatchesHandler(request: FastifyRequest, reply: FastifyReply) {
-  const { query: q } = await import('../../config/database.js');
-  const result = await q(
+  const result = await query(
     `SELECT * FROM sync_import_batches ORDER BY created_at DESC LIMIT 20`
   );
   return sendSuccess(reply, result.rows);
@@ -72,8 +72,7 @@ export async function getImportBatchesHandler(request: FastifyRequest, reply: Fa
 
 export async function getChangeLogHandler(request: FastifyRequest, reply: FastifyReply) {
   const { batchId } = request.params as { batchId: string };
-  const { query: q } = await import('../../config/database.js');
-  const result = await q(
+  const result = await query(
     `SELECT gcl.*, b.ration_card_no, b.head_of_family
      FROM govt_change_log gcl
      LEFT JOIN beneficiaries b ON b.id = gcl.beneficiary_id

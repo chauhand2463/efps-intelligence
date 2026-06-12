@@ -14,6 +14,8 @@ export interface Dealer {
   role: RoleType;
   is_active: boolean;
   is_verified: boolean;
+  sync_enabled: boolean;
+  last_sync_at: string | null;
   last_login_at: string | null;
   created_at: string;
   updated_at: string;
