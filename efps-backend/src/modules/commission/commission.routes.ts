@@ -1,7 +1,6 @@
 import type { FastifyInstance } from 'fastify';
 import { authenticate } from '../../shared/middleware/authenticate.js';
 import { authorize } from '../../shared/middleware/authorize.js';
-import { Role } from '../../shared/types/enums.js';
 import {
   setCommissionRateHandler, getCommissionRatesHandler,
   calculateCommissionHandler, listCommissionsHandler,

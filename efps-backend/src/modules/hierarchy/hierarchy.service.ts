@@ -287,7 +287,7 @@ export class HierarchyService {
 
     let inserted = 0;
     let updated = 0;
-    let unchanged = 0;
+    const unchanged = 0;
     const regionIds: string[] = [];
 
     for (const row of rows) {

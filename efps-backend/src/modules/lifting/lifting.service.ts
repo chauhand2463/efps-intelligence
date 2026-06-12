@@ -1,6 +1,4 @@
 import { query } from '../../config/database.js';
-import { AppError } from '../../shared/errors/AppError.js';
-import { ERROR_CODES } from '../../config/constants.js';
 import { parsePaginationParams, buildPaginationMeta } from '../../shared/utils/pagination.js';
 import { eventBus, EventTypes } from '../../shared/events/index.js';
 import type { CreateLiftingInput, ListLiftingInput } from './lifting.schema.js';

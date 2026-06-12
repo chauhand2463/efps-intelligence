@@ -250,7 +250,7 @@ async function upsertSyncData(
   return totalRecords;
 }
 
-async function markJobStatus(dealerId: string, status: string, errorMessage?: string) {
+async function markJobStatus(dealerId: string, status: string, _errorMessage?: string) {
   if (status === 'running') {
     await query(
       `UPDATE sync_jobs SET status = 'running', started_at = NOW()
@@ -264,7 +264,7 @@ async function markJobStatus(dealerId: string, status: string, errorMessage?: st
 export const efpsSyncWorker = new Worker<EfpsSyncPayload>(
   QUEUE_NAME,
   async (job: Job<EfpsSyncPayload>) => {
-    const { dealerId, fpsId, triggeredBy } = job.data;
+    const { dealerId, fpsId } = job.data;
     let browser: Browser | null = null;
 
     await markJobStatus(dealerId, 'running');

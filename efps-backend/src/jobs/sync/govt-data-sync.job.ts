@@ -24,7 +24,7 @@ interface GovtSyncPayload {
   sourceUrl?: string;
 }
 
-interface FpsSyncConfig {
+interface _FpsSyncConfig {
   id: string;
   dealer_id: string;
   fps_id: string;
@@ -200,7 +200,7 @@ async function tryFetchFromGovtPortal(fpsId: string, sourceUrl?: string): Promis
   return null;
 }
 
-function parseGovtResponse(text: string, fpsId: string): { rows: GovtBeneficiaryRow[] } {
+function parseGovtResponse(text: string, _fpsId: string): { rows: GovtBeneficiaryRow[] } {
   const lines = text.trim().split('\n');
   if (lines.length < 2) return { rows: [] };
 

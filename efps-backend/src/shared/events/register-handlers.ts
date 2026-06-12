@@ -18,13 +18,6 @@ type LiftingPayload = Record<string, unknown> & {
   month: string;
 };
 
-type CommissionPayload = Record<string, unknown> & {
-  dealerId: string;
-  month: string;
-  commodity: string;
-  netCommission: number;
-  grossCommission: number;
-};
 
 type SettlementPayload = Record<string, unknown> & {
   dealerId: string;

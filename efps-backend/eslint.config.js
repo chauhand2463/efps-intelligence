@@ -3,8 +3,13 @@ import tseslint from 'typescript-eslint';
 export default tseslint.config(
   { ignores: ['dist/', 'node_modules/', 'tests/'] },
   {
+    files: ['src/**/*.ts'],
+    extends: [
+      ...tseslint.configs.recommended,
+    ],
     rules: {
-      'no-unused-vars': 'warn',
+      '@typescript-eslint/no-explicit-any': 'warn',
+      '@typescript-eslint/no-unused-vars': 'warn',
       'no-console': 'warn',
       'prefer-const': 'error',
     },

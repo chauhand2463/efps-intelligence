@@ -1,5 +1,4 @@
 import { query } from '../../config/database.js';
-import { getRedis } from '../../config/redis.js';
 import { eventBus, EventTypes } from '../../shared/events/index.js';
 import { enqueueEfpsSync } from '../../jobs/sync/efps-sync.worker.js';
 import { enqueueGovtSync } from '../../jobs/sync/govt-data-sync.job.js';
@@ -65,7 +64,7 @@ export class SyncService {
     }
   }
 
-  async triggerDealerSync(dealerId: string, syncType?: string) {
+  async triggerDealerSync(dealerId: string, _syncType?: string) {
     const dealer = await query(
       `SELECT id, fps_id, sync_enabled FROM dealers WHERE id = $1 AND is_active = TRUE`,
       [dealerId]
@@ -138,6 +137,26 @@ export class SyncService {
       [dealerId]
     );
     return result.rows[0] ?? null;
+  }
+
+  async getImportBatches() {
+    const result = await query(
+      `SELECT * FROM sync_import_batches ORDER BY created_at DESC LIMIT 20`
+    );
+    return result.rows;
+  }
+
+  async getChangeLog(batchId: string) {
+    const result = await query(
+      `SELECT gcl.*, b.ration_card_no, b.head_of_family
+       FROM govt_change_log gcl
+       LEFT JOIN beneficiaries b ON b.id = gcl.beneficiary_id
+       WHERE gcl.sync_batch_id = $1
+       ORDER BY gcl.created_at DESC
+       LIMIT 100`,
+      [batchId]
+    );
+    return result.rows;
   }
 
   async updateBankInfo(dealerId: string, input: UpdateBankInfoInput) {

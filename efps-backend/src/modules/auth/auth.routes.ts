@@ -1,14 +1,6 @@
 import type { FastifyInstance } from 'fastify';
 import { authenticate } from '../../shared/middleware/authenticate.js';
 import {
-  loginSchema,
-  forgotPasswordRequestSchema,
-  forgotPasswordVerifySchema,
-  forgotPasswordResetSchema,
-  changePasswordSchema,
-  refreshTokenSchema,
-} from './auth.schema.js';
-import {
   loginHandler,
   logoutHandler,
   refreshHandler,

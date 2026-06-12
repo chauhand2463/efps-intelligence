@@ -8,7 +8,6 @@ import {
   triggerSelfSyncSchema,
 } from './sync.schema.js';
 import { sendSuccess, sendCreated } from '../../shared/utils/response.js';
-import { query } from '../../config/database.js';
 
 export async function triggerSyncHandler(request: FastifyRequest, reply: FastifyReply) {
   const body = triggerSyncSchema.parse(request.body);
@@ -53,7 +52,7 @@ export async function importSingleRowHandler(request: FastifyRequest, reply: Fas
 }
 
 export async function syncAllDealersHandler(request: FastifyRequest, reply: FastifyReply) {
-  const body = syncAllSchema.parse(request.body ?? {});
+  syncAllSchema.parse(request.body ?? {});
   const result = await enqueueFullStateSync();
   return sendSuccess(reply, { message: `Sync queued for ${result.queued} dealers`, ...result });
 }
@@ -65,24 +64,14 @@ export async function syncDistrictHandler(request: FastifyRequest, reply: Fastif
 }
 
 export async function getImportBatchesHandler(request: FastifyRequest, reply: FastifyReply) {
-  const result = await query(
-    `SELECT * FROM sync_import_batches ORDER BY created_at DESC LIMIT 20`
-  );
-  return sendSuccess(reply, result.rows);
+  const result = await syncService.getImportBatches();
+  return sendSuccess(reply, result);
 }
 
 export async function getChangeLogHandler(request: FastifyRequest, reply: FastifyReply) {
   const { batchId } = request.params as { batchId: string };
-  const result = await query(
-    `SELECT gcl.*, b.ration_card_no, b.head_of_family
-     FROM govt_change_log gcl
-     LEFT JOIN beneficiaries b ON b.id = gcl.beneficiary_id
-     WHERE gcl.sync_batch_id = $1
-     ORDER BY gcl.created_at DESC
-     LIMIT 100`,
-    [batchId]
-  );
-  return sendSuccess(reply, result.rows);
+  const result = await syncService.getChangeLog(batchId);
+  return sendSuccess(reply, result);
 }
 
 export async function triggerSelfSyncHandler(request: FastifyRequest, reply: FastifyReply) {

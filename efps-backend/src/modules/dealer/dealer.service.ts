@@ -1,7 +1,7 @@
 import { query } from '../../config/database.js';
 import { getRedis } from '../../config/redis.js';
 import { hashPassword } from '../../shared/utils/hash.js';
-import { encrypt, encryptMany } from '../../shared/utils/encrypt.js';
+import { encryptMany } from '../../shared/utils/encrypt.js';
 import { AppError } from '../../shared/errors/AppError.js';
 import { ERROR_CODES } from '../../config/constants.js';
 import type { RegisterDealerInput, UpdateDealerInput } from './dealer.schema.js';

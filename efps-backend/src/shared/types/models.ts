@@ -1,4 +1,4 @@
-import type { RoleType, AccountStatusType, CommodityTypeType, BeneficiaryCategoryType, TransactionModeType, NotificationTypeType } from './enums.js';
+import type { RoleType, CommodityTypeType, BeneficiaryCategoryType, TransactionModeType, NotificationTypeType } from './enums.js';
 
 export interface Dealer {
   id: string;

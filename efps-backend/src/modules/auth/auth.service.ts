@@ -8,7 +8,7 @@ import { ValidationError } from '../../shared/errors/ValidationError.js';
 import { AppError } from '../../shared/errors/AppError.js';
 import { config } from '../../config/index.js';
 import { ERROR_CODES, ONLINE_TTL_SECONDS } from '../../config/constants.js';
-import type { Dealer, JwtPayload } from '../../shared/types/models.js';
+import type { Dealer } from '../../shared/types/models.js';
 import type { LoginInput, ForgotPasswordRequestInput, ForgotPasswordVerifyInput, ForgotPasswordResetInput, ChangePasswordInput, RefreshTokenInput } from './auth.schema.js';
 
 export class AuthService {
@@ -90,9 +90,8 @@ export class AuthService {
   }
 
   async refresh(input: RefreshTokenInput) {
-    let payload: { sub: string };
     try {
-      payload = verifyRefreshToken(input.refresh_token);
+      verifyRefreshToken(input.refresh_token);
     } catch {
       throw new AuthError('TOKEN_INVALID', 'Invalid refresh token');
     }
