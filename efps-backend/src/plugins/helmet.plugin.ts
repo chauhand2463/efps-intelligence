@@ -8,8 +8,8 @@ export async function registerHelmet(app: FastifyInstance) {
       ? {
           directives: {
             defaultSrc: ["'self'"],
-            scriptSrc: ["'self'", "'unsafe-inline'"],
-            styleSrc: ["'self'", "'unsafe-inline'"],
+            scriptSrc: ["'self'"],
+            styleSrc: ["'self'"],
             imgSrc: ["'self'", 'data:'],
             fontSrc: ["'self'"],
             connectSrc: ["'self'", config.API_BASE_URL],

@@ -9,3 +9,4 @@ openapi.json
 .env.test
 srv-*.txt
 server-*.log
+*.pid

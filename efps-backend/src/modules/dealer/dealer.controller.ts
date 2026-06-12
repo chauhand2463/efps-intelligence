@@ -1,12 +1,10 @@
 import type { FastifyRequest, FastifyReply } from 'fastify';
 import { dealerService } from './dealer.service.js';
 import { sendSuccess, sendCreated } from '../../shared/utils/response.js';
+import { registerDealerSchema, updateDealerSchema } from './dealer.schema.js';
 
 export async function registerHandler(request: FastifyRequest, reply: FastifyReply) {
-  const body = request.body as {
-    fps_id: string; full_name: string; mobile: string; password: string;
-    address?: string; district?: string; taluka?: string; village?: string; area_id?: string;
-  };
+  const body = registerDealerSchema.parse(request.body);
   const result = await dealerService.register(body);
   return sendCreated(reply, result);
 }
@@ -19,9 +17,7 @@ export async function getDealerHandler(request: FastifyRequest, reply: FastifyRe
 
 export async function updateDealerHandler(request: FastifyRequest, reply: FastifyReply) {
   const { id } = request.params as { id: string };
-  const body = request.body as {
-    full_name?: string; address?: string; district?: string; taluka?: string; village?: string; area_id?: string;
-  };
+  const body = updateDealerSchema.parse(request.body);
   const result = await dealerService.update(id, body);
   return sendSuccess(reply, result);
 }

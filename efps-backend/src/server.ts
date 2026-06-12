@@ -9,7 +9,6 @@ import { dailyReportWorker } from './jobs/daily-report.job.js';
 import { sessionCleanupWorker } from './jobs/session-cleanup.job.js';
 import { govtDataSyncWorker } from './jobs/sync/govt-data-sync.job.js';
 import { syncSchedulerWorker } from './jobs/sync/sync-scheduler.job.js';
-import { efpsSyncWorker } from './jobs/sync/efps-sync.worker.js';
 
 async function main() {
   const app = await buildApp();
@@ -46,7 +45,6 @@ async function main() {
       const workers = [
         auditFlushWorker, smsOtpWorker, dailyReportWorker,
         sessionCleanupWorker, govtDataSyncWorker, syncSchedulerWorker,
-        efpsSyncWorker,
       ];
       await Promise.all(workers.map(w => w.close()));
 
