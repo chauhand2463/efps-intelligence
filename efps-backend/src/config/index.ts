@@ -19,6 +19,8 @@ const envSchema = z.object({
   JWT_ACCESS_EXPIRY: z.string().default('15m'),
   JWT_REFRESH_EXPIRY: z.string().default('30d'),
 
+  ENCRYPTION_KEY: z.string().length(64),
+
   SMS_PROVIDER: z.enum(['msg91', 'twilio', 'mock']).default('mock'),
   MSG91_AUTH_KEY: z.string().optional(),
   MSG91_SENDER_ID: z.string().default('EFPSMS'),
@@ -26,7 +28,7 @@ const envSchema = z.object({
   OTP_TTL_MINUTES: z.coerce.number().default(10),
   OTP_MAX_ATTEMPTS: z.coerce.number().default(3),
 
-  CORS_ALLOWED_ORIGINS: z.string().default('*'),
+  CORS_ALLOWED_ORIGINS: z.string().default('http://localhost:3000'),
   RATE_LIMIT_LOGIN_MAX: z.coerce.number().default(5),
   RATE_LIMIT_LOGIN_WINDOW_MS: z.coerce.number().default(900000),
 

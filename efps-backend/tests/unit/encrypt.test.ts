@@ -29,14 +29,15 @@ describe('Encrypt (AES-256-GCM)', () => {
     expect(dec2).toBe(plaintext);
   });
 
-  it('should reject decryption with wrong key', () => {
-    const originalKey = process.env.ENCRYPTION_KEY;
-    process.env.ENCRYPTION_KEY = '000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f';
+  it('should reject decryption with tampered ciphertext (GCM auth)', () => {
     const encrypted = encrypt('sensitive-data');
-    process.env.ENCRYPTION_KEY = 'ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff';
+    const tamperedCiphertext = encrypted.ciphertext.replace(/^.{1}/, 'X');
+    expect(() => decrypt(tamperedCiphertext, encrypted.iv, encrypted.authTag)).toThrow();
+  });
 
-    expect(() => decrypt(encrypted.ciphertext, encrypted.iv, encrypted.authTag)).toThrow();
-    process.env.ENCRYPTION_KEY = originalKey;
+  it('should reject decryption with tampered auth tag', () => {
+    const encrypted = encrypt('sensitive-data');
+    expect(() => decrypt(encrypted.ciphertext, encrypted.iv, 'AAAAAAAAAAAAAAAAAAAAAA==')).toThrow();
   });
 
   it('should encrypt many fields at once', () => {

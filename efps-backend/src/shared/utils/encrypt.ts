@@ -1,18 +1,11 @@
 import { createCipheriv, createDecipheriv, randomBytes } from 'node:crypto';
+import { config } from '../../config/index.js';
 
 const ALGORITHM = 'aes-256-gcm';
 const IV_LENGTH = 12;
 
 function getKey(): Buffer {
-  const key = process.env.ENCRYPTION_KEY;
-  if (!key) {
-    throw new Error('ENCRYPTION_KEY environment variable is required for credential encryption');
-  }
-  const buf = Buffer.from(key, 'hex');
-  if (buf.length !== 32) {
-    throw new Error('ENCRYPTION_KEY must be a 64-character hex string (32 bytes)');
-  }
-  return buf;
+  return Buffer.from(config.ENCRYPTION_KEY, 'hex');
 }
 
 export interface EncryptedPayload {
