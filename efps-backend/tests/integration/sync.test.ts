@@ -1,5 +1,6 @@
 import { describe, it, expect, beforeAll, afterAll } from 'vitest';
 import { buildApp } from '../../src/app.js';
+import { getRedis, closeRedis } from '../../src/config/redis.js';
 import pg from 'pg';
 import * as argon2 from 'argon2';
 
@@ -38,6 +39,7 @@ beforeAll(async () => {
   );
   dealerId = result.rows[0]!.id;
 
+  await getRedis().connect();
   app = await buildApp();
   await app.ready();
 
@@ -54,11 +56,13 @@ beforeAll(async () => {
 }, 30000);
 
 afterAll(async () => {
-  await app.close();
+  await app?.close();
   await pool.query(`DELETE FROM sync_jobs WHERE dealer_id = $1`, [dealerId]);
   await pool.query(`DELETE FROM sessions WHERE dealer_id = $1`, [dealerId]);
+  await pool.query(`DELETE FROM dealer_bank_info WHERE dealer_id = $1`, [dealerId]);
   await pool.query(`DELETE FROM dealers WHERE id = $1`, [dealerId]);
   await pool.end();
+  await closeRedis();
 });
 
 describe('Sync Integration', () => {

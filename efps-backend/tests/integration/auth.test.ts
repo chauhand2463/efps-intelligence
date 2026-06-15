@@ -1,5 +1,6 @@
 import { describe, it, expect, beforeAll, afterAll } from 'vitest';
 import { buildApp } from '../../src/app.js';
+import { getRedis, closeRedis } from '../../src/config/redis.js';
 import pg from 'pg';
 import * as argon2 from 'argon2';
 
@@ -35,15 +36,17 @@ beforeAll(async () => {
      TEST_DEALER.role, TEST_DEALER.district, TEST_DEALER.taluka, TEST_DEALER.village]
   );
 
+  await getRedis().connect();
   app = await buildApp();
   await app.ready();
 }, 30000);
 
 afterAll(async () => {
-  await app.close();
+  await app?.close();
   await pool.query(`DELETE FROM sessions WHERE dealer_id = (SELECT id FROM dealers WHERE fps_id = $1)`, [TEST_DEALER.fps_id]);
   await pool.query(`DELETE FROM dealers WHERE fps_id = $1`, [TEST_DEALER.fps_id]);
   await pool.end();
+  await closeRedis();
 });
 
 describe('Auth Integration', () => {
