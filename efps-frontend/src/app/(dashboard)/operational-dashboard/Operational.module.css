@@ -1,0 +1,172 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.title {
+  color: var(--text-dark);
+  font-size: 28px;
+  font-weight: 700;
+  margin: 0 0 4px 0;
+}
+
+.subtitle {
+  color: var(--text-muted);
+  font-size: 14px;
+}
+
+.metricsGrid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+}
+
+.metricCard {
+  background-color: var(--surface-gray);
+  border: 1px solid var(--border-light);
+  border-radius: 12px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+}
+
+.metricHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.metricIcon {
+  color: var(--primary-navy);
+  background-color: rgba(27, 58, 107, 0.1);
+  padding: 8px;
+  border-radius: 8px;
+}
+
+.metricLabel {
+  color: var(--text-muted);
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.metricValue {
+  color: var(--text-dark);
+  font-size: 24px;
+  font-weight: 700;
+  margin: 0;
+}
+
+.mainGrid {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 24px;
+}
+
+.sectionTitle {
+  color: var(--primary-navy);
+  font-size: 18px;
+  font-weight: 600;
+  margin: 0 0 16px 0;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--border-light);
+}
+
+.deviceList {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.deviceItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px;
+  border: 1px solid var(--border-light);
+  border-radius: 8px;
+}
+
+.deviceInfo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.deviceName {
+  color: var(--text-dark);
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.deviceMeta {
+  color: var(--text-muted);
+  font-size: 12px;
+}
+
+.statusBadge {
+  padding: 4px 12px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.statusOnline {
+  background-color: rgba(16, 185, 129, 0.1);
+  color: var(--online-green);
+}
+
+.statusOffline {
+  background-color: rgba(239, 68, 68, 0.1);
+  color: var(--offline-red);
+}
+
+.transactionList {
+  display: flex;
+  flex-direction: column;
+}
+
+.transactionItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--border-light);
+}
+
+.transactionItem:last-child {
+  border-bottom: none;
+}
+
+.txDetails {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.txName {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-dark);
+}
+
+.txTime {
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.txAmount {
+  font-weight: 600;
+  color: var(--primary-navy);
+}

@@ -1,0 +1,398 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* Dashboard Top Header Bar */
+.topHeaderBar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: white;
+  padding: 12px 24px;
+  border-radius: 12px;
+  border: 1px solid var(--border-light);
+}
+
+.topLeftBlock {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.topLogoText {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 700;
+  font-size: 18px;
+  color: var(--primary-navy);
+}
+
+.topLogoIcon {
+  color: var(--primary-navy);
+}
+
+.topRightBlock {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.iconButton {
+  background: none;
+  border: none;
+  padding: 8px;
+  cursor: pointer;
+  color: var(--text-muted);
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color 0.2s;
+}
+
+.iconButton:hover {
+  color: var(--primary-navy);
+  background: none;
+}
+
+.notificationBadge {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  width: 6px;
+  height: 6px;
+  background-color: var(--online-green);
+  border-radius: 50%;
+}
+
+.profileInfo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+}
+
+.profileText {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+.profileName {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text-dark);
+}
+
+.profileRole {
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--text-muted);
+}
+
+.avatarContainer {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 1px solid var(--border-light);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--surface-gray);
+}
+
+.avatarImg {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Page Header Block */
+.pageHeader {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-top: 10px;
+}
+
+.headerIconBox {
+  width: 48px;
+  height: 48px;
+  background-color: var(--primary-navy);
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  box-shadow: 0 4px 6px -1px rgba(27, 58, 107, 0.1);
+}
+
+.titleBlock {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.pageTitle {
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--primary-navy);
+  margin: 0;
+}
+
+.pageSubtitle {
+  font-size: 13px;
+  color: var(--text-muted);
+  margin: 0;
+}
+
+/* Main Display Panels */
+.mainCard {
+  background-color: white;
+  border: 1px solid var(--border-light);
+  border-radius: 12px;
+  padding: 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.02);
+}
+
+/* Section 1: Static Information Display Grid */
+.staticInfoGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 24px;
+  border-bottom: 1px dashed var(--border-input);
+  padding-bottom: 32px;
+}
+
+.staticField {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.staticFieldFullWidth {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.infoLabel {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.infoValue {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text-dark);
+}
+
+/* Section 2: Metric Cards Row */
+.metricsRow {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+}
+
+@media (max-width: 768px) {
+  .metricsRow {
+    grid-template-columns: 1fr;
+  }
+}
+
+.metricCardPurple {
+  background-color: #8B5CF6;
+  border-radius: 12px;
+  padding: 24px;
+  color: white;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 4px 6px rgba(139, 92, 246, 0.15);
+}
+
+.metricCardGreen {
+  background-color: #10B981;
+  border-radius: 12px;
+  padding: 24px;
+  color: white;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 4px 6px rgba(16, 185, 129, 0.15);
+}
+
+.metricCardActive {
+  background-color: white;
+  border: 2px dashed #F59E0B;
+  border-radius: 12px;
+  padding: 24px;
+  color: var(--text-dark);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.metricContent {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.metricLabel {
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+
+.metricLabelOrange {
+  color: #D97706;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+
+.metricValue {
+  font-size: 36px;
+  font-weight: 800;
+  line-height: 1;
+}
+
+.metricIconCircle {
+  width: 44px;
+  height: 44px;
+  background-color: rgba(255, 255, 255, 0.2);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Section 3: Form Block */
+.formBlock {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  border-top: 1px solid var(--border-light);
+  padding-top: 32px;
+}
+
+.formHeader {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.formHeaderIcon {
+  color: #10B981;
+}
+
+.formTitle {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--primary-navy);
+  margin: 0;
+}
+
+.formGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+}
+
+@media (max-width: 768px) {
+  .formGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.formGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.formGroupFullWidth {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.input {
+  width: 100%;
+  background-color: white;
+  border: 1px solid var(--border-input);
+  border-radius: 8px;
+  padding: 12px 16px;
+  font-size: 14px;
+  color: var(--text-dark);
+  font-weight: 500;
+  outline: none;
+}
+
+.input:focus {
+  border-color: var(--primary-navy);
+  box-shadow: 0 0 0 3px rgba(27, 58, 107, 0.15);
+}
+
+.inputReadOnly {
+  background-color: rgba(139, 92, 246, 0.04);
+  border-color: rgba(139, 92, 246, 0.15);
+  cursor: not-allowed;
+  color: var(--primary-navy);
+  font-weight: 600;
+}
+
+.actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 16px;
+  margin-top: 12px;
+  border-top: 1px solid var(--border-light);
+  padding-top: 24px;
+}
+
+.saveBtn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background-color: #10B981;
+  color: white;
+  font-weight: 700;
+  padding: 12px 32px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.saveBtn:hover {
+  background-color: #059669;
+}
+
+.cancelBtn {
+  background-color: white;
+  color: var(--text-muted);
+  border: 1px solid var(--border-input);
+  font-weight: 700;
+  padding: 12px 32px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.2s, color 0.2s;
+}
+
+.cancelBtn:hover {
+  background-color: var(--surface-gray);
+  color: var(--text-dark);
+}

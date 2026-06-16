@@ -1,0 +1,613 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+
+.headerIconBox {
+  width: 40px;
+  height: 40px;
+  background-color: var(--primary-fixed);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--primary-navy);
+}
+
+.title {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--on-surface);
+  margin: 0;
+}
+
+/* Banners */
+.banners {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.bannerCard {
+  background-color: white;
+  border: 1px solid var(--border-light);
+  padding: 16px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  align-items: stretch;
+  justify-content: space-between;
+}
+
+@media (min-width: 768px) {
+  .bannerCard {
+    flex-direction: row;
+    align-items: center;
+  }
+}
+
+.bannerContent {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.bannerInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.bannerTitle {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text-dark);
+  margin: 0;
+}
+
+.bannerSub {
+  font-size: 12px;
+  color: var(--text-muted);
+  margin: 0;
+}
+
+.bannerBtn {
+  padding: 8px 16px;
+  font-size: 12px;
+  font-weight: 700;
+  border-radius: 0;
+  border: none;
+  cursor: pointer;
+  white-space: nowrap;
+  color: white;
+}
+
+/* Search Section */
+.searchSection {
+  background-color: white;
+  border: 1px solid var(--border-light);
+  border-radius: 12px;
+  padding: 24px;
+}
+
+.searchHeader {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  justify-content: space-between;
+  align-items: stretch;
+  margin-bottom: 24px;
+}
+
+@media (min-width: 768px) {
+  .searchHeader {
+    flex-direction: row;
+    align-items: center;
+  }
+}
+
+.searchTitle {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--primary-navy);
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.searchControls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: center;
+}
+
+.exportBtn {
+  height: 40px;
+  padding: 0 16px;
+  background-color: #10B981;
+  color: white;
+  font-weight: 700;
+  font-size: 12px;
+  border-radius: 4px;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.exportBtn:hover {
+  background-color: #059669;
+}
+
+.searchBar {
+  display: flex;
+  align-items: center;
+}
+
+.searchInput {
+  height: 40px;
+  border: 1px solid var(--border-input);
+  border-radius: 8px 0 0 8px;
+  padding: 0 16px;
+  font-size: 14px;
+  width: 200px;
+  outline: none;
+  background-color: white;
+  color: var(--text-dark);
+}
+
+.searchInput:focus {
+  border-color: var(--accent-amber);
+}
+
+.searchBtn {
+  height: 40px;
+  border-radius: 0 8px 8px 0;
+  background-color: var(--primary-navy);
+  color: white;
+  border: none;
+  cursor: pointer;
+  padding: 0 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.searchBtn:hover {
+  filter: brightness(1.1);
+}
+
+/* Smart Filters Grid */
+.smartFiltersWrapper {
+  border: 2px dashed var(--border-light);
+  border-radius: 8px;
+  padding: 20px;
+}
+
+.smartFiltersTitle {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: 16px;
+}
+
+.filtersGrid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 16px;
+}
+
+@media (min-width: 768px) {
+  .filtersGrid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+.filterCol {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.filterLabel {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.filterSelect {
+  height: 40px;
+  border: 1px solid var(--border-input);
+  border-radius: 8px;
+  padding: 0 12px;
+  font-size: 14px;
+  background-color: white;
+  color: var(--text-dark);
+  outline: none;
+}
+
+.filterSelect:focus {
+  border-color: var(--accent-amber);
+}
+
+.clearFiltersBtn {
+  height: 40px;
+  background-color: white;
+  border: 1px solid var(--primary-navy);
+  color: var(--primary-navy);
+  font-weight: 700;
+  font-size: 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.clearFiltersBtn:hover {
+  background-color: var(--primary-navy);
+  color: white;
+}
+
+/* Actions Row */
+.actionsRow {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  justify-content: space-between;
+  align-items: stretch;
+}
+
+@media (min-width: 768px) {
+  .actionsRow {
+    flex-direction: row;
+    align-items: center;
+  }
+}
+
+.actionBtnGroup {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+}
+
+.deleteBtn {
+  height: 40px;
+  padding: 0 20px;
+  background-color: var(--offline-red);
+  color: white;
+  font-weight: 700;
+  font-size: 12px;
+  border-radius: 4px;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.deleteBtn:hover {
+  filter: brightness(0.9);
+}
+
+.saveAllBtn {
+  height: 40px;
+  padding: 0 20px;
+  background-color: var(--online-green);
+  color: white;
+  font-weight: 700;
+  font-size: 12px;
+  border-radius: 4px;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.saveAllBtn:hover {
+  filter: brightness(0.9);
+}
+
+.resultsCount {
+  font-size: 13px;
+  color: var(--text-muted);
+  font-weight: 500;
+}
+
+.resultsCountNumber {
+  color: var(--primary-navy);
+  font-weight: 700;
+}
+
+/* Table Card */
+.tableCard {
+  background-color: white;
+  border: 1px solid var(--border-light);
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.tableHeader {
+  background-color: var(--primary-navy);
+  padding: 12px 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.tableTitle {
+  font-size: 13px;
+  font-weight: 700;
+  color: white;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  margin: 0;
+}
+
+.tableSyncInfo {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  color: white;
+}
+
+.syncLabel {
+  font-size: 10px;
+  opacity: 0.7;
+}
+
+.syncIconBtn {
+  cursor: pointer;
+  opacity: 0.8;
+  display: flex;
+  align-items: center;
+}
+
+.syncIconBtn:hover {
+  opacity: 1;
+}
+
+/* Table styling */
+.tableWrapper {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.th {
+  background-color: var(--surface-gray);
+  border-bottom: 1px solid var(--border-light);
+  padding: 12px 16px;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  text-align: left;
+}
+
+.thRight {
+  text-align: right;
+}
+
+.td {
+  padding: 16px;
+  border-bottom: 1px solid var(--border-light);
+  font-size: 14px;
+  color: var(--text-dark);
+}
+
+.tdRight {
+  text-align: right;
+}
+
+.checkboxInput {
+  border: 1px solid var(--border-input);
+  border-radius: 4px;
+  accent-color: var(--accent-amber);
+}
+
+/* Empty State Table */
+.emptyTd {
+  padding: 80px 16px;
+  text-align: center;
+}
+
+.emptyStateWrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+}
+
+.emptyIconBox {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background-color: var(--surface-gray);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-muted);
+}
+
+.emptyTitle {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text-dark);
+  margin: 0 0 4px 0;
+}
+
+.emptyDesc {
+  font-size: 14px;
+  color: var(--text-muted);
+  margin: 0;
+}
+
+.addNewBtn {
+  height: 36px;
+  padding: 0 24px;
+  background-color: white;
+  border: 1px solid var(--border-input);
+  color: var(--primary-navy);
+  font-weight: 700;
+  font-size: 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.addNewBtn:hover {
+  background-color: var(--surface-gray);
+}
+
+/* Pagination */
+.paginationRow {
+  padding: 16px 24px;
+  background-color: var(--surface-gray);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.paginationLabel {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text-muted);
+  letter-spacing: 0.05em;
+}
+
+.paginationBtns {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.pagerBtn {
+  width: 28px;
+  height: 28px;
+  background-color: white;
+  border: 1px solid var(--border-light);
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-muted);
+  cursor: pointer;
+}
+
+.pagerBtnDisabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Add Customer Modal */
+.modalOverlay {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(27, 58, 107, 0.4);
+  backdrop-filter: blur(2px);
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.modalCard {
+  background-color: white;
+  border-radius: 12px;
+  border-top: 3px solid var(--primary-navy);
+  width: 100%;
+  max-width: 500px;
+  padding: 32px;
+}
+
+.modalTitle {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--primary-navy);
+  margin: 0 0 24px 0;
+}
+
+.modalForm {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.inputGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.inputLabel {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text-muted);
+  text-transform: uppercase;
+}
+
+.textInputModal {
+  height: 40px;
+  border: 1px solid var(--border-input);
+  border-radius: 8px;
+  padding: 0 12px;
+  font-size: 14px;
+  color: var(--text-dark);
+  outline: none;
+}
+
+.modalBtnGroup {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 16px;
+}
+
+.cancelBtn {
+  height: 40px;
+  padding: 0 20px;
+  background-color: white;
+  border: 1px solid var(--border-input);
+  color: var(--text-muted);
+  font-weight: 600;
+  font-size: 13px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.confirmBtn {
+  height: 40px;
+  padding: 0 20px;
+  background-color: var(--primary-navy);
+  color: white;
+  font-weight: 700;
+  font-size: 13px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+}

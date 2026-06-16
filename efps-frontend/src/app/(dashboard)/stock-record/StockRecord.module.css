@@ -1,0 +1,376 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+
+.headerIconBox {
+  width: 40px;
+  height: 40px;
+  background-color: var(--primary-fixed);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--primary-navy);
+}
+
+.title {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--on-surface);
+  margin: 0;
+}
+
+/* Filter Bar */
+.filterBar {
+  background-color: white;
+  border: 1px solid var(--border-light);
+  border-radius: 12px;
+  padding: 16px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  justify-content: space-between;
+  align-items: stretch;
+}
+
+@media (min-width: 1024px) {
+  .filterBar {
+    flex-direction: row;
+    align-items: center;
+  }
+}
+
+.filterControls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 16px;
+}
+
+.filterGroup {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.filterLabel {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  white-space: nowrap;
+}
+
+.filterSelect {
+  height: 40px;
+  border: 1px solid var(--border-input);
+  border-radius: 8px;
+  padding: 0 12px;
+  font-size: 14px;
+  background-color: white;
+  color: var(--text-dark);
+  min-width: 120px;
+  outline: none;
+}
+
+.filterSelect:focus {
+  border-color: var(--accent-amber);
+  box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.15);
+}
+
+.btnGroup {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.primaryBtn {
+  height: 40px;
+  padding: 0 20px;
+  background-color: var(--primary-navy);
+  color: white;
+  font-weight: 600;
+  font-size: 13px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: background-color 0.2s, transform 0.1s;
+}
+
+.primaryBtn:hover {
+  background-color: var(--primary-navy);
+  filter: brightness(1.1);
+}
+
+.secondaryBtn {
+  height: 40px;
+  padding: 0 20px;
+  background-color: white;
+  border: 1px solid var(--online-green);
+  color: var(--online-green);
+  font-weight: 600;
+  font-size: 13px;
+  border-radius: 8px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: background-color 0.2s, transform 0.1s;
+}
+
+.secondaryBtn:hover {
+  background-color: rgba(16, 185, 129, 0.05);
+}
+
+.accentBtn {
+  height: 40px;
+  padding: 0 20px;
+  background-color: var(--accent-amber);
+  color: white;
+  font-weight: 700;
+  font-size: 13px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: background-color 0.2s, transform 0.1s;
+  white-space: nowrap;
+}
+
+.accentBtn:hover {
+  background-color: var(--accent-amber-hover);
+}
+
+/* Report Card Header */
+.reportHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 32px;
+}
+
+.reportTitle {
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--text-dark);
+  margin: 0 0 4px 0;
+}
+
+.reportSub {
+  font-size: 14px;
+  color: var(--text-muted);
+  margin: 0;
+}
+
+.balanceBadge {
+  background-color: var(--surface-gray);
+  border: 1px solid var(--border-light);
+  color: var(--text-dark);
+  padding: 8px 16px;
+  border-radius: 999px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.badgeDot {
+  width: 8px;
+  height: 8px;
+  background-color: var(--online-green);
+  border-radius: 50%;
+}
+
+/* Table */
+.tableWrapper {
+  border: 1px solid var(--border-light);
+  border-radius: 12px;
+  overflow: hidden;
+  margin-bottom: 32px;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+}
+
+.th {
+  background-color: var(--primary-navy);
+  color: white;
+  padding: 16px 24px;
+  font-size: 13px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.thRight {
+  text-align: right;
+}
+
+.td {
+  padding: 16px 24px;
+  border-bottom: 1px solid var(--border-light);
+  font-size: 14px;
+  color: var(--text-dark);
+}
+
+.tdRight {
+  text-align: right;
+}
+
+.tr:last-child .td {
+  border-bottom: none;
+}
+
+.tr:hover .td {
+  background-color: var(--surface-gray);
+}
+
+.placeholderRow {
+  opacity: 0.5;
+}
+
+.textIn {
+  color: var(--online-green);
+  font-weight: 500;
+}
+
+.textOut {
+  color: var(--offline-red);
+}
+
+.textBold {
+  font-weight: 700;
+}
+
+.remarksMuted {
+  color: var(--text-muted);
+}
+
+/* Summary Row */
+.summaryContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 16px;
+}
+
+.totalsRow {
+  display: flex;
+  align-items: center;
+  gap: 32px;
+  border-bottom: 1px solid var(--border-light);
+  padding-bottom: 16px;
+  padding-right: 16px;
+}
+
+.totalGroup {
+  text-align: right;
+}
+
+.totalLabel {
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: 4px;
+}
+
+.totalValueGreen {
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--online-green);
+  margin: 0;
+}
+
+.totalValueRed {
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--offline-red);
+  margin: 0;
+}
+
+.netClosingBox {
+  background-color: var(--primary-navy);
+  color: white;
+  padding: 12px 24px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.netLabel {
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  opacity: 0.8;
+}
+
+.netValue {
+  font-size: 20px;
+  font-weight: 800;
+}
+
+/* Footer styling */
+.footer {
+  margin-top: 48px;
+  padding: 16px 8px;
+  border-top: 1px solid var(--border-light);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.footerLeft {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+}
+
+.statusIndicator {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.statusDot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background-color: var(--online-green);
+}
+
+.statusText {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.copyrightText {
+  font-size: 11px;
+  color: var(--text-muted);
+  margin: 0;
+}

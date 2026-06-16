@@ -1,0 +1,231 @@
+.sidebarContainer {
+    width: 320px;
+    height: 100vh;
+    background-color: var(--primary-navy);
+    border-right: 1px solid rgba(255, 255, 255, 0.08);
+    padding: 24px 20px;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+    scrollbar-width: none;
+    position: sticky;
+    top: 0;
+    flex-shrink: 0;
+}
+.sidebarContainer::-webkit-scrollbar {
+    display: none;
+}
+
+.logoBlock {
+    margin-bottom: 24px;
+}
+
+.logoRow {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    margin-bottom: 8px;
+}
+
+.logoIconContainer {
+    position: relative;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+}
+
+.logoBars {
+    position: absolute;
+    top: -4px;
+    right: -4px;
+    display: flex;
+    align-items: flex-end;
+    gap: 2px;
+    margin-bottom: 2px;
+}
+
+.logoBar {
+    width: 3px;
+    background-color: var(--accent-amber);
+}
+
+.h2 { height: 8px; }
+.h3 { height: 12px; }
+.h4 { height: 16px; }
+
+.logoTextContainer {
+    display: flex;
+    flex-direction: column;
+}
+
+.logoTextContainer h1 {
+    font-size: 24px;
+    line-height: 1;
+    letter-spacing: -0.02em;
+    font-weight: 800;
+    margin: 0;
+}
+
+.amberAccent { color: var(--accent-amber); }
+.whiteText { color: #FFFFFF; }
+
+.subtitle {
+    font-size: 11px;
+    font-weight: 700;
+    color: rgba(255, 255, 255, 0.45);
+    letter-spacing: 0.1em;
+    margin-top: 4px;
+}
+
+.divider {
+    height: 1px;
+    width: 100%;
+    background-color: rgba(255, 255, 255, 0.1);
+    margin-top: 16px;
+}
+
+.accountBlock {
+    background-color: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+    padding: 14px;
+    margin-bottom: 16px;
+}
+
+.idRow {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 8px;
+}
+
+.idLabel {
+    color: rgba(255, 255, 255, 0.6);
+    font-size: 12px;
+    font-weight: 500;
+}
+
+.idValue {
+    color: #FFFFFF;
+    font-weight: 700;
+    font-size: 16px;
+    margin-left: auto;
+}
+
+.accountRow {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.accountLabel {
+    color: #93C5FD;
+    font-size: 13px;
+    font-weight: 500;
+}
+
+.userLine {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 0 4px;
+    margin-bottom: 24px;
+}
+
+.userName {
+    color: rgba(255, 255, 255, 0.65);
+    font-size: 12px;
+    line-height: 1.2;
+    font-weight: 500;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.nav {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.navItem {
+    display: flex;
+    align-items: center;
+    height: 42px;
+    padding: 0 12px;
+    border-radius: 10px;
+    gap: 12px;
+    transition: background-color 0.2s, color 0.2s;
+    text-decoration: none;
+}
+
+.navItemActive {
+    background-color: var(--accent-amber);
+    color: #FFFFFF;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+}
+
+.navItemHover {
+    color: rgba(255, 255, 255, 0.7);
+}
+
+.navItemHover:hover {
+    background-color: rgba(255, 255, 255, 0.04);
+}
+
+.navNumber {
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background-color: rgba(255, 255, 255, 0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.navNumber span {
+    font-size: 11px;
+    font-weight: 700;
+}
+
+.navText {
+    font-size: 14px;
+    font-weight: 500;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.navItemActive .navText {
+    font-weight: 700;
+}
+
+.logoutBlock {
+    margin-top: auto;
+    padding-top: 24px;
+}
+
+.logoutButton {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 44px;
+    border-radius: 10px;
+    gap: 8px;
+    background-color: rgba(239, 68, 68, 0.2);
+    border: 1px solid rgba(239, 68, 68, 0.25);
+    color: #FCA5A5;
+    font-weight: 600;
+    font-size: 14px;
+    transition: background-color 0.2s;
+    text-decoration: none;
+}
+
+.logoutButton:hover {
+    background-color: rgba(239, 68, 68, 0.3);
+}

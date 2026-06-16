@@ -1,0 +1,358 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+/* Page Header */
+.header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.headerIcon {
+  color: #F59E0B;
+}
+
+.title {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--primary-navy);
+  margin: 0;
+}
+
+/* Dark Showcase Card */
+.showcaseCard {
+  background-color: #1E293B;
+  border-radius: 16px;
+  border-top: 4px solid #F59E0B;
+  overflow: hidden;
+  padding: 40px;
+  position: relative;
+}
+
+/* Pink Ribbon Badge */
+.ribbon {
+  position: absolute;
+  top: 0;
+  left: 24px;
+  width: 52px;
+  height: 72px;
+  background-color: #EC4899;
+  clip-path: polygon(0 0, 100% 0, 100% 100%, 50% 85%, 0 100%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding-top: 8px;
+  gap: 2px;
+}
+
+.ribbonText {
+  color: white;
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  line-height: 1.2;
+}
+
+/* Showcase Title Zone */
+.showcaseHeader {
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+.showcaseTitleRow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+
+.showcaseTitleIcon {
+  color: #F59E0B;
+}
+
+.showcaseTitle {
+  font-size: 22px;
+  font-weight: 700;
+  color: #F59E0B;
+  margin: 0;
+}
+
+.showcaseSubtitle {
+  font-size: 14px;
+  color: #94A3B8;
+  max-width: 600px;
+  margin: 0 auto;
+  line-height: 1.6;
+}
+
+/* Video Grid */
+.videoGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+  margin-bottom: 40px;
+}
+
+@media (min-width: 768px) {
+  .videoGrid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+/* Video Tile */
+.videoTile {
+  background-color: #1B2436;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid rgba(100, 116, 139, 0.3);
+  cursor: pointer;
+  transition: border-color 0.2s, transform 0.2s;
+}
+
+.videoTile:hover {
+  border-color: rgba(245, 158, 11, 0.5);
+  transform: translateY(-2px);
+}
+
+.videoTileHeader {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 12px;
+  border-bottom: 1px solid rgba(100, 116, 139, 0.3);
+}
+
+.videoTileHeaderIcon {
+  color: #60A5FA;
+}
+
+.videoTileLabel {
+  font-size: 13px;
+  font-weight: 600;
+  color: #CBD5E1;
+}
+
+/* Video Thumbnail */
+.videoThumbnail {
+  position: relative;
+  aspect-ratio: 16/9;
+  background: linear-gradient(135deg, #002452, #1B3A6B);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.thumbnailOverlay {
+  position: absolute;
+  inset: 0;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  pointer-events: none;
+}
+
+.thumbnailBrand {
+  font-size: 13px;
+  font-weight: 900;
+  color: #F59E0B;
+  text-transform: uppercase;
+  font-style: italic;
+  line-height: 1;
+}
+
+.thumbnailSub {
+  font-size: 9px;
+  color: rgba(255,255,255,0.9);
+  font-weight: 700;
+  margin-top: 4px;
+}
+
+.thumbnailBottom {
+  margin-top: auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+}
+
+.channelBadge {
+  background-color: #DC2626;
+  padding: 2px 6px;
+  border-radius: 3px;
+  font-size: 8px;
+  font-weight: 700;
+  color: white;
+  text-transform: uppercase;
+}
+
+.videoNumberBadge {
+  background-color: rgba(0,0,0,0.6);
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 10px;
+  color: white;
+  font-weight: 500;
+}
+
+/* Play Button */
+.playBtn {
+  width: 48px;
+  height: 48px;
+  background-color: #DC2626;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+  transition: transform 0.2s;
+  position: relative;
+}
+
+.videoTile:hover .playBtn {
+  transform: scale(1.1);
+}
+
+.playIcon {
+  color: white;
+}
+
+/* Green Bottom Strip */
+.videoBottomStrip {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 20px;
+  background-color: #10B981;
+  display: flex;
+  align-items: center;
+  padding: 0 10px;
+  gap: 4px;
+}
+
+.stripIcon {
+  color: white;
+}
+
+.stripText {
+  color: white;
+  font-size: 8px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+/* CTA Buttons */
+.ctaRow {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  margin-bottom: 40px;
+}
+
+@media (min-width: 640px) {
+  .ctaRow {
+    flex-direction: row;
+  }
+}
+
+.subscribeBtn {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 32px;
+  background-color: #EC4899;
+  color: white;
+  font-size: 16px;
+  font-weight: 700;
+  border: none;
+  border-radius: 9999px;
+  cursor: pointer;
+  box-shadow: 0 8px 24px rgba(236, 72, 153, 0.35);
+  transition: filter 0.2s, transform 0.1s;
+}
+
+.subscribeBtn:hover { filter: brightness(1.1); }
+.subscribeBtn:active { transform: scale(0.97); }
+
+.helplineBtn {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 32px;
+  background-color: #10B981;
+  color: white;
+  font-size: 16px;
+  font-weight: 700;
+  border: none;
+  border-radius: 9999px;
+  cursor: pointer;
+  box-shadow: 0 8px 24px rgba(16, 185, 129, 0.35);
+  transition: filter 0.2s, transform 0.1s;
+}
+
+.helplineBtn:hover { filter: brightness(1.1); }
+.helplineBtn:active { transform: scale(0.97); }
+
+/* Showcase Footer Credit */
+.showcaseCredit {
+  text-align: center;
+  font-size: 13px;
+  color: rgba(255,255,255,0.2);
+  font-weight: 500;
+  letter-spacing: 0.05em;
+}
+
+/* Info Bento Cards */
+.bentoGrid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 16px;
+}
+
+@media (min-width: 768px) {
+  .bentoGrid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.bentoCard {
+  background-color: white;
+  border: 1px solid var(--border-light);
+  border-radius: 12px;
+  padding: 24px;
+}
+
+.bentoCardIconBox {
+  width: 40px;
+  height: 40px;
+  background-color: var(--surface-gray);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 16px;
+  color: var(--primary-navy);
+}
+
+.bentoCardTitle {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--primary-navy);
+  margin: 0 0 8px 0;
+}
+
+.bentoCardBody {
+  font-size: 14px;
+  color: var(--text-muted);
+  line-height: 1.6;
+  margin: 0;
+}
