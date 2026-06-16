@@ -1,0 +1,229 @@
+'use client';
+
+import { useState, useCallback } from 'react';
+import { GraduationCap, Printer, Save } from 'lucide-react';
+import styles from './MdmRecord.module.css';
+
+const MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+const CURRENT_YEAR = new Date().getFullYear();
+
+interface CommodityRow {
+  id: number;
+  name: string;
+  openingStock: number;
+  income: number;
+  distribution: number;
+  rate: number;
+}
+
+const INITIAL_ROWS: CommodityRow[] = [
+  { id: 1,  name: 'MDM Wheat',          openingStock: 5734, income: 1036, distribution: 772,  rate: 1.28 },
+  { id: 2,  name: 'MDM Fortified Rice', openingStock: 3170, income: 1445, distribution: 704,  rate: 1.50 },
+  { id: 3,  name: 'MDM Tuverdal',       openingStock: 2980, income: -412, distribution: 1990, rate: 1.50 },
+  { id: 4,  name: 'MDM Oil (Pouch)',    openingStock: 4175, income: -826, distribution: 1579, rate: 1.76 },
+  { id: 5,  name: 'ICDS Wheat',         openingStock: 1344, income: -197, distribution: 1903, rate: 2.23 },
+  { id: 6,  name: 'ICDS Fortified Rice',openingStock: 1281, income: -838, distribution: 914,  rate: 3.28 },
+  { id: 7,  name: 'ICDS Tuverdal',      openingStock: 1990, income: -177, distribution: 1581, rate: 1.99 },
+  { id: 8,  name: 'ICDS Oil',           openingStock: 3380, income: -1823,distribution: 742,  rate: 1.44 },
+  { id: 9,  name: 'ICDS Chana',         openingStock: 4100, income: -1407,distribution: 1462, rate: 2.32 },
+  { id: 10, name: 'ICDS Salt',          openingStock: 3133, income: -1170,distribution: 1521, rate: 2.01 },
+  { id: 11, name: 'MDM Chana',          openingStock: 1437, income: -1441,distribution: 1359, rate: 2.38 },
+  { id: 12, name: 'MDM Salt',           openingStock: 2991, income: -803, distribution: 1988, rate: 1.96 },
+];
+
+export default function MdmRecordPage() {
+  const currentMonthIdx = new Date().getMonth();
+  const [selectedMonth, setSelectedMonth] = useState(MONTHS[currentMonthIdx]);
+  const [selectedYear, setSelectedYear] = useState(CURRENT_YEAR);
+  const [rows, setRows] = useState<CommodityRow[]>(INITIAL_ROWS);
+
+  const updateRow = useCallback((id: number, field: 'distribution' | 'rate', value: string) => {
+    setRows(prev => prev.map(r => r.id === id ? { ...r, [field]: parseFloat(value) || 0 } : r));
+  }, []);
+
+  const getTotal = (row: CommodityRow) => row.openingStock + row.income;
+  const getClosing = (row: CommodityRow) => getTotal(row) - row.distribution;
+  const getAmount = (row: CommodityRow) => row.distribution * row.rate;
+  const getTds = (row: CommodityRow) => getAmount(row) * 0.02;
+  const getNet = (row: CommodityRow) => getAmount(row) - getTds(row);
+
+  const fmt = (n: number) => n.toFixed(2);
+  const fmtInt = (n: number) => n >= 0 ? `${n}.00` : `${n}.00`;
+
+  // Grand totals
+  const grandOpening   = rows.reduce((s, r) => s + r.openingStock, 0);
+  const grandIncome    = rows.reduce((s, r) => s + r.income, 0);
+  const grandTotal     = rows.reduce((s, r) => s + getTotal(r), 0);
+  const grandDist      = rows.reduce((s, r) => s + r.distribution, 0);
+  const grandClosing   = rows.reduce((s, r) => s + getClosing(r), 0);
+  const grandAmount    = rows.reduce((s, r) => s + getAmount(r), 0);
+  const grandTds       = rows.reduce((s, r) => s + getTds(r), 0);
+  const grandNet       = rows.reduce((s, r) => s + getNet(r), 0);
+
+  return (
+    <div className={styles.container}>
+      {/* Page Header */}
+      <div className={styles.pageHeader}>
+        <div className={styles.headerIconBox}>
+          <GraduationCap size={28} />
+        </div>
+        <div className={styles.titleBlock}>
+          <h1 className={styles.title}>MDM &amp; ICDS Record</h1>
+          <p className={styles.subtitle}>Mid-Day Meal &amp; Integrated Child Development Services Administration</p>
+        </div>
+      </div>
+
+      {/* Main Card */}
+      <div className={styles.tableCard}>
+        {/* Filter Bar */}
+        <div className={styles.cardFilterBar}>
+          <div className={styles.filterLeft}>
+            <h3 className={styles.filterTitle}>Stock &amp; Commission Record</h3>
+            <div className={styles.filterControls}>
+              <div className={styles.selectWrapper}>
+                <select
+                  className={styles.filterSelect}
+                  value={selectedMonth}
+                  onChange={e => setSelectedMonth(e.target.value)}
+                >
+                  {MONTHS.map(m => <option key={m} value={m}>{m}</option>)}
+                </select>
+              </div>
+              <div className={styles.selectWrapper}>
+                <select
+                  className={styles.filterSelect}
+                  value={selectedYear}
+                  onChange={e => setSelectedYear(Number(e.target.value))}
+                >
+                  {[CURRENT_YEAR, CURRENT_YEAR - 1].map(y => (
+                    <option key={y} value={y}>{y}</option>
+                  ))}
+                </select>
+              </div>
+              <button
+                className={styles.viewReportBtn}
+                onClick={() => alert(`Loading report for ${selectedMonth} ${selectedYear}...`)}
+              >
+                View Report
+              </button>
+            </div>
+          </div>
+
+          <div className={styles.printBtns}>
+            <button className={styles.mdmPrintBtn} onClick={() => window.print()}>
+              <Printer size={16} /> MDM Print
+            </button>
+            <button className={styles.icdsPrintBtn} onClick={() => window.print()}>
+              <Printer size={16} /> ICDS Print
+            </button>
+            <button className={styles.combinedPrintBtn} onClick={() => window.print()}>
+              <Printer size={16} /> Combined Print
+            </button>
+          </div>
+        </div>
+
+        {/* Data Table */}
+        <div className={styles.tableWrapper}>
+          <table className={styles.table}>
+            <thead>
+              {/* Tier 1: Group Headers */}
+              <tr className={styles.tier1Row}>
+                <th className={styles.tier1General} colSpan={2}>General Information</th>
+                <th className={styles.tier1Stock} colSpan={5}>Stock Details (Kg.)</th>
+                <th className={styles.tier1Commission} colSpan={4}>Commission Calculation (₹)</th>
+              </tr>
+              {/* Tier 2: Column Headers */}
+              <tr className={styles.tier2Row}>
+                <th className={`${styles.th} ${styles.thCenter}`} style={{ width: 40 }}>#</th>
+                <th className={`${styles.th} ${styles.thLeft}`} style={{ minWidth: 180 }}>Item Name</th>
+                <th className={styles.th}>Opening Stock</th>
+                <th className={styles.th}>Income</th>
+                <th className={styles.th}>Total Qty</th>
+                <th className={`${styles.th} ${styles.thPink}`}>Distribution (Sales)</th>
+                <th className={styles.th}>Closing Stock</th>
+                <th className={`${styles.th} ${styles.thPurple}`}>Rate ₹</th>
+                <th className={styles.th}>Total Amount</th>
+                <th className={styles.th}>TDS (2%)</th>
+                <th className={styles.th} style={{ borderRight: 'none' }}>Net Eligible</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              {rows.map((row, idx) => {
+                const total   = getTotal(row);
+                const closing = getClosing(row);
+                const amount  = getAmount(row);
+                const tds     = getTds(row);
+                const net     = getNet(row);
+
+                return (
+                  <tr key={row.id} className={styles.tr}>
+                    <td className={`${styles.td} ${styles.tdCenter}`}>{row.id}</td>
+                    <td className={`${styles.td} ${styles.tdItemName}`}>{row.name}</td>
+                    <td className={styles.td}>{fmtInt(row.openingStock)}</td>
+                    <td className={`${styles.td} ${styles.tdIncome}`}>
+                      {row.income >= 0 ? `+${row.income}.00` : `${row.income}.00`}
+                    </td>
+                    <td className={`${styles.td} ${styles.tdTotal}`}>{fmtInt(total)}</td>
+
+                    {/* Editable: Distribution */}
+                    <td className={styles.editableCellPink}>
+                      <input
+                        type="number"
+                        className={styles.inputPink}
+                        value={row.distribution}
+                        onChange={e => updateRow(row.id, 'distribution', e.target.value)}
+                      />
+                    </td>
+
+                    <td className={`${styles.td} ${styles.tdClosing}`}>{fmtInt(closing)}</td>
+
+                    {/* Editable: Rate */}
+                    <td className={styles.editableCellPurple}>
+                      <input
+                        type="text"
+                        className={styles.inputPurple}
+                        value={row.rate}
+                        onChange={e => updateRow(row.id, 'rate', e.target.value)}
+                      />
+                    </td>
+
+                    <td className={`${styles.td} ${styles.tdAmount}`}>{fmt(amount)}</td>
+                    <td className={`${styles.td} ${styles.tdTds}`}>-{fmt(tds)}</td>
+                    <td className={`${styles.td} ${styles.tdNet}`} style={{ borderRight: 'none' }}>{fmt(net)}</td>
+                  </tr>
+                );
+              })}
+            </tbody>
+
+            <tfoot>
+              <tr className={styles.totalRow}>
+                <td className={styles.totalLabel} colSpan={2}>Grand Totals</td>
+                <td className={styles.totalCell}>{fmtInt(grandOpening)}</td>
+                <td className={styles.totalCell}>{fmtInt(grandIncome)}</td>
+                <td className={styles.totalCell}>{fmtInt(grandTotal)}</td>
+                <td className={`${styles.totalCell} ${styles.totalPink}`}>{fmtInt(grandDist)}</td>
+                <td className={styles.totalCell}>{fmtInt(grandClosing)}</td>
+                <td className={styles.totalCell}>—</td>
+                <td className={`${styles.totalCell} ${styles.totalGreen}`}>₹ {fmt(grandAmount)}</td>
+                <td className={`${styles.totalCell} ${styles.totalRed}`}>₹ {fmt(grandTds)}</td>
+                <td className={`${styles.totalCell} ${styles.totalNavy}`} style={{ borderRight: 'none' }}>₹ {fmt(grandNet)}</td>
+              </tr>
+            </tfoot>
+          </table>
+        </div>
+      </div>
+
+      {/* Save Button */}
+      <div className={styles.saveRow}>
+        <button
+          className={styles.saveBtn}
+          onClick={() => alert('Record saved successfully!')}
+        >
+          <Save size={22} />
+          Save Record
+        </button>
+      </div>
+    </div>
+  );
+}

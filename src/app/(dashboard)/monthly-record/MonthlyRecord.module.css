@@ -1,0 +1,324 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: 24px;
+  background-color: #f8fafc;
+  min-height: 100vh;
+}
+
+.systemAlert {
+  background-color: #fef9c3;
+  border: 1px solid #fef08a;
+  color: #854d0e;
+  padding: 12px 16px;
+  font-size: 13px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border-radius: 4px;
+  text-transform: uppercase;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: white;
+  padding: 16px 24px;
+  border: 1px solid #e2e8f0;
+  border-radius: 4px;
+}
+
+.titleSection {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.titleSection h1 {
+  font-size: 20px;
+  font-weight: 700;
+  color: #1e293b;
+  margin: 0;
+}
+
+.headerActions {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.iconButton {
+  background: none;
+  border: none;
+  color: #64748b;
+  cursor: pointer;
+  padding: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.iconButton:hover {
+  background-color: #f1f5f9;
+  border-radius: 4px;
+}
+
+.adminProfile {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  border-left: 1px solid #e2e8f0;
+  padding-left: 16px;
+}
+
+.adminInfo {
+  text-align: right;
+}
+
+.adminName {
+  font-size: 14px;
+  font-weight: 600;
+  color: #1e293b;
+  display: block;
+}
+
+.adminDetails {
+  font-size: 11px;
+  color: #64748b;
+  display: block;
+}
+
+.avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background-color: #1b3a6b;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  font-size: 14px;
+}
+
+.contentCard {
+  background-color: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 4px;
+  padding: 24px;
+}
+
+.cardHeaderRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-bottom: 24px;
+}
+
+.selectorsSection {
+  display: flex;
+  align-items: flex-end;
+  gap: 16px;
+  flex: 1;
+}
+
+.fieldGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.fieldGroup label {
+  font-size: 11px;
+  font-weight: 700;
+  color: #94a3b8;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.selectInput {
+  padding: 8px 12px;
+  border: 1px solid #cbd5e1;
+  border-radius: 4px;
+  font-size: 14px;
+  background-color: white;
+  color: #1e293b;
+  min-width: 120px;
+}
+
+.viewBtn {
+  background-color: #0f172a;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  padding: 8px 16px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  height: 38px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.viewBtn:hover {
+  background-color: #1e293b;
+}
+
+.greenDot {
+  width: 8px;
+  height: 8px;
+  background-color: #10b981;
+  border-radius: 50%;
+}
+
+.printBtn {
+  background-color: #10b981;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  padding: 8px 16px;
+  font-size: 14px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+}
+
+.printBtn:hover {
+  background-color: #059669;
+}
+
+/* Document Viewport styles to match the report paper look */
+.documentContainer {
+  background-color: white;
+  border: 1px solid #cbd5e1;
+  border-radius: 4px;
+  padding: 40px;
+  margin-top: 20px;
+}
+
+.docHeading {
+  text-align: center;
+  color: #1b3a6b;
+  font-size: 20px;
+  font-weight: 800;
+  margin: 0 0 8px 0;
+  letter-spacing: 0.02em;
+}
+
+.docSubheading {
+  text-align: center;
+  color: #475569;
+  font-size: 14px;
+  font-weight: 600;
+  margin: 0 0 32px 0;
+}
+
+.docInfoGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px 40px;
+  margin-bottom: 32px;
+  border-bottom: 1px dashed #cbd5e1;
+  padding-bottom: 24px;
+}
+
+.infoRow {
+  display: flex;
+  justify-content: space-between;
+  font-size: 14px;
+}
+
+.infoLabel {
+  font-weight: 700;
+  color: #1e293b;
+}
+
+.infoValue {
+  color: #475569;
+  font-weight: 500;
+}
+
+/* Table styling with sub-columns */
+.docTable {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+  margin-bottom: 48px;
+  font-size: 13px;
+}
+
+.docTable th {
+  background-color: #1b3a6b;
+  color: white;
+  font-weight: 600;
+  padding: 8px 12px;
+  border: 1px solid #1b3a6b;
+  text-align: center;
+  vertical-align: middle;
+}
+
+.docTable td {
+  padding: 12px;
+  border: 1px solid #cbd5e1;
+  color: #334155;
+}
+
+.emptyState {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 64px 24px;
+}
+
+.emptyIcon {
+  color: #cbd5e1;
+  margin-bottom: 12px;
+}
+
+.emptyText {
+  color: #64748b;
+  font-size: 14px;
+  margin: 0;
+}
+
+.docFooter {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-top: 40px;
+}
+
+.generationInfo {
+  font-size: 12px;
+  color: #64748b;
+}
+
+.dateField {
+  font-weight: 600;
+  color: #1e293b;
+  margin-bottom: 4px;
+}
+
+.signatureArea {
+  text-align: center;
+}
+
+.signatureLine {
+  width: 200px;
+  border-top: 1px solid #0f172a;
+  margin-bottom: 8px;
+}
+
+.signatureLabel {
+  font-size: 12px;
+  font-weight: 700;
+  color: #1b3a6b;
+  letter-spacing: 0.05em;
+}

@@ -12,7 +12,7 @@ import styles from './Sidebar.module.css';
 const navItems = [
     { id: '01', name: 'Dashboard', icon: LayoutGrid, href: '/dashboard' },
     { id: '02', name: 'Stock Entry / New Intake', icon: PlusSquare, href: '/incoming-stock' },
-    { id: '03', name: 'Monthly Record', icon: FileText, href: '/reports/monthly-sales' },
+    { id: '03', name: 'Monthly Record', icon: FileText, href: '/monthly-record' },
     { id: '04', name: 'Stock Record (Date-wise)', icon: CalendarDays, href: '/stock-record' },
     { id: '05', name: 'Item-wise Sales', icon: BarChart2, href: '/sales' },
     { id: '06', name: 'Commission Calculator', icon: Calculator, href: '/calculator' },

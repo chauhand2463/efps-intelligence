@@ -65,7 +65,7 @@ export default function LoginPage() {
         
         <div className={styles.secondaryLinks}>
           <Link href="/register" className={styles.createAccount}>Create New Account</Link>
-          <Link href="/profile/edit" className={styles.changeProfile}>Change Profile / Reset Password</Link>
+          <Link href="/change-profile" className={styles.changeProfile}>Change Profile / Reset Password</Link>
         </div>
       </div>
       
