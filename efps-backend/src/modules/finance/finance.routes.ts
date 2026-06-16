@@ -3,6 +3,7 @@ import { authenticate } from '../../shared/middleware/authenticate.js';
 import {
   addIncomeHandler, addExpenseHandler,
   listIncomeHandler, listExpensesHandler, getProfitLossHandler,
+  deleteIncomeHandler, deleteExpenseHandler,
 } from './finance.controller.js';
 
 export async function financeRoutes(app: FastifyInstance) {
@@ -11,4 +12,7 @@ export async function financeRoutes(app: FastifyInstance) {
   app.get('/finance/income', { preHandler: [authenticate] }, listIncomeHandler);
   app.get('/finance/expenses', { preHandler: [authenticate] }, listExpensesHandler);
   app.get('/finance/profit-loss', { preHandler: [authenticate] }, getProfitLossHandler);
+
+  app.delete('/finance/income/:id', { preHandler: [authenticate] }, deleteIncomeHandler);
+  app.delete('/finance/expense/:id', { preHandler: [authenticate] }, deleteExpenseHandler);
 }

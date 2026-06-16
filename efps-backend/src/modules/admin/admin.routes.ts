@@ -1,6 +1,7 @@
 import type { FastifyInstance } from 'fastify';
 import { authenticate } from '../../shared/middleware/authenticate.js';
 import { authorize } from '../../shared/middleware/authorize.js';
+import { idempotencyKey } from '../../shared/middleware/idempotency.js';
 import { Role } from '../../shared/types/enums.js';
 import {
   listDealersHandler,
@@ -18,5 +19,5 @@ export async function adminRoutes(app: FastifyInstance) {
 
   app.get('/admin/stats', { preHandler: adminGuard }, getPlatformStatsHandler);
 
-  app.post('/admin/bulk-notify', { preHandler: adminGuard }, bulkNotifyHandler);
+  app.post('/admin/bulk-notify', { preHandler: [...adminGuard, idempotencyKey] }, bulkNotifyHandler);
 }

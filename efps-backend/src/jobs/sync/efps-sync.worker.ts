@@ -354,7 +354,7 @@ export const efpsSyncWorker = new Worker<EfpsSyncPayload>(
   },
   {
     connection: getBullRedis() as any,
-    concurrency: 3,
+    concurrency: 1,
     limiter: {
       max: 10,
       duration: 60000,

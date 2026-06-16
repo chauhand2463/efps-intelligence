@@ -27,6 +27,11 @@ class EventBus {
   }
 
   async emit(event: string, payload: unknown) {
+    const { enqueueDomainEvent } = await import('../../jobs/domain-events.queue.js');
+    await enqueueDomainEvent(event, payload).catch((err) => {
+      console.error(`[EventBus] Failed to enqueue ${event}:`, err);
+    });
+
     const handlers = this.handlers.get(event);
     if (!handlers) return;
     await Promise.allSettled(handlers.map((h) => h(payload)));

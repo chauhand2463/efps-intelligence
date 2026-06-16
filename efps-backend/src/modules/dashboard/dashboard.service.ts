@@ -8,8 +8,12 @@ export class DashboardService {
     const redis = getRedis();
     const cacheKey = `dashboard:${dealerId}`;
 
-    const cached = await redis.get(cacheKey);
-    if (cached) return JSON.parse(cached);
+    try {
+      const cached = await redis.get(cacheKey);
+      if (cached) return JSON.parse(cached);
+    } catch {
+      // Cache unavailable — fall through to DB query
+    }
 
     const sql = `
       SELECT
@@ -51,7 +55,11 @@ export class DashboardService {
       audits_count: row.total_audits,
     };
 
-    await redis.setex(cacheKey, DASHBOARD_CACHE_TTL, JSON.stringify(data));
+    try {
+      await redis.setex(cacheKey, DASHBOARD_CACHE_TTL, JSON.stringify(data));
+    } catch {
+      // Cache write failure is non-critical
+    }
     return data;
   }
 }

@@ -1,5 +1,6 @@
 import Fastify from 'fastify';
 import compress from '@fastify/compress';
+import Prometheus from 'prom-client';
 import { config } from './config/index.js';
 import { getRedis } from './config/redis.js';
 import pool from './config/database.js';
@@ -10,6 +11,7 @@ import { registerRateLimit } from './plugins/rate-limit.plugin.js';
 import { registerSwagger } from './plugins/swagger.plugin.js';
 import { registerAuthPlugin } from './plugins/auth.plugin.js';
 import { registerMultipart } from './plugins/multipart.plugin.js';
+import { registerMetrics } from './plugins/metrics.plugin.js';
 import { authRoutes } from './modules/auth/auth.routes.js';
 import { dealerRoutes } from './modules/dealer/dealer.routes.js';
 import { beneficiaryRoutes } from './modules/beneficiary/beneficiary.routes.js';
@@ -53,6 +55,7 @@ export async function buildApp() {
   await app.register(compress, { global: true, threshold: 1024 });
   await registerHelmet(app);
   await registerRateLimit(app);
+  await registerMetrics(app);
   await registerMultipart(app);
 
   if (config.NODE_ENV !== 'production') {
@@ -96,6 +99,11 @@ export async function buildApp() {
       checks,
       timestamp: new Date().toISOString(),
     };
+  });
+
+  app.get('/metrics', async (_request, reply) => {
+    const metrics = await Prometheus.register.metrics();
+    return reply.type('text/plain').send(metrics);
   });
 
   await app.register(async (api) => {

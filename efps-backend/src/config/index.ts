@@ -9,6 +9,7 @@ const envSchema = z.object({
   API_BASE_URL: z.string().url().default('http://localhost:3000'),
 
   DATABASE_URL: z.string(),
+  DATABASE_REPLICA_URL: z.string().optional(),
   DATABASE_POOL_MIN: z.coerce.number().default(2),
   DATABASE_POOL_MAX: z.coerce.number().default(20),
 

@@ -9,6 +9,7 @@ import { dailyReportWorker } from './jobs/daily-report.job.js';
 import { sessionCleanupWorker } from './jobs/session-cleanup.job.js';
 import { govtDataSyncWorker } from './jobs/sync/govt-data-sync.job.js';
 import { syncSchedulerWorker } from './jobs/sync/sync-scheduler.job.js';
+import { domainEventsWorker } from './jobs/domain-events.queue.js';
 
 async function main() {
   const app = await buildApp();

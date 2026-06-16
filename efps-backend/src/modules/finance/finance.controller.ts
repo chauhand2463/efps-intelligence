@@ -1,7 +1,7 @@
 import type { FastifyRequest, FastifyReply } from 'fastify';
 import { financeService } from './finance.service.js';
 import { incomeSchema, expenseSchema, financeQuerySchema } from './finance.schema.js';
-import { sendSuccess, sendCreated } from '../../shared/utils/response.js';
+import { sendSuccess, sendCreated, sendNoContent } from '../../shared/utils/response.js';
 
 export async function addIncomeHandler(request: FastifyRequest, reply: FastifyReply) {
   const body = incomeSchema.parse(request.body);
@@ -31,4 +31,16 @@ export async function getProfitLossHandler(request: FastifyRequest, reply: Fasti
   const query = request.query as { month?: string };
   const result = await financeService.getProfitLoss(request.user!.id, query.month);
   return sendSuccess(reply, result);
+}
+
+export async function deleteIncomeHandler(request: FastifyRequest, reply: FastifyReply) {
+  const { id } = request.params as { id: string };
+  await financeService.removeIncome(id, request.user!.id);
+  return sendNoContent(reply);
+}
+
+export async function deleteExpenseHandler(request: FastifyRequest, reply: FastifyReply) {
+  const { id } = request.params as { id: string };
+  await financeService.removeExpense(id, request.user!.id);
+  return sendNoContent(reply);
 }

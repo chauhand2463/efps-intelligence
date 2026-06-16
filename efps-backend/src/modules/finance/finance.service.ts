@@ -1,4 +1,6 @@
 import { query } from '../../config/database.js';
+import { AppError } from '../../shared/errors/AppError.js';
+import { ERROR_CODES } from '../../config/constants.js';
 import { parsePaginationParams, buildPaginationMeta } from '../../shared/utils/pagination.js';
 import type { IncomeInput, ExpenseInput, FinanceQueryInput } from './finance.schema.js';
 
@@ -61,6 +63,32 @@ export class FinanceService {
       [...values, limit, offset]
     );
     return buildPaginationMeta(data.rows, total, page, limit);
+  }
+
+  async removeIncome(id: string, dealerId: string) {
+    const result = await query(
+      `DELETE FROM income_entries WHERE id = $1 AND dealer_id = $2 RETURNING id`,
+      [id, dealerId]
+    );
+
+    if (result.rows.length === 0) {
+      throw new AppError('Income entry not found', 404, ERROR_CODES.NOT_FOUND);
+    }
+
+    return { message: 'Income entry deleted successfully' };
+  }
+
+  async removeExpense(id: string, dealerId: string) {
+    const result = await query(
+      `DELETE FROM expense_entries WHERE id = $1 AND dealer_id = $2 RETURNING id`,
+      [id, dealerId]
+    );
+
+    if (result.rows.length === 0) {
+      throw new AppError('Expense entry not found', 404, ERROR_CODES.NOT_FOUND);
+    }
+
+    return { message: 'Expense entry deleted successfully' };
   }
 
   async getProfitLoss(dealerId: string, month?: string) {

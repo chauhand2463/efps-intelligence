@@ -104,13 +104,16 @@ export class AdminService {
 
   async bulkNotify(input: BulkNotifyInput) {
     if (input.dealer_ids) {
+      const values = input.dealer_ids.map((_, i) => `($${i * 4 + 1}, $${i * 4 + 2}, $${i * 4 + 3}, $${i * 4 + 4})`).join(', ');
+      const params: unknown[] = [];
       for (const dealerId of input.dealer_ids) {
-        await query(
-          `INSERT INTO notifications (dealer_id, title, body, type) VALUES ($1, $2, $3, $4)`,
-          [dealerId, input.title, input.body, input.type]
-        );
+        params.push(dealerId, input.title, input.body, input.type);
       }
-      return { sent: input.dealer_ids.length };
+      const result = await query(
+        `INSERT INTO notifications (dealer_id, title, body, type) VALUES ${values}`,
+        params
+      );
+      return { sent: result.rowCount };
     }
 
     if (input.district) {

@@ -1,8 +1,14 @@
 import { Queue, Worker, type Job } from 'bullmq';
 import { getBullRedis } from '../config/redis.js';
 import { config } from '../config/index.js';
+import { CircuitBreaker } from '../shared/utils/circuit-breaker.js';
 
 const QUEUE_NAME = 'sms-otp';
+
+const smsCircuitBreaker = new CircuitBreaker('msg91-sms', {
+  failureThreshold: 3,
+  resetTimeoutMs: 30000,
+});
 
 export const smsOtpQueue = new Queue(QUEUE_NAME, {
   connection: getBullRedis() as any,
@@ -31,24 +37,31 @@ async function sendSms(mobile: string, message: string) {
   }
 
   if (config.SMS_PROVIDER === 'msg91' && config.MSG91_AUTH_KEY) {
-    const url = 'https://api.msg91.com/api/v5/flow/';
-    const response = await fetch(url, {
-      method: 'POST',
-      headers: {
-        'authkey': config.MSG91_AUTH_KEY,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        sender: config.MSG91_SENDER_ID,
-        mobiles: mobile,
-        template_id: config.MSG91_TEMPLATE_ID,
-        var1: message,
-      }),
-    });
+    await smsCircuitBreaker.call(
+      async () => {
+        const url = 'https://api.msg91.com/api/v5/flow/';
+        const response = await fetch(url, {
+          method: 'POST',
+          headers: {
+            'authkey': config.MSG91_AUTH_KEY!,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            sender: config.MSG91_SENDER_ID,
+            mobiles: mobile,
+            template_id: config.MSG91_TEMPLATE_ID,
+            var1: message,
+          }),
+        });
 
-    if (!response.ok) {
-      throw new Error(`SMS send failed: ${response.statusText}`);
-    }
+        if (!response.ok) {
+          throw new Error(`SMS send failed: ${response.statusText}`);
+        }
+      },
+      async () => {
+        console.warn(`[SMS] Circuit breaker open, skipping SMS to ${mobile}`);
+      }
+    );
   }
 }
 

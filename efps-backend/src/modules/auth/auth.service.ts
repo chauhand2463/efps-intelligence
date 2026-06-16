@@ -1,7 +1,7 @@
 import { query } from '../../config/database.js';
 import { getRedis } from '../../config/redis.js';
 import { hashPassword, verifyPassword, hashOtp, hashToken } from '../../shared/utils/hash.js';
-import { signAccessToken, signRefreshToken, verifyRefreshToken } from '../../shared/utils/token.js';
+import { signAccessToken, signRefreshToken, verifyAccessToken, verifyRefreshToken } from '../../shared/utils/token.js';
 import { generateOtp } from '../../shared/utils/otp.js';
 import { AuthError, SessionNotFoundError } from '../../shared/errors/AuthError.js';
 import { ValidationError } from '../../shared/errors/ValidationError.js';
@@ -216,8 +216,8 @@ export class AuthService {
   }
 
   async forgotPasswordReset(input: ForgotPasswordResetInput) {
-    const decoded = verifyRefreshToken(input.otp);
-    if (!decoded.sub) {
+    const decoded = verifyAccessToken(input.otp);
+    if (decoded.sub !== input.fps_id) {
       throw new AuthError('TOKEN_INVALID', 'Invalid verification token');
     }
 
