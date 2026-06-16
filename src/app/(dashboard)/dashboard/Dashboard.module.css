@@ -1,0 +1,175 @@
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 40px;
+}
+
+.title {
+  color: var(--text-dark);
+  font-size: 32px;
+  font-weight: 700;
+  margin: 0 0 4px 0;
+}
+
+.actions {
+  display: flex;
+  gap: 16px;
+}
+
+.exportBtn {
+  background-color: var(--background);
+  color: var(--primary-navy);
+  border: 1px solid var(--border-light);
+}
+
+.exportBtn:hover {
+  background-color: var(--surface-gray);
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: 24px;
+}
+
+.mainCol {
+  grid-column: span 8;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.sideCol {
+  grid-column: span 4;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.cardHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+.cardTitle {
+  color: var(--primary-navy);
+  font-size: 18px;
+  font-weight: 600;
+  margin: 0;
+}
+
+.statusIndicator {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.dot {
+  width: 6px;
+  height: 6px;
+  background-color: var(--online-green);
+  border-radius: 50%;
+}
+
+.statusText {
+  color: var(--online-green);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+}
+
+.statsGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+}
+
+.statCard {
+  background-color: rgba(240, 244, 248, 0.5);
+  border: 1px solid var(--border-light);
+  border-radius: 12px;
+  padding: 24px;
+}
+
+.statLabel {
+  color: var(--text-muted);
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  display: block;
+  margin-bottom: 4px;
+}
+
+.statValue {
+  color: var(--primary-navy);
+  font-size: 24px;
+  font-weight: 800;
+  margin: 0;
+}
+
+.alertCard {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 32px;
+}
+
+.alertIconBox {
+  width: 64px;
+  height: 64px;
+  background-color: var(--info-amber-bg);
+  color: var(--info-amber-text);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 16px;
+}
+
+.alertTitle {
+  color: var(--primary-navy);
+  font-weight: 700;
+  margin: 0 0 8px 0;
+}
+
+.dealerCard {
+  background-color: var(--primary-navy);
+  color: white;
+  padding: 32px;
+  border-radius: 16px;
+  display: flex;
+  flex-direction: column;
+}
+
+.dealerLabel {
+  color: rgba(255, 255, 255, 0.4);
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin-bottom: 4px;
+}
+
+.dealerName {
+  font-size: 18px;
+  font-weight: 700;
+  margin: 0;
+}
+
+.verifiedRow {
+  margin-top: 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.verifiedText {
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 13px;
+}
