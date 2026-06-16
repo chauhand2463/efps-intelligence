@@ -5,6 +5,7 @@ import {
   getCurrentStockHandler,
   getStockHistoryHandler,
   updateAllocationHandler,
+  deleteAllocationHandler,
 } from './stock.controller.js';
 
 export async function stockRoutes(app: FastifyInstance) {
@@ -19,4 +20,8 @@ export async function stockRoutes(app: FastifyInstance) {
   app.patch('/stock/:id', {
     preHandler: [authenticate, authorize('admin')],
   }, updateAllocationHandler);
+
+  app.delete('/stock/:id', {
+    preHandler: [authenticate, authorize('admin')],
+  }, deleteAllocationHandler);
 }

@@ -1,7 +1,7 @@
 import type { FastifyRequest, FastifyReply } from 'fastify';
 import { transactionService } from './transaction.service.js';
 import { createTransactionSchema, listTransactionsSchema } from './transaction.schema.js';
-import { sendSuccess, sendCreated } from '../../shared/utils/response.js';
+import { sendSuccess, sendCreated, sendNoContent } from '../../shared/utils/response.js';
 
 export async function createTransactionHandler(request: FastifyRequest, reply: FastifyReply) {
   const body = createTransactionSchema.parse(request.body);
@@ -29,4 +29,10 @@ export async function getTransactionSummaryHandler(request: FastifyRequest, repl
 export async function getPendingHandler(request: FastifyRequest, reply: FastifyReply) {
   const result = await transactionService.getPending(request.user!.id);
   return sendSuccess(reply, result);
+}
+
+export async function deleteTransactionHandler(request: FastifyRequest, reply: FastifyReply) {
+  const { id } = request.params as { id: string };
+  await transactionService.remove(id, request.user!.id);
+  return sendNoContent(reply);
 }

@@ -1,5 +1,14 @@
 import { query } from '../../config/database.js';
-import type { CreateSchemeInput, UpdateSchemeInput, CreateIcdsCodeInput } from './mdm.schema.js';
+import { AppError } from '../../shared/errors/AppError.js';
+import { ERROR_CODES } from '../../config/constants.js';
+import { parsePaginationParams, buildPaginationMeta } from '../../shared/utils/pagination.js';
+import type {
+  CreateSchemeInput,
+  UpdateSchemeInput,
+  ListSchemesInput,
+  CreateIcdsCodeInput,
+  ListIcdsCodesInput,
+} from './mdm.schema.js';
 
 export class MdmService {
   async createScheme(input: CreateSchemeInput) {
@@ -11,12 +20,45 @@ export class MdmService {
     return result.rows[0];
   }
 
-  async listSchemes() {
-    const result = await query(`SELECT * FROM policy_schemes ORDER BY created_at DESC`);
-    return result.rows;
+  async listSchemes(params: ListSchemesInput) {
+    const { offset, limit, page } = parsePaginationParams(params);
+
+    const conditions: string[] = [];
+    const values: unknown[] = [];
+    let idx = 1;
+
+    if (params.is_active !== undefined) {
+      conditions.push(`is_active = $${idx}`);
+      values.push(params.is_active);
+      idx++;
+    }
+
+    const where = conditions.length > 0 ? `WHERE ${conditions.join(' AND ')}` : '';
+
+    const countResult = await query(`SELECT COUNT(*) FROM policy_schemes ${where}`, values);
+    const total = Number(countResult.rows[0]?.count ?? 0);
+
+    const dataResult = await query(
+      `SELECT * FROM policy_schemes ${where} ORDER BY created_at DESC LIMIT $${idx} OFFSET $${idx + 1}`,
+      [...values, limit, offset]
+    );
+
+    return buildPaginationMeta(dataResult.rows, total, page, limit);
+  }
+
+  async getSchemeById(id: string) {
+    const result = await query(`SELECT * FROM policy_schemes WHERE id = $1`, [id]);
+
+    if (result.rows.length === 0) {
+      throw new AppError('Scheme not found', 404, ERROR_CODES.SCHEME_NOT_FOUND);
+    }
+
+    return result.rows[0];
   }
 
   async updateScheme(id: string, input: UpdateSchemeInput) {
+    await this.getSchemeById(id);
+
     const fields: string[] = [];
     const values: unknown[] = [];
     let idx = 1;
@@ -45,7 +87,19 @@ export class MdmService {
     return result.rows[0];
   }
 
+  async deleteScheme(id: string) {
+    await this.getSchemeById(id);
+
+    await query(`DELETE FROM policy_schemes WHERE id = $1`, [id]);
+    return { message: 'Scheme deleted successfully' };
+  }
+
   async createIcdsCode(input: CreateIcdsCodeInput) {
+    const existing = await query(`SELECT id FROM icds_codes WHERE code = $1`, [input.code]);
+    if (existing.rows.length > 0) {
+      throw new AppError('ICDS code already exists', 409, ERROR_CODES.VALIDATION_ERROR);
+    }
+
     const result = await query(
       `INSERT INTO icds_codes (code, description, category, department)
        VALUES ($1, $2, $3, $4) RETURNING *`,
@@ -54,9 +108,47 @@ export class MdmService {
     return result.rows[0];
   }
 
-  async listIcdsCodes() {
-    const result = await query(`SELECT * FROM icds_codes ORDER BY code ASC`);
-    return result.rows;
+  async listIcdsCodes(params: ListIcdsCodesInput) {
+    const { offset, limit, page } = parsePaginationParams(params);
+
+    const conditions: string[] = [];
+    const values: unknown[] = [];
+    let idx = 1;
+
+    if (params.category) {
+      conditions.push(`category = $${idx}`);
+      values.push(params.category);
+      idx++;
+    }
+
+    const where = conditions.length > 0 ? `WHERE ${conditions.join(' AND ')}` : '';
+
+    const countResult = await query(`SELECT COUNT(*) FROM icds_codes ${where}`, values);
+    const total = Number(countResult.rows[0]?.count ?? 0);
+
+    const dataResult = await query(
+      `SELECT * FROM icds_codes ${where} ORDER BY code ASC LIMIT $${idx} OFFSET $${idx + 1}`,
+      [...values, limit, offset]
+    );
+
+    return buildPaginationMeta(dataResult.rows, total, page, limit);
+  }
+
+  async getIcdsCodeById(id: string) {
+    const result = await query(`SELECT * FROM icds_codes WHERE id = $1`, [id]);
+
+    if (result.rows.length === 0) {
+      throw new AppError('ICDS code not found', 404, ERROR_CODES.ICDS_CODE_NOT_FOUND);
+    }
+
+    return result.rows[0];
+  }
+
+  async deleteIcdsCode(id: string) {
+    await this.getIcdsCodeById(id);
+
+    await query(`DELETE FROM icds_codes WHERE id = $1`, [id]);
+    return { message: 'ICDS code deleted successfully' };
   }
 }
 

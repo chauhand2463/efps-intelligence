@@ -1,7 +1,7 @@
 import type { FastifyRequest, FastifyReply } from 'fastify';
 import { stockService } from './stock.service.js';
 import { listStockHistorySchema, updateAllocationSchema } from './stock.schema.js';
-import { sendSuccess } from '../../shared/utils/response.js';
+import { sendSuccess, sendNoContent } from '../../shared/utils/response.js';
 
 export async function getCurrentStockHandler(request: FastifyRequest, reply: FastifyReply) {
   const result = await stockService.getCurrent(request.user!.id);
@@ -19,4 +19,10 @@ export async function updateAllocationHandler(request: FastifyRequest, reply: Fa
   const body = updateAllocationSchema.parse(request.body);
   const result = await stockService.updateAllocation(id, body);
   return sendSuccess(reply, result);
+}
+
+export async function deleteAllocationHandler(request: FastifyRequest, reply: FastifyReply) {
+  const { id } = request.params as { id: string };
+  await stockService.removeAllocation(id);
+  return sendNoContent(reply);
 }

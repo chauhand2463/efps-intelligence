@@ -1,4 +1,6 @@
 import { query } from '../../config/database.js';
+import { AppError } from '../../shared/errors/AppError.js';
+import { ERROR_CODES } from '../../config/constants.js';
 import { parsePaginationParams, buildPaginationMeta } from '../../shared/utils/pagination.js';
 import type { Notification } from '../../shared/types/models.js';
 import type { ListNotificationsInput } from './notification.schema.js';
@@ -29,7 +31,11 @@ export class NotificationService {
       [id, dealerId]
     );
 
-    return result.rows[0] as Notification | undefined;
+    if (result.rows.length === 0) {
+      throw new AppError('Notification not found', 404, ERROR_CODES.NOTIFICATION_NOT_FOUND);
+    }
+
+    return result.rows[0] as Notification;
   }
 
   async markAllAsRead(dealerId: string) {
@@ -51,6 +57,19 @@ export class NotificationService {
     );
 
     return result.rows[0] as Notification;
+  }
+
+  async remove(id: string, dealerId: string) {
+    const result = await query(
+      `DELETE FROM notifications WHERE id = $1 AND dealer_id = $2 RETURNING id`,
+      [id, dealerId]
+    );
+
+    if (result.rows.length === 0) {
+      throw new AppError('Notification not found', 404, ERROR_CODES.NOTIFICATION_NOT_FOUND);
+    }
+
+    return { message: 'Notification deleted successfully' };
   }
 }
 

@@ -1,5 +1,8 @@
 import { query } from '../../config/database.js';
-import type { CreateAdInput, UpdateAdInput } from './ads.schema.js';
+import { AppError } from '../../shared/errors/AppError.js';
+import { ERROR_CODES } from '../../config/constants.js';
+import { parsePaginationParams, buildPaginationMeta } from '../../shared/utils/pagination.js';
+import type { CreateAdInput, UpdateAdInput, ListAdsInput } from './ads.schema.js';
 
 export class AdsService {
   async create(dealerId: string, input: CreateAdInput) {
@@ -11,15 +14,40 @@ export class AdsService {
     return result.rows[0];
   }
 
-  async list(dealerId: string) {
-    const result = await query(
-      `SELECT * FROM dealer_ads WHERE dealer_id = $1 ORDER BY created_at DESC`,
+  async list(dealerId: string, params: ListAdsInput) {
+    const { offset, limit, page } = parsePaginationParams(params);
+
+    const countResult = await query(
+      `SELECT COUNT(*) FROM dealer_ads WHERE dealer_id = $1`,
       [dealerId]
     );
-    return result.rows;
+    const total = Number(countResult.rows[0]?.count ?? 0);
+
+    const dataResult = await query(
+      `SELECT * FROM dealer_ads WHERE dealer_id = $1
+       ORDER BY created_at DESC LIMIT $2 OFFSET $3`,
+      [dealerId, limit, offset]
+    );
+
+    return buildPaginationMeta(dataResult.rows, total, page, limit);
+  }
+
+  async getById(id: string, dealerId: string) {
+    const result = await query(
+      `SELECT * FROM dealer_ads WHERE id = $1 AND dealer_id = $2`,
+      [id, dealerId]
+    );
+
+    if (result.rows.length === 0) {
+      throw new AppError('Ad not found', 404, ERROR_CODES.ADS_NOT_FOUND);
+    }
+
+    return result.rows[0];
   }
 
   async update(id: string, dealerId: string, input: UpdateAdInput) {
+    await this.getById(id, dealerId);
+
     const fields: string[] = [];
     const values: unknown[] = [];
     let idx = 1;
@@ -42,6 +70,17 @@ export class AdsService {
       values
     );
     return result.rows[0];
+  }
+
+  async remove(id: string, dealerId: string) {
+    await this.getById(id, dealerId);
+
+    const result = await query(
+      `DELETE FROM dealer_ads WHERE id = $1 AND dealer_id = $2 RETURNING id`,
+      [id, dealerId]
+    );
+
+    return { message: 'Ad deleted successfully' };
   }
 }
 

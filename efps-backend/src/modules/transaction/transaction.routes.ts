@@ -6,6 +6,7 @@ import {
   getTransactionHandler,
   getTransactionSummaryHandler,
   getPendingHandler,
+  deleteTransactionHandler,
 } from './transaction.controller.js';
 
 export async function transactionRoutes(app: FastifyInstance) {
@@ -28,4 +29,8 @@ export async function transactionRoutes(app: FastifyInstance) {
   app.get('/transactions/:id', {
     preHandler: [authenticate],
   }, getTransactionHandler);
+
+  app.delete('/transactions/:id', {
+    preHandler: [authenticate],
+  }, deleteTransactionHandler);
 }

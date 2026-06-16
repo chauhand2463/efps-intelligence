@@ -187,6 +187,24 @@ export class TransactionService {
     return result.rows;
   }
 
+  async remove(id: string, dealerId: string) {
+    const transaction = await this.getById(id, dealerId);
+
+    await query(
+      `UPDATE stock_allocations SET lifted_kg = lifted_kg - $1, updated_at = NOW()
+       WHERE dealer_id = $2 AND month = $3 AND commodity = $4`,
+      [transaction.quantity_kg, dealerId, transaction.month, transaction.commodity]
+    );
+
+    await query(
+      `DELETE FROM inventory_movements WHERE reference_id = $1 AND reference_type = 'transaction'`,
+      [id]
+    );
+
+    await query(`DELETE FROM transactions WHERE id = $1 AND dealer_id = $2`, [id, dealerId]);
+    return { message: 'Transaction deleted successfully' };
+  }
+
   async getPending(dealerId: string) {
     const firstOfMonth = new Date();
     firstOfMonth.setDate(1);

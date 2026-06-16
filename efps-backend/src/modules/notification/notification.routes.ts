@@ -4,6 +4,7 @@ import {
   listNotificationsHandler,
   markAsReadHandler,
   markAllAsReadHandler,
+  deleteNotificationHandler,
 } from './notification.controller.js';
 
 export async function notificationRoutes(app: FastifyInstance) {
@@ -18,4 +19,8 @@ export async function notificationRoutes(app: FastifyInstance) {
   app.patch('/notifications/:id/read', {
     preHandler: [authenticate],
   }, markAsReadHandler);
+
+  app.delete('/notifications/:id', {
+    preHandler: [authenticate],
+  }, deleteNotificationHandler);
 }

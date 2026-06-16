@@ -93,6 +93,21 @@ export class StockService {
 
     return updated;
   }
+
+  async removeAllocation(allocationId: string) {
+    const existing = await query(
+      `SELECT * FROM stock_allocations WHERE id = $1`,
+      [allocationId]
+    );
+
+    if (existing.rows.length === 0) {
+      throw new AppError('Allocation not found', 404, ERROR_CODES.ALLOCATION_NOT_FOUND);
+    }
+
+    await query(`DELETE FROM inventory_movements WHERE reference_id = $1 AND reference_type = 'allocation'`, [allocationId]);
+    await query(`DELETE FROM stock_allocations WHERE id = $1`, [allocationId]);
+    return { message: 'Allocation deleted successfully' };
+  }
 }
 
 export const stockService = new StockService();
