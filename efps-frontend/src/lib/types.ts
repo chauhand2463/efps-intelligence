@@ -289,6 +289,48 @@ export interface DashboardSummary {
   monthly_sales: Array<{ commodity: string; quantity: number; amount: number }>;
 }
 
+export interface MasterDashboard {
+  kpis: {
+    rationCards: { total: number; aay: number; phh: number; priority: number; nonPriority: number; inactive: number; migrated: number; blocked: number };
+    todayDistribution: { cardsServed: number; membersServed: number; quantityDistributed: number; transactions: number };
+    remainingDistribution: { pendingCards: number; pendingMembers: number; pendingQuantity: number; estimatedCompletion: string };
+    currentStock: { available: number; reserved: number; damaged: number; incoming: number; lowStock: number };
+    governmentAllocation: { allocated: number; received: number; remaining: number; shortage: number; excess: number };
+    revenue: { commission: number; subsidy: number; todayIncome: number; monthlyIncome: number };
+    syncStatus: { efps: string; ipds: string; lastSync: string | null; worker: string; queue: number; failedJobs: number };
+    alerts: { pendingIssues: number; portalErrors: number; stockShortage: number; beneficiaryIssues: number };
+  };
+  distributionProgress: {
+    target: number; completed: number; pending: number; percentage: number;
+    trend: string; dailyComparison: number; monthlyComparison: number;
+  };
+  stockByCommodity: Array<{
+    commodity: string; allocated: number; received: number; available: number;
+    reserved: number; distributed: number; damaged: number; remaining: number;
+    variance: number; status: string;
+  }>;
+  beneficiarySummary: {
+    totalFamilies: number; totalMembers: number; todayServed: number;
+    pending: number; portability: number; migrated: number; inactive: number; rejected: number;
+  };
+  distributionHistory: Array<{
+    id: string; date: string; beneficiary: string; commodity: string;
+    quantity: number; mode: string; amount: number; status: string;
+  }>;
+  financialSummary: {
+    commission: number; governmentIncentive: number; bankDeposits: number;
+    expenses: number; profit: number;
+    monthlySummary: Array<{ month: string; income: number; expense: number; profit: number }>;
+    yearlySummary: Array<{ year: string; income: number; expense: number; profit: number }>;
+  };
+  monthlySales: Array<{ commodity: string; quantity: number; amount: number }>;
+  systemHealth: {
+    dealer: { fps_id: string; area_id: string | null; district: string | null; village: string | null; full_name: string; role: string; last_login: string | null };
+    server: string; database: string; redis: string; worker: string;
+    portal: string; efps: string; ipds: string;
+  };
+}
+
 // --- Ads ---
 export interface Ad {
   id: string;

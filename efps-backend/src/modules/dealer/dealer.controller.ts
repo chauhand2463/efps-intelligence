@@ -1,19 +1,13 @@
 import type { FastifyRequest, FastifyReply } from 'fastify';
 import { dealerService } from './dealer.service.js';
-import { govtLookupService } from './govt-lookup.service.js';
 import { registerDealerSchema, updateDealerSchema } from './dealer.schema.js';
+import { ValidationError } from '../../shared/errors/ValidationError.js';
 import { sendSuccess, sendCreated } from '../../shared/utils/response.js';
 
 export async function registerHandler(request: FastifyRequest, reply: FastifyReply) {
   const body = registerDealerSchema.parse(request.body);
   const result = await dealerService.register(body);
   return sendCreated(reply, result);
-}
-
-export async function govtLookupHandler(request: FastifyRequest, reply: FastifyReply) {
-  const { fpsId } = request.params as { fpsId: string };
-  const result = await govtLookupService.lookup(fpsId);
-  return sendSuccess(reply, result);
 }
 
 export async function getDealerHandler(request: FastifyRequest, reply: FastifyReply) {
@@ -49,6 +43,9 @@ export async function revokeSessionHandler(request: FastifyRequest, reply: Fasti
 
 export async function lookupFpsIdHandler(request: FastifyRequest, reply: FastifyReply) {
   const { fpsId } = request.params as { fpsId: string };
+  if (!fpsId || fpsId.length < 3 || fpsId.length > 20) {
+    throw new ValidationError('FPS ID must be between 3 and 20 characters', 'fpsId');
+  }
   const result = await dealerService.lookupByFpsId(fpsId);
   return sendSuccess(reply, result);
 }

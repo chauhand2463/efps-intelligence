@@ -11,19 +11,12 @@ import {
   revokeSessionHandler,
   lookupFpsIdHandler,
   heartbeatHandler,
-  govtLookupHandler,
 } from './dealer.controller.js';
 
 export async function dealerRoutes(app: FastifyInstance) {
   app.post('/dealers/register', registerHandler);
 
-  app.get('/dealers/lookup/:fpsId', {
-    preHandler: [validateFpsIdParam],
-  }, lookupFpsIdHandler);
-
-  app.get('/dealers/govt-lookup/:fpsId', {
-    preHandler: [validateFpsIdParam],
-  }, govtLookupHandler);
+  app.get('/dealers/lookup/:fpsId', lookupFpsIdHandler);
 
   app.post('/dealers/heartbeat', {
     preHandler: [authenticate],

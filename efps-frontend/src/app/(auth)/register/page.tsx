@@ -4,7 +4,7 @@ import { useState, type FormEvent } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import toast from 'react-hot-toast';
-import { ArrowLeft, Search, CheckCircle, XCircle, User, MapPin, Building, Lock, UserPlus, Loader2, Globe, ChevronDown, Check, Shield, Sparkles } from 'lucide-react';
+import { ArrowLeft, Search, CheckCircle, XCircle, User, MapPin, Building, Lock, UserPlus, Loader2, Globe, ChevronDown, Check, Shield } from 'lucide-react';
 import { api, ApiRequestError } from '@/lib/api';
 import { AuthCard } from '@/components/auth/AuthCard';
 import { ProgressStepper } from '@/components/auth/ProgressStepper';
@@ -14,20 +14,6 @@ import styles from './Register.module.css';
 interface LookupResult {
   exists: boolean;
   dealer: { fps_id: string; full_name: string } | null;
-}
-
-interface GovtLookupResult {
-  exists: boolean;
-  dealer: {
-    full_name: string;
-    mobile: string;
-    address: string;
-    district: string;
-    taluka: string;
-    village: string;
-    shop_name: string;
-    area_id: string;
-  } | null;
 }
 
 const STEPS = [
@@ -52,7 +38,6 @@ export default function RegisterPage() {
   const [district, setDistrict] = useState('');
   const [taluka, setTaluka] = useState('');
   const [areaId, setAreaId] = useState('');
-  const [govtAutoFilled, setGovtAutoFilled] = useState(false);
 
   const [enableSync, setEnableSync] = useState(false);
   const [efpsUsername, setEfpsUsername] = useState('');
@@ -69,10 +54,7 @@ export default function RegisterPage() {
     if (trimmed.length < 3 || trimmed.length > 20) { toast.error('FPS ID must be 3-20 characters'); return; }
     setLookupState('loading');
     try {
-      const [localResult, govtResult] = await Promise.all([
-        api.get<LookupResult>(`/dealers/lookup/${trimmed}`, { skipAuth: true }),
-        api.get<GovtLookupResult>(`/dealers/govt-lookup/${trimmed}`, { skipAuth: true }).catch(() => null),
-      ]);
+      const localResult = await api.get<LookupResult>(`/dealers/lookup/${trimmed}`, { skipAuth: true });
 
       if (localResult.exists && localResult.dealer) {
         setLookupName(localResult.dealer.full_name);
@@ -81,20 +63,6 @@ export default function RegisterPage() {
         toast.success('FPS ID verified!');
       } else {
         setLookupState('notfound');
-      }
-
-      if (govtResult?.exists && govtResult.dealer) {
-        const g = govtResult.dealer;
-        setFullName(g.full_name);
-        if (g.address) setAddress(g.address);
-        if (g.district) setDistrict(g.district);
-        if (g.taluka) setTaluka(g.taluka);
-        if (g.area_id) setAreaId(g.area_id);
-        if (g.mobile) setMobile(g.mobile);
-        setGovtAutoFilled(true);
-        setLookupState('found');
-        toast.success('Shop details loaded from government portal');
-      } else if (!localResult.exists) {
         toast('FPS ID not found — fill details manually.', { icon: 'ℹ️' });
       }
     } catch (err) {
@@ -226,12 +194,6 @@ export default function RegisterPage() {
                 <p style={{ margin: '8px 0 0 0', fontSize: 12, color: '#10B981', display: 'flex', alignItems: 'center', gap: 4 }}>
                   <Shield size={14} />
                   Verified as <strong>{lookupName}</strong>
-                  {govtAutoFilled && (
-                    <span style={{ color: '#2563EB', display: 'inline-flex', alignItems: 'center', gap: 3, marginLeft: 4 }}>
-                      <Sparkles size={13} />
-                      Auto-filled from govt portal
-                    </span>
-                  )}
                 </p>
               )}
             </div>
@@ -630,6 +592,11 @@ export default function RegisterPage() {
                     onFocus={e => { e.currentTarget.style.borderColor = '#2563EB'; e.currentTarget.style.boxShadow = '0 0 0 3px rgba(37,99,235,0.12)'; }}
                     onBlur={e => { e.currentTarget.style.borderColor = '#D0D5DD'; e.currentTarget.style.boxShadow = 'none'; }}
                   />
+                </div>
+                <div style={{ padding: '12px 16px', backgroundColor: '#FEF3C7', borderRadius: 12, border: '1px solid #FDE68A', marginBottom: 20 }}>
+                  <p style={{ margin: 0, fontSize: 12, color: '#92400E', lineHeight: 1.5 }}>
+                    After account creation, the system will attempt to scrape the government eFPS portal using your credentials. Note: the portal requires <strong>biometric (Mantra) authentication</strong> as a second factor — automated scraping may fail without a physical biometric device. Any successfully scraped data will update your profile automatically.
+                  </p>
                 </div>
               </div>
             )}

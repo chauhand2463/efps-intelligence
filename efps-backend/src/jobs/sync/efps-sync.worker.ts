@@ -347,69 +347,36 @@ if (config.START_SYNC_WORKER) {
       }
 
       try {
-        let scrapeResult;
+        const { username, password } = await getCredentials(dealerId);
 
-        if (config.MOCK_GOVT_PORTAL) {
-          logger.info({ dealerId, fpsId, traceId }, 'eFPS Portal Mock Mode active — generating mock sync data');
-          
-          // Generate realistic mock beneficiaries
-          const mockBeneficiaries: BeneficiaryRow[] = [
-            { rationCardNo: `GJ${fpsId}001`, headOfFamily: 'Arvindbhai Patel', memberCount: 4, category: 'NFSA-PHH', mobile: '9988776655' },
-            { rationCardNo: `GJ${fpsId}002`, headOfFamily: 'Savitaben Shah', memberCount: 5, category: 'NFSA-AAY', mobile: '9876543210' },
-            { rationCardNo: `GJ${fpsId}003`, headOfFamily: 'Rajeshbhai Mehta', memberCount: 3, category: 'APL', mobile: '9012345678' },
-          ];
+        browser = await chromium.launch({
+          headless: true,
+          args: [
+            '--no-sandbox',
+            '--disable-setuid-sandbox',
+            '--disable-dev-shm-usage',
+            '--disable-gpu',
+          ],
+        });
 
-          // Generate mock transactions for today
-          const todayStr: string = new Date().toISOString().split('T')[0] ?? '';
-          const mockTransactions: TransactionRow[] = [
-            { transactionDate: todayStr, commodity: 'Wheat', quantityKg: 15, pricePerKg: 2, totalAmount: 30, beneficiaryRationCard: `GJ${fpsId}001`, mode: 'pos' },
-            { transactionDate: todayStr, commodity: 'Rice', quantityKg: 20, pricePerKg: 3, totalAmount: 60, beneficiaryRationCard: `GJ${fpsId}001`, mode: 'pos' },
-            { transactionDate: todayStr, commodity: 'Sugar', quantityKg: 2.5, pricePerKg: 15, totalAmount: 37.5, beneficiaryRationCard: `GJ${fpsId}002`, mode: 'pos' },
-          ];
-
-          // Generate mock stock allocations for the current month
-          const currentMonthStr: string = todayStr.substring(0, 7) + '-01';
-          const mockStock: StockRow[] = [
-            { commodity: 'Wheat', allocatedKg: 1000, liftedKg: 850, month: currentMonthStr },
-            { commodity: 'Rice', allocatedKg: 800, liftedKg: 600, month: currentMonthStr },
-            { commodity: 'Sugar', allocatedKg: 150, liftedKg: 150, month: currentMonthStr },
-          ];
-
-          scrapeResult = { beneficiaryRows: mockBeneficiaries, transactionRows: mockTransactions, stockRows: mockStock };
-        } else {
-          const { username, password } = await getCredentials(dealerId);
-
-          browser = await chromium.launch({
-            headless: true,
-            args: [
-              '--no-sandbox',
-              '--disable-setuid-sandbox',
-              '--disable-dev-shm-usage',
-              '--disable-gpu',
-            ],
+        const { beneficiaryRows, transactionRows, stockRows } = await efpsCircuitBreaker.call(async () => {
+          const context = await browser!.newContext({
+            userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
+            viewport: { width: 1280, height: 720 },
           });
 
-          scrapeResult = await efpsCircuitBreaker.call(async () => {
-            const context = await browser!.newContext({
-              userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
-              viewport: { width: 1280, height: 720 },
-            });
+          const page = await context.newPage();
 
-            const page = await context.newPage();
+          await loginToEfps(page, username, password);
 
-            await loginToEfps(page, username, password);
+          const [bRows, tRows, sRows] = await Promise.all([
+            scrapeBeneficiaries(page),
+            scrapeTransactions(page),
+            scrapeStockAllocations(page),
+          ]);
 
-            const [beneficiaryRows, transactionRows, stockRows] = await Promise.all([
-              scrapeBeneficiaries(page),
-              scrapeTransactions(page),
-              scrapeStockAllocations(page),
-            ]);
-
-            return { beneficiaryRows, transactionRows, stockRows };
-          });
-        }
-
-        const { beneficiaryRows, transactionRows, stockRows } = scrapeResult;
+          return { beneficiaryRows: bRows, transactionRows: tRows, stockRows: sRows };
+        });
 
         const workers: { type: string; records: Record<string, unknown>[] }[] = [];
         if (beneficiaryRows.length > 0) {
