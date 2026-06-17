@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { 
-  Bell, HelpCircle, ChevronDown, Landmark, Search, RotateCcw, 
+  Landmark, Search, RotateCcw, 
   Info, Save, Printer, CreditCard 
 } from 'lucide-react';
 import styles from './BankCommission.module.css';
@@ -29,8 +29,8 @@ export default function BankCommissionPage() {
   const [financialYear, setFinancialYear] = useState('2026');
   const [reportingMonth, setReportingMonth] = useState('JUN');
   const [transactions, setTransactions] = useState<Transaction[]>([]);
-  const [saveSuccess, setSaveSuccess] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [saving, setSaving] = useState(false);
 
   const getMonthParam = useCallback(() => {
     return `${financialYear}-${MONTH_MAP[reportingMonth]}`;
@@ -45,7 +45,7 @@ export default function BankCommissionPage() {
 
       const mapped: Transaction[] = commissionList.map((c, idx) => ({
         srNo: String(idx + 1).padStart(2, '0'),
-        fpsUid: c.dealer_id ? c.dealer_id.substring(0, 9) : 'FPS-88291',
+        fpsUid: c.dealer_id ? c.dealer_id.substring(0, 9) : '',
         transactionType: `${c.commodity}${c.status ? ` (${c.status})` : ''}`,
         payableAmount: c.gross_commission,
         amountPaid: c.net_commission.toFixed(2),
@@ -65,7 +65,6 @@ export default function BankCommissionPage() {
     loadData();
   }, [loadData]);
 
-  // Formatting helper for Indian currency
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat('en-IN', {
       style: 'currency',
@@ -75,7 +74,6 @@ export default function BankCommissionPage() {
     }).format(amount).replace('INR', '₹').trim();
   };
 
-  // Handle amount edit
   const handleAmountChange = (index: number, value: string) => {
     const updated = [...transactions];
     const cleanValue = value.replace(/[^0-9.]/g, '');
@@ -83,42 +81,48 @@ export default function BankCommissionPage() {
     setTransactions(updated);
   };
 
-  // Handle date edit
   const handleDateChange = (index: number, value: string) => {
     const updated = [...transactions];
     updated[index].depositDate = value;
     setTransactions(updated);
   };
 
-  // Handle Reset
   const handleReset = () => {
     setFinancialYear('2026');
     setReportingMonth('JUN');
     loadData();
-    setSaveSuccess(false);
   };
 
-  // Calculations
   const totalPayable = transactions.reduce((sum, item) => sum + item.payableAmount, 0);
   const totalPaid = transactions.reduce((sum, item) => {
     const parsed = parseFloat(item.amountPaid);
     return sum + (isNaN(parsed) ? 0 : parsed);
   }, 0);
 
-  // Actions
-  const handleSave = () => {
-    setSaveSuccess(true);
-    setTimeout(() => setSaveSuccess(false), 3000);
-    toast.success('Bank Commission data saved successfully!');
+  const handleSave = async () => {
+    setSaving(true);
+    try {
+      await api.post('/sync/bank-info', {
+        month: getMonthParam(),
+        commission_payments: transactions.map(t => ({
+          fps_uid: t.fpsUid,
+          payable_amount: t.payableAmount,
+          amount_paid: parseFloat(t.amountPaid) || 0,
+          deposit_date: t.depositDate,
+        })),
+      });
+      toast.success('Bank Commission data saved successfully!');
+    } catch {
+      toast.error('Failed to save commission data');
+    } finally {
+      setSaving(false);
+    }
   };
 
-  const handlePrint = () => {
-    window.print();
-  };
+  const handlePrint = () => window.print();
 
   return (
     <div className={styles.container}>
-      {/* Top Portal Header */}
       <header className={styles.topHeaderBar}>
         <div className={styles.topLeftBlock}>
           <div className={styles.topLogoText}>
@@ -131,28 +135,8 @@ export default function BankCommissionPage() {
             <span>Commission Portal</span>
           </div>
         </div>
-
-        <div className={styles.topRightBlock}>
-          <button className={styles.iconButton} aria-label="Notifications">
-            <Bell size={18} />
-            <span className={styles.notificationBadge}></span>
-          </button>
-
-          <button className={styles.iconButton} aria-label="Help Center">
-            <HelpCircle size={18} />
-          </button>
-
-          <div className={styles.profileInfo}>
-            <div className={styles.profileText}>
-              <span className={styles.profileName}>A.D. Chauhan</span>
-              <span className={styles.profileRole}>ACCOUNT SETTINGS</span>
-            </div>
-            <ChevronDown className={styles.chevronIcon} size={16} />
-          </div>
-        </div>
       </header>
 
-      {/* Page Title Block */}
       <div className={styles.titleSection}>
         <div className={styles.titleIconBox}>
           <CreditCard size={24} />
@@ -163,9 +147,7 @@ export default function BankCommissionPage() {
         </div>
       </div>
 
-      {/* Main Form/Table Container */}
       <div className={styles.tableCard}>
-        {/* Filters and Warn Line */}
         <div className={styles.filterRow}>
           <div className={styles.filterGroupLeft}>
             <div className={styles.inputFieldGroup}>
@@ -188,18 +170,7 @@ export default function BankCommissionPage() {
                 value={reportingMonth}
                 onChange={(e) => setReportingMonth(e.target.value)}
               >
-                <option value="JAN">JAN</option>
-                <option value="FEB">FEB</option>
-                <option value="MAR">MAR</option>
-                <option value="APR">APR</option>
-                <option value="MAY">MAY</option>
-                <option value="JUN">JUN</option>
-                <option value="JUL">JUL</option>
-                <option value="AUG">AUG</option>
-                <option value="SEP">SEP</option>
-                <option value="OCT">OCT</option>
-                <option value="NOV">NOV</option>
-                <option value="DEC">DEC</option>
+                {Object.keys(MONTH_MAP).map(m => <option key={m} value={m}>{m}</option>)}
               </select>
             </div>
 
@@ -216,11 +187,10 @@ export default function BankCommissionPage() {
 
           <div className={styles.lockBadge}>
             <Info size={16} className={styles.lockIcon} />
-            <span>Editing is locked for verified transactions.</span>
+            <span>Edit amounts and dates as needed before saving.</span>
           </div>
         </div>
 
-        {/* Responsive Table */}
         <div className={styles.tableWrapper}>
           {loading ? (
             <div style={{ textAlign: 'center', padding: '48px 24px', color: '#64748b' }}>
@@ -276,7 +246,6 @@ export default function BankCommissionPage() {
                   ))
                 )}
                 
-                {/* Grand Total Row */}
                 {transactions.length > 0 && (
                   <tr className={styles.totalRow}>
                     <td colSpan={3} className={styles.totalLabel}>
@@ -297,12 +266,11 @@ export default function BankCommissionPage() {
         </div>
       </div>
 
-      {/* Bottom Row - Save, Print Buttons, Cloud Status */}
       <footer className={styles.bottomActionRow}>
         <div className={styles.actionButtons}>
-          <button className={styles.saveBtn} onClick={handleSave}>
+          <button className={styles.saveBtn} onClick={handleSave} disabled={saving}>
             <Save size={18} />
-            Save Data Entries
+            {saving ? 'Saving...' : 'Save Data Entries'}
           </button>
           <button className={styles.printBtn} onClick={handlePrint}>
             <Printer size={18} />

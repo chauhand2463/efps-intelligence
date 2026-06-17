@@ -1,8 +1,9 @@
 'use client';
 
 import { useState } from 'react';
-import { CalendarDays, Eye, Printer, Copy } from 'lucide-react';
+import { CalendarDays, Eye, Printer, Copy, AlertCircle } from 'lucide-react';
 import { api } from '@/lib/api';
+import toast from 'react-hot-toast';
 import type { StockAllocation, Transaction, ApiResponse } from '@/lib/types';
 import styles from './StockRecord.module.css';
 
@@ -26,6 +27,7 @@ export default function StockRecordPage() {
   const [activeYear, setActiveYear] = useState('2026');
   const [records, setRecords] = useState<StockRow[]>([]);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
 
   const handleViewRecord = async () => {
     setActiveItem(selectedItem);
@@ -73,8 +75,11 @@ export default function StockRecordPage() {
         running = closing;
       }
       setRecords(computedRecords);
+      setError('');
     } catch (err) {
-      console.error('Failed to fetch stock record', err);
+      const msg = err instanceof Error ? err.message : 'Failed to fetch stock record';
+      setError(msg);
+      toast.error(msg);
     } finally {
       setLoading(false);
     }
@@ -156,6 +161,25 @@ export default function StockRecordPage() {
         </button>
       </section>
 
+      {/* Error Banner */}
+      {error && (
+        <div style={{
+          backgroundColor: '#FEF2F2',
+          border: '1px solid #FECACA',
+          color: '#991B1B',
+          padding: '12px 16px',
+          borderRadius: 4,
+          marginBottom: 16,
+          display: 'flex',
+          alignItems: 'center',
+          gap: 8,
+          fontSize: 14,
+        }}>
+          <AlertCircle size={16} />
+          <span>{error}</span>
+        </div>
+      )}
+
       {/* ZONE 2: LOADED REPORT STATE */}
       <section className="card">
         <div className={styles.reportHeader}>
@@ -191,7 +215,7 @@ export default function StockRecordPage() {
               ) : currentRecords.length === 0 ? (
                 <tr>
                   <td colSpan={6} className={styles.td} style={{ textAlign: 'center', padding: '40px 24px' }}>
-                    Select filters and click "View Record" to load data.
+                    Select filters and click &ldquo;View Record&rdquo; to load data.
                   </td>
                 </tr>
               ) : (

@@ -1,7 +1,7 @@
 import { z } from 'zod';
 
 export const registerDealerSchema = z.object({
-  fps_id: z.string().regex(/^\d{5,20}$/, 'FPS ID must be 5-20 digits'),
+  fps_id: z.string().min(3, 'FPS ID must be at least 3 characters').max(20, 'FPS ID must be at most 20 characters'),
   full_name: z.string().min(2).max(255),
   mobile: z.string().regex(/^\d{10}$/, 'Mobile must be a valid 10-digit Indian number'),
   password: z.string().min(8, 'Password must be at least 8 characters')

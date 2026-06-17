@@ -12,6 +12,10 @@ import {
   getIcdsCodeHandler,
   deleteIcdsCodeHandler,
 } from './mdm.controller.js';
+import {
+  saveMonthlyRecordsHandler,
+  getMonthlyRecordsHandler,
+} from './mdm.monthly.controller.js';
 
 export async function mdmRoutes(app: FastifyInstance) {
   const adminGuard = [authenticate, authorize('admin')];
@@ -26,4 +30,7 @@ export async function mdmRoutes(app: FastifyInstance) {
   app.get('/mdm/icds-codes', { preHandler: [authenticate] }, listIcdsCodesHandler);
   app.get('/mdm/icds-codes/:id', { preHandler: [authenticate] }, getIcdsCodeHandler);
   app.delete('/mdm/icds-codes/:id', { preHandler: adminGuard }, deleteIcdsCodeHandler);
+
+  app.post('/mdm/monthly-records', { preHandler: [authenticate] }, saveMonthlyRecordsHandler);
+  app.get('/mdm/monthly-records', { preHandler: [authenticate] }, getMonthlyRecordsHandler);
 }

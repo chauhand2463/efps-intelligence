@@ -1,8 +1,8 @@
 'use client';
 import { useState } from 'react';
-import { 
-    Bell, HelpCircle, AlertTriangle, Info, RefreshCw, 
-    CheckCircle, ExternalLink, Loader2 
+import {
+    AlertTriangle, Info, RefreshCw,
+    CheckCircle, ExternalLink, Loader2
 } from 'lucide-react';
 import { api, ApiRequestError } from '@/lib/api';
 import type { Beneficiary } from '@/lib/types';
@@ -171,15 +171,9 @@ export default function SocialAuditPage() {
             {/* Header Area */}
             <header className={styles.header}>
                 <div className={styles.titleSection}>
-                    <h1>Import Entire Month's Sales At Once</h1>
+                    <h1>Import Entire Month&apos;s Sales At Once</h1>
                 </div>
                 <div className={styles.headerActions}>
-                    <button className={styles.iconButton}>
-                        <Bell size={20} />
-                    </button>
-                    <button className={styles.iconButton}>
-                        <HelpCircle size={20} />
-                    </button>
                     <div className={styles.adminProfile}>
                         <div className={styles.adminInfo}>
                             <span className={styles.adminName}>A.D. Chauhan</span>
@@ -382,10 +376,7 @@ Columns order doesn't matter, we will watch:
                         <button type="button" className={styles.textLink} onClick={handleClear}>
                             Clear Buffer
                         </button>
-                        <span style={{ color: '#cbd5e1' }}>|</span>
-                        <button type="button" className={styles.textLink}>
-                            Validation Rules
-                        </button>
+                        
                     </div>
                 </div>
 

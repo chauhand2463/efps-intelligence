@@ -40,8 +40,30 @@ export const listIcdsCodesSchema = z.object({
   category: z.string().optional(),
 });
 
+const monthRegex = /^(January|February|March|April|May|June|July|August|September|October|November|December)$/i;
+
+export const saveMonthlyRecordSchema = z.object({
+  month: z.string().regex(monthRegex, 'Invalid month name'),
+  year: z.number().int().min(2020).max(2100),
+  records: z.array(z.object({
+    id: z.number().optional(),
+    name: z.string().optional(),
+    openingStock: z.number().optional(),
+    income: z.number().optional(),
+    distribution: z.number().optional(),
+    rate: z.number().optional(),
+  })),
+});
+
+export const getMonthlyRecordSchema = z.object({
+  month: z.string().regex(monthRegex, 'Invalid month name'),
+  year: z.coerce.number().int().min(2020).max(2100),
+});
+
 export type CreateSchemeInput = z.infer<typeof createSchemeSchema>;
 export type UpdateSchemeInput = z.infer<typeof updateSchemeSchema>;
 export type ListSchemesInput = z.infer<typeof listSchemesSchema>;
 export type CreateIcdsCodeInput = z.infer<typeof createIcdsCodeSchema>;
 export type ListIcdsCodesInput = z.infer<typeof listIcdsCodesSchema>;
+export type SaveMonthlyRecordInput = z.infer<typeof saveMonthlyRecordSchema>;
+export type GetMonthlyRecordInput = z.infer<typeof getMonthlyRecordSchema>;

@@ -16,8 +16,8 @@ export class BeneficiaryService {
     let paramIndex = 2;
 
     if (params.q) {
-      conditions.push(`b.head_of_family ILIKE $${paramIndex}`);
-      values.push(`%${params.q}%`);
+      conditions.push(`to_tsvector('simple', b.head_of_family) @@ plainto_tsquery('simple', $${paramIndex})`);
+      values.push(params.q);
       paramIndex++;
     }
 

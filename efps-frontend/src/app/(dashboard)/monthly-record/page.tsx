@@ -6,13 +6,13 @@ import {
 import { api } from '@/lib/api';
 import type { StockAllocation, LiftingEntry, ApiResponse } from '@/lib/types';
 import styles from './MonthlyRecord.module.css';
+import toast from 'react-hot-toast';
 
 export default function MonthlyRecordPage() {
     const [month, setMonth] = useState('June');
     const [year, setYear] = useState('2026');
-    const [stockData, setStockData] = useState<StockAllocation[]>([]);
-    const [liftingData, setLiftingData] = useState<LiftingEntry[]>([]);
     const [loading, setLoading] = useState(false);
+    const [error, setError] = useState(false);
 
     interface MonthlyRow {
       commodity: string;
@@ -28,6 +28,7 @@ export default function MonthlyRecordPage() {
 
     const fetchMonthlyData = async () => {
       setLoading(true);
+      setError(false);
       try {
         const [stockResult, liftingResult] = await Promise.all([
           api.get<StockAllocation[]>('/stock'),
@@ -35,8 +36,6 @@ export default function MonthlyRecordPage() {
         ]);
 
         const liftingList = liftingResult.data;
-        setStockData(stockResult);
-        setLiftingData(liftingList);
 
         const liftingByCommodity: Record<string, number> = {};
         for (const entry of liftingList) {
@@ -61,8 +60,9 @@ export default function MonthlyRecordPage() {
         });
 
         setRows(computedRows);
-      } catch (err) {
-        console.error('Failed to fetch monthly record', err);
+      } catch {
+        setError(true);
+        toast.error('Failed to fetch monthly record');
       } finally {
         setLoading(false);
       }
@@ -70,13 +70,11 @@ export default function MonthlyRecordPage() {
 
     return (
         <div className={styles.container}>
-            {/* System Alert Banner */}
             <div className={styles.systemAlert}>
                 <AlertTriangle size={16} />
-                <span>System Alert: Stock Reconciliation for June Cycle is now live. Please review allocations.</span>
+                <span>System Alert: Stock Reconciliation for current cycle is now live. Please review allocations.</span>
             </div>
 
-            {/* Header Section */}
             <header className={styles.header}>
                 <div className={styles.titleSection}>
                     <FileText size={22} className={styles.titleIcon} style={{ color: '#1b3a6b' }} />
@@ -91,18 +89,15 @@ export default function MonthlyRecordPage() {
                     </button>
                     <div className={styles.adminProfile}>
                         <div className={styles.adminInfo}>
-                            <span className={styles.adminName}>A.D. Chauhan</span>
-                            <span className={styles.adminDetails}>Morbi-4 - Permanent (ID: 3617)</span>
+                            <span className={styles.adminName}>Dealer</span>
+                            <span className={styles.adminDetails}>Monthly Record</span>
                         </div>
-                        <div className={styles.avatar}>AD</div>
+                        <div className={styles.avatar}>DR</div>
                     </div>
                 </div>
             </header>
 
-            {/* Document Control Card */}
             <div className={styles.contentCard}>
-                
-                {/* Selector Controls Row */}
                 <div className={styles.cardHeaderRow}>
                     <div className={styles.selectorsSection}>
                         <div className={styles.fieldGroup}>
@@ -147,38 +142,16 @@ export default function MonthlyRecordPage() {
                         </button>
                     </div>
 
-                    <button className={styles.printBtn}>
+                    <button className={styles.printBtn} onClick={() => window.print()}>
                         <Printer size={16} />
                         Print
                     </button>
                 </div>
 
-                {/* Printable Document Sheet */}
                 <div className={styles.documentContainer}>
                     <h2 className={styles.docHeading}>FAIR PRICE SHOP MONTHLY RECORD (GOVERNMENT REGULATED PRICES)</h2>
                     <p className={styles.docSubheading}>Month: {month} - {year}</p>
 
-                    {/* Dealer / Shop Info Grid */}
-                    <div className={styles.docInfoGrid}>
-                        <div className={styles.infoRow}>
-                            <span className={styles.infoLabel}>Dealer's Name:</span>
-                            <span className={styles.infoValue}>Amit D. Chauhan</span>
-                        </div>
-                        <div className={styles.infoRow}>
-                            <span className={styles.infoLabel}>Shop Address:</span>
-                            <span className={styles.infoValue}>Near Bus Stand, Morbi-4</span>
-                        </div>
-                        <div className={styles.infoRow}>
-                            <span className={styles.infoLabel}>Shop Number:</span>
-                            <span className={styles.infoValue}>FPS-3617-MOR-4</span>
-                        </div>
-                        <div className={styles.infoRow}>
-                            <span className={styles.infoLabel}>Area ID:</span>
-                            <span className={styles.infoValue}>MORBI-ZONE-004</span>
-                        </div>
-                    </div>
-
-                    {/* Table */}
                     <table className={styles.docTable}>
                         <thead>
                             <tr>
@@ -202,6 +175,15 @@ export default function MonthlyRecordPage() {
                                         <div className={styles.emptyState}>
                                             <Loader2 className={styles.emptyIcon} size={48} />
                                             <p className={styles.emptyText}>Loading data...</p>
+                                        </div>
+                                    </td>
+                                </tr>
+                            ) : error ? (
+                                <tr>
+                                    <td colSpan={8}>
+                                        <div className={styles.emptyState}>
+                                            <AlertTriangle size={48} style={{ color: 'var(--offline-red)' }} />
+                                            <p className={styles.emptyText}>Error loading data. Please try again.</p>
                                         </div>
                                     </td>
                                 </tr>
@@ -231,16 +213,15 @@ export default function MonthlyRecordPage() {
                         </tbody>
                     </table>
 
-                    {/* Document Footer */}
                     <div className={styles.docFooter}>
                         <div className={styles.generationInfo}>
                             <div className={styles.dateField}>Date: ____________________</div>
-                            <div>Generated on: 24 Oct 2023, 14:22</div>
+                            <div>Generated on: {new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}</div>
                         </div>
 
                         <div className={styles.signatureArea}>
                             <div className={styles.signatureLine}></div>
-                            <div className={styles.signatureLabel}>DEALER'S SIGNATURE</div>
+                            <div className={styles.signatureLabel}>DEALER&apos;S SIGNATURE</div>
                         </div>
                     </div>
                 </div>

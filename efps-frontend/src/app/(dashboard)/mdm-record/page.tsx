@@ -3,6 +3,7 @@
 import { useState, useCallback, useEffect, useRef } from 'react';
 import { GraduationCap, Printer, Save, Loader2, AlertTriangle } from 'lucide-react';
 import { api } from '@/lib/api';
+import toast from 'react-hot-toast';
 import styles from './MdmRecord.module.css';
 
 const MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
@@ -15,14 +16,6 @@ interface CommodityRow {
   income: number;
   distribution: number;
   rate: number;
-}
-
-interface FieldChange {
-  id: number;
-  name: string;
-  field: string;
-  from: number;
-  to: number;
 }
 
 const INITIAL_ROWS: CommodityRow[] = [
@@ -65,6 +58,19 @@ export default function MdmRecordPage() {
     setLoading(true);
     setDataUnavailable(false);
     setSaveMessage('');
+
+    try {
+      const saved = await api.get<{records: any[]}>(`/mdm/monthly-records?month=${encodeURIComponent(selectedMonth)}&year=${selectedYear}`);
+      if (saved?.records?.length) {
+        const mapped = saved.records.map((r, idx) => mapApiRow(r, idx + 1));
+        setRows(mapped);
+        originalRowsRef.current = JSON.parse(JSON.stringify(mapped));
+        setLoading(false);
+        return;
+      }
+    } catch {
+      // No saved records for this month/year
+    }
 
     try {
       const schemes = await api.get<any[]>('/mdm/schemes');
@@ -125,31 +131,31 @@ export default function MdmRecordPage() {
     setRows(prev => prev.map(r => r.id === id ? { ...r, [field]: parseFloat(value) || 0 } : r));
   }, []);
 
-  const handleSave = () => {
-    const originals = originalRowsRef.current;
-    const changes: FieldChange[] = [];
-
-    for (let i = 0; i < rows.length; i++) {
-      const orig = originals[i];
-      const curr = rows[i];
-      if (!orig || !curr) continue;
-      if (orig.distribution !== curr.distribution) {
-        changes.push({ id: curr.id, name: curr.name, field: 'distribution', from: orig.distribution, to: curr.distribution });
-      }
-      if (orig.rate !== curr.rate) {
-        changes.push({ id: curr.id, name: curr.name, field: 'rate', from: orig.rate, to: curr.rate });
-      }
-    }
-
-    if (changes.length > 0) {
-      const msg = changes.map(c => `${c.name}: ${c.field} changed from ${c.from} to ${c.to}`).join('\n');
-      setSaveMessage(`Record saved! ${changes.length} field(s) updated.`);
+  const handleSave = async () => {
+    try {
+      const payload = rows.map(r => ({
+        id: r.id,
+        name: r.name,
+        openingStock: r.openingStock,
+        income: r.income,
+        distribution: r.distribution,
+        rate: r.rate,
+      }));
+      await api.post('/mdm/monthly-records', {
+        month: selectedMonth,
+        year: selectedYear,
+        records: payload,
+      });
       originalRowsRef.current = JSON.parse(JSON.stringify(rows));
-    } else {
-      setSaveMessage('Record saved successfully! No changes detected.');
+      setSaveMessage('Record saved successfully!');
+      toast.success('MDM record saved');
+      setTimeout(() => setSaveMessage(''), 4000);
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : 'Failed to save record';
+      setSaveMessage(`Save failed: ${msg}`);
+      toast.error('Failed to save MDM record');
+      setTimeout(() => setSaveMessage(''), 6000);
     }
-
-    setTimeout(() => setSaveMessage(''), 4000);
   };
 
   const getTotal = (row: CommodityRow) => row.openingStock + row.income;

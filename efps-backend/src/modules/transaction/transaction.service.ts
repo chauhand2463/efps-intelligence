@@ -213,11 +213,13 @@ export class TransactionService {
     const result = await query(
       `SELECT b.id, b.ration_card_no, b.head_of_family, b.mobile, b.member_count, b.category
        FROM beneficiaries b
-       WHERE b.dealer_id = $1 AND b.is_active = TRUE
-       AND NOT EXISTS (
-         SELECT 1 FROM transactions t
-         WHERE t.beneficiary_id = b.id AND t.month = $2
-       )
+       LEFT JOIN transactions t 
+         ON t.beneficiary_id = b.id 
+         AND t.month = $2 
+         AND t.dealer_id = $1
+       WHERE b.dealer_id = $1 
+         AND b.is_active = TRUE 
+         AND t.id IS NULL
        ORDER BY b.head_of_family`,
       [dealerId, monthStr]
     );

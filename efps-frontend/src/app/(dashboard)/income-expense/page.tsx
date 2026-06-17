@@ -1,8 +1,8 @@
 'use client';
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { 
-    Printer, Save, Eye, Trash2, Bell, HelpCircle, 
-    Wallet, TrendingUp, TrendingDown, Inbox, AlertTriangle 
+    Printer, Save, Trash2, 
+    TrendingUp, TrendingDown, Inbox, AlertTriangle 
 } from 'lucide-react';
 import styles from './IncomeExpense.module.css';
 import { useFinance } from '@/lib/api-hooks';
@@ -28,30 +28,29 @@ export default function IncomeExpensePage() {
     const [selectedYear, setSelectedYear] = useState('2026');
     const [transactionType, setTransactionType] = useState<'Income' | 'Expense'>('Income');
     
-    // Form States
-    const [date, setDate] = useState('2026-06-16');
+    const [date, setDate] = useState(new Date().toISOString().split('T')[0]);
     const [category, setCategory] = useState('Daily grain distribution income');
     const [amount, setAmount] = useState('');
     
-    // Data states
     const [transactions, setTransactions] = useState<Transaction[]>([]);
     const [loading, setLoading] = useState(false);
     const [saving, setSaving] = useState(false);
     const [profitLoss, setProfitLoss] = useState<{ total_income: number; total_expense: number; net_profit: number } | null>(null);
 
     const finance = useFinance();
+    const financeRef = useRef(finance);
+    useEffect(() => { financeRef.current = finance; });
 
-    const getMonthParam = useCallback(() => {
-        return `${selectedYear}-${MONTH_MAP[selectedMonth]}`;
-    }, [selectedMonth, selectedYear]);
+    const monthParam = () => `${selectedYear}-${MONTH_MAP[selectedMonth]}`;
 
-    const loadData = useCallback(async () => {
+    const loadData = async () => {
         setLoading(true);
         try {
-            const month = getMonthParam();
+            const month = monthParam();
+            const f = financeRef.current;
             const [incomeRes, expenseRes] = await Promise.all([
-                finance.listIncome(1, 100, month),
-                finance.listExpenses(1, 100, month),
+                f.listIncome(1, 100, month),
+                f.listExpenses(1, 100, month),
             ]);
             
             const incomeTxs: Transaction[] = incomeRes.data.map((inc: IncomeEntry) => ({
@@ -80,21 +79,21 @@ export default function IncomeExpensePage() {
         } finally {
             setLoading(false);
         }
-    }, [finance, getMonthParam]);
+    };
 
-    const loadProfitLoss = useCallback(async () => {
+    const loadProfitLoss = async () => {
         try {
-            const pl = await finance.getProfitLoss(getMonthParam());
+            const pl = await financeRef.current.getProfitLoss(monthParam());
             setProfitLoss(pl);
         } catch {
-            // silently fail
+            toast.error('Failed to load profit/loss summary');
         }
-    }, [finance, getMonthParam]);
+    };
 
     useEffect(() => {
         loadData();
         loadProfitLoss();
-    }, [loadData, loadProfitLoss]);
+    }, [selectedMonth, selectedYear]);
 
     const handleSaveEntry = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -116,6 +115,7 @@ export default function IncomeExpensePage() {
             }
             setAmount('');
             await Promise.all([loadData(), loadProfitLoss()]);
+            toast.success(`${transactionType} entry saved`);
         } catch (err) {
             if (err instanceof Error) toast.error(err.message);
             else toast.error(`Failed to add ${transactionType.toLowerCase()}`);
@@ -132,6 +132,7 @@ export default function IncomeExpensePage() {
                 await finance.deleteExpense(id.replace('expense-', ''));
             }
             await Promise.all([loadData(), loadProfitLoss()]);
+            toast.success('Entry deleted');
         } catch (err) {
             if (err instanceof Error) toast.error(err.message);
             else toast.error('Failed to delete entry');
@@ -140,51 +141,40 @@ export default function IncomeExpensePage() {
 
     return (
         <div className={styles.container}>
-            {/* Maintenance Warning Banner */}
             <div className={styles.maintenanceBanner}>
                 <AlertTriangle size={16} />
-                <span>System Maintenance scheduled for June 25th at 02:00 AM UTC.</span>
+                <span>Income & Expense Register</span>
             </div>
 
-            {/* Header Area */}
             <header className={styles.header}>
                 <div className={styles.titleSection}>
                     <h1>Income & Expense Register (Hisab)</h1>
                 </div>
                 <div className={styles.headerActions}>
-                    <button className={styles.iconButton}>
-                        <Bell size={20} />
-                    </button>
-                    <button className={styles.iconButton}>
-                        <HelpCircle size={20} />
-                    </button>
                     <div className={styles.adminProfile}>
                         <div className={styles.adminInfo}>
-                            <span className={styles.adminName}>Administrator</span>
+                            <span className={styles.adminName}>Finance</span>
                             <span className={styles.adminStatus}>
                                 <span className={styles.statusDot}></span>
                                 ONLINE
                             </span>
                         </div>
-                        <div className={styles.avatar}>A</div>
                     </div>
                 </div>
             </header>
 
-            {/* Content Card */}
             <div className={styles.contentCard}>
                 <div className={styles.cardHeader}>
                     <div className={styles.cardTitleSection}>
                         <h2>Income-Expense Sheet: {selectedMonth} - {selectedYear}</h2>
                         <p>Manage and track daily administrative ledger entries.</p>
                     </div>
-                    <button className={styles.printBtn}>
+                    <button className={styles.printBtn} onClick={() => window.print()}>
                         <Printer size={16} />
                         Print Report
                     </button>
                 </div>
 
-                {/* Selected Month / Year selectors */}
                 <div className={styles.selectionRow}>
                     <div className={styles.fieldGroup}>
                         <label>Selected Month</label>
@@ -193,18 +183,7 @@ export default function IncomeExpensePage() {
                             value={selectedMonth} 
                             onChange={(e) => setSelectedMonth(e.target.value)}
                         >
-                            <option value="January">January</option>
-                            <option value="February">February</option>
-                            <option value="March">March</option>
-                            <option value="April">April</option>
-                            <option value="May">May</option>
-                            <option value="June">June</option>
-                            <option value="July">July</option>
-                            <option value="August">August</option>
-                            <option value="September">September</option>
-                            <option value="October">October</option>
-                            <option value="November">November</option>
-                            <option value="December">December</option>
+                            {Object.keys(MONTH_MAP).map(m => <option key={m} value={m}>{m}</option>)}
                         </select>
                     </div>
                     <div className={styles.fieldGroup}>
@@ -223,7 +202,6 @@ export default function IncomeExpensePage() {
                     <button className={styles.viewBtn} onClick={() => { loadData(); loadProfitLoss(); }}>View Hisab</button>
                 </div>
 
-                {/* Profit / Loss Summary Card */}
                 {profitLoss && (
                     <div className={styles.ledgerSection} style={{ marginBottom: '16px' }}>
                         <div className={styles.ledgerHeader}>
@@ -249,14 +227,12 @@ export default function IncomeExpensePage() {
                     </div>
                 )}
 
-                {/* Form to Create New Entry */}
                 <div className={styles.transactionFormSection}>
                     <h3 className={styles.sectionHeader}>
                         <span className={styles.iconCircle}>+</span>
                         New Transaction Entry
                     </h3>
 
-                    {/* Toggle Buttons */}
                     <div className={styles.typeToggleGroup}>
                         <button 
                             type="button"
@@ -323,7 +299,7 @@ export default function IncomeExpensePage() {
                             </div>
 
                             <div className={styles.fieldGroup}>
-                                <label>Amount (Currency: eFPS Units)</label>
+                                <label>Amount (₹)</label>
                                 <input 
                                     type="text" 
                                     placeholder="e.g. 1500" 
@@ -339,15 +315,10 @@ export default function IncomeExpensePage() {
                                 <Save size={16} />
                                 {saving ? 'Saving...' : 'Save Entry'}
                             </button>
-                            <button type="button" className={styles.showHisabBtn}>
-                                <Eye size={16} />
-                                Show This Month's Hisab
-                            </button>
                         </div>
                     </form>
                 </div>
 
-                {/* Current Ledger Summary */}
                 <div className={styles.ledgerSection}>
                     <div className={styles.ledgerHeader}>
                         <h3 className={styles.ledgerTitle}>Current Ledger Summary</h3>

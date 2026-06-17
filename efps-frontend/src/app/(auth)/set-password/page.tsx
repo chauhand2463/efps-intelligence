@@ -12,7 +12,7 @@ function SetPasswordForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const fpsId = searchParams.get('fps_id') ?? '';
-  const token = searchParams.get('token') ?? '';
+  const [token] = useState(() => sessionStorage.getItem('reset_token') ?? '');
 
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -23,6 +23,10 @@ function SetPasswordForm() {
       router.replace('/forgot-password');
     }
   }, [fpsId, token, router]);
+
+  useEffect(() => {
+    return () => { sessionStorage.removeItem('reset_token'); };
+  }, []);
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
@@ -36,7 +40,8 @@ function SetPasswordForm() {
     }
     setLoading(true);
     try {
-      await api.post('/auth/forgot-password/reset', { fps_id: fpsId, otp: token, new_password: newPassword }, { skipAuth: true });
+      await api.post('/auth/forgot-password/reset', { fps_id: fpsId, token, new_password: newPassword }, { skipAuth: true });
+      sessionStorage.removeItem('reset_token');
       toast.success('Password reset successfully');
       router.push('/password-success');
     } catch (err) {

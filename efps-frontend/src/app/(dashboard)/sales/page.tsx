@@ -1,10 +1,11 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { BarChart2, Eye, Printer, Copy, Info, CheckCircle, Download, FileText, Loader2 } from 'lucide-react';
+import { BarChart2, Eye, Printer, Info, CheckCircle, Download, FileText, Loader2 } from 'lucide-react';
 import { api } from '@/lib/api';
 import type { Transaction } from '@/lib/types';
 import styles from './Sales.module.css';
+import toast from 'react-hot-toast';
 
 interface SalesRow {
   date: string;
@@ -15,16 +16,16 @@ interface SalesRow {
 
 const itemLabels: Record<string, string> = {
   wheat: 'Wheat',
-  rice: 'Rice (AAY)',
+  rice: 'Rice',
   sugar: 'Sugar',
-  kerosene: 'Kerosene'
+  kerosene: 'Kerosene',
 };
 
 const commodityMap: Record<string, string> = {
   wheat: 'Wheat',
   rice: 'Rice',
   sugar: 'Sugar',
-  kerosene: 'Kerosene'
+  kerosene: 'Kerosene',
 };
 
 export default function ItemWiseSalesPage() {
@@ -62,7 +63,7 @@ export default function ItemWiseSalesPage() {
       setOverlayDesc(`Sending report for ${itemName} (${activeMonth} ${activeYear}) to connected printer system.`);
     } else {
       setOverlayText('Preparing Bulk Print...');
-      setOverlayDesc(`Sending 4 combined commodity group reports for ${activeMonth} ${activeYear} to connected printer system.`);
+      setOverlayDesc(`Sending combined commodity group reports for ${activeMonth} ${activeYear} to connected printer system.`);
     }
     setShowOverlay(true);
     setTimeout(() => {
@@ -104,9 +105,32 @@ export default function ItemWiseSalesPage() {
   const totalQty = currentRows.reduce((sum, r) => sum + r.qty, 0);
   const totalAmount = currentRows.reduce((sum, r) => sum + r.amount, 0);
 
+  const handleExportCsv = () => {
+    if (currentRows.length === 0) {
+      toast.error('No data to export');
+      return;
+    }
+    const csv = [
+      'Date,Quantity (kg),Rate (₹/kg),Amount (₹)',
+      ...currentRows.map(r => `${r.date},${r.qty},${r.rate},${r.amount}`),
+    ].join('\n');
+    const blob = new Blob([csv], { type: 'text/csv' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `sales-${activeCommodity}-${activeMonth}-${activeYear}.csv`;
+    a.click();
+    URL.revokeObjectURL(url);
+    toast.success('CSV exported successfully');
+  };
+
+  const handleDownloadPdf = () => {
+    window.print();
+    toast.success('PDF download initiated via browser print');
+  };
+
   return (
     <div className={styles.container}>
-      {/* Header */}
       <div className={styles.header}>
         <div className={styles.headerIconBox}>
           <BarChart2 size={24} />
@@ -114,11 +138,9 @@ export default function ItemWiseSalesPage() {
         <h1 className={styles.title}>Item-wise Sales</h1>
       </div>
 
-      {/* ZONE 1: FILTER CARD */}
       <section className={styles.filterCard}>
         <div className={styles.filterFlex}>
           <div className={styles.filterControls}>
-            {/* SELECT COMMODITY */}
             <div className={styles.filterGroup}>
               <label className={styles.filterLabel}>SELECT COMMODITY</label>
               <select 
@@ -128,22 +150,12 @@ export default function ItemWiseSalesPage() {
               >
                 <option value="">Select item or combine group...</option>
                 <option value="wheat">Wheat</option>
-                <option value="rice">Rice (AAY)</option>
+                <option value="rice">Rice</option>
                 <option value="sugar">Sugar</option>
                 <option value="kerosene">Kerosene</option>
               </select>
             </div>
 
-            {/* VIEW MODE */}
-            <div className={styles.filterGroup}>
-              <label className={styles.filterLabel}>VIEW MODE</label>
-              <div className={styles.viewModeBox}>
-                <CalendarDays size={18} />
-                <span>Whole Month</span>
-              </div>
-            </div>
-
-            {/* MONTH */}
             <div className={styles.filterGroup}>
               <label className={styles.filterLabel}>MONTH</label>
               <select 
@@ -153,10 +165,11 @@ export default function ItemWiseSalesPage() {
               >
                 <option value="June">June</option>
                 <option value="July">July</option>
+                <option value="August">August</option>
+                <option value="May">May</option>
               </select>
             </div>
 
-            {/* YEAR */}
             <div className={styles.filterGroup}>
               <label className={styles.filterLabel}>YEAR</label>
               <select 
@@ -165,11 +178,10 @@ export default function ItemWiseSalesPage() {
                 onChange={(e) => setSelectedYear(e.target.value)}
               >
                 <option value="2026">2026</option>
-                <option value="2027">2027</option>
+                <option value="2025">2025</option>
               </select>
             </div>
 
-            {/* Buttons */}
             <div className={styles.btnGroup}>
               <button 
                 className={styles.primaryBtn} 
@@ -191,45 +203,21 @@ export default function ItemWiseSalesPage() {
               </button>
             </div>
           </div>
-
-          <div>
-            <button 
-              className={styles.accentBtn} 
-              onClick={() => triggerPrintNotification('bulk')}
-            >
-              <Copy size={18} />
-              <span>Print 4 Combine Groups at Once</span>
-            </button>
-          </div>
         </div>
       </section>
 
-      {/* ZONE 2: CONTENT */}
       <div>
         {!showReport ? (
-          /* EMPTY STATE CARD */
           <div className={styles.emptyCard}>
             <div className={styles.emptyIconContainer}>
               <Info size={36} />
             </div>
             <h3 className={styles.emptyTitle}>No Item Selected</h3>
             <p className={styles.emptyDesc}>
-              Please use the selectors above to choose a specific commodity or a combine group to view the detailed sales breakdown.
+              Please use the selectors above to choose a commodity to view the detailed sales breakdown.
             </p>
-            <div className={styles.infoSteps}>
-              <span className={styles.infoStep}>
-                <Info size={16} /> Select Month
-              </span>
-              <span className={styles.infoStep}>
-                <Info size={16} /> Choose Item
-              </span>
-              <span className={styles.infoStep}>
-                <Info size={16} /> Click View Report
-              </span>
-            </div>
           </div>
         ) : (
-          /* LOADED REPORT STATE */
           <div className={styles.reportCard}>
             {isLoading ? (
               <div className={styles.emptyCard} style={{ border: 'none' }}>
@@ -257,7 +245,6 @@ export default function ItemWiseSalesPage() {
               </div>
             ) : (
               <>
-                {/* Report Header */}
                 <div className={styles.reportHeader}>
                   <div>
                     <h2 className={styles.reportTitle}>{itemLabels[activeCommodity]} — Item-wise Sales Report</h2>
@@ -269,7 +256,6 @@ export default function ItemWiseSalesPage() {
                   </div>
                 </div>
 
-                {/* Table */}
                 <div className={styles.tableWrapper}>
                   <table className={styles.table}>
                     <thead>
@@ -305,18 +291,17 @@ export default function ItemWiseSalesPage() {
                   </table>
                 </div>
 
-                {/* Report Footer */}
                 <div className={styles.reportFooter}>
                   <div className={styles.syncStatus}>
                     <span className={styles.syncDot}></span>
                     <span className={styles.syncText}>Data synced with central server</span>
                   </div>
                   <div className={styles.actionLinks}>
-                    <button className={styles.actionLink} onClick={() => alert('CSV Export triggered')}>
+                    <button className={styles.actionLink} onClick={handleExportCsv}>
                       <Download size={18} />
                       <span>Export CSV</span>
                     </button>
-                    <button className={styles.actionLink} onClick={() => alert('PDF Download triggered')}>
+                    <button className={styles.actionLink} onClick={handleDownloadPdf}>
                       <FileText size={18} />
                       <span>Download PDF</span>
                     </button>
@@ -328,7 +313,6 @@ export default function ItemWiseSalesPage() {
         )}
       </div>
 
-      {/* Print Overlay Notification */}
       {showOverlay && (
         <div className={styles.overlay}>
           <div className={styles.overlayCard}>
@@ -341,34 +325,5 @@ export default function ItemWiseSalesPage() {
         </div>
       )}
     </div>
-  );
-}
-
-// Simple fallback helper
-function CalendarDays(props: any) {
-  return (
-    <svg
-      {...props}
-      xmlns="http://www.w3.org/2000/svg"
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <rect width="18" height="18" x="3" y="4" rx="2" ry="2" />
-      <line x1="16" x2="16" y1="2" y2="6" />
-      <line x1="8" x2="8" y1="2" y2="6" />
-      <line x1="3" x2="21" y1="10" y2="10" />
-      <path d="M8 14h.01" />
-      <path d="M12 14h.01" />
-      <path d="M16 14h.01" />
-      <path d="M8 18h.01" />
-      <path d="M12 18h.01" />
-      <path d="M16 18h.01" />
-    </svg>
   );
 }

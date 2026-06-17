@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { MonitorSmartphone, FileSpreadsheet, ArrowDown, Upload, ShieldCheck, CheckCircle2, Loader2, AlertCircle } from 'lucide-react';
 import { api, ApiRequestError } from '@/lib/api';
+import toast from 'react-hot-toast';
 import type { Beneficiary } from '@/lib/types';
 import styles from './ManualSale.module.css';
 
@@ -75,11 +76,11 @@ export default function ManualSalePage() {
   const handleProcessAndCreateBills = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!itemName.trim()) {
-      alert('Please specify which item this sale is for.');
+      toast.error('Please specify which item this sale is for.');
       return;
     }
     if (!pasteContent.trim()) {
-      alert('Please paste the table content from the government portal.');
+      toast.error('Please paste the table content from the government portal.');
       return;
     }
 
@@ -88,7 +89,7 @@ export default function ManualSalePage() {
 
     const parsedRows = parsePastedContent(pasteContent);
     if (parsedRows.length === 0) {
-      alert('Could not parse any valid rows from the pasted content. Please check the format (pipe or tab delimited).');
+      toast.error('Could not parse any valid rows from the pasted content. Please check the format (pipe or tab delimited).');
       setIsProcessing(false);
       return;
     }
@@ -169,7 +170,7 @@ export default function ManualSalePage() {
             </div>
             <h2 className={styles.cardTitle}>Paste Directly from Government Portal</h2>
             <p className={styles.cardSub}>
-              You can paste either the old portal format or the new 'Bill Scheme Qty Report' format directly here.
+              You can paste either the old portal format or the new &lsquo;Bill Scheme Qty Report&rsquo; format directly here.
             </p>
           </div>
 

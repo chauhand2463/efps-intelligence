@@ -43,14 +43,11 @@ export interface ApiError {
 
 // --- Auth ---
 export interface LoginResponse {
-  access_token: string;
-  refresh_token: string;
   dealer: DealerDto;
 }
 
 export interface RefreshResponse {
-  access_token: string;
-  refresh_token: string;
+  message: string;
 }
 
 export interface DealerDto {

@@ -12,6 +12,7 @@ function VerifyOtpForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const fpsId = searchParams.get('fps_id') ?? '';
+  const mobile = searchParams.get('mobile') ?? '';
 
   const [otp, setOtp] = useState(['', '', '', '', '', '']);
   const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
@@ -49,13 +50,14 @@ function VerifyOtpForm() {
     }
     setLoading(true);
     try {
-      const result = await api.post<{ message: string; verification_token: string }>(
+      const result = await api.post<{ message: string; token: string }>(
         '/auth/forgot-password/verify',
         { fps_id: fpsId, otp: code },
         { skipAuth: true }
       );
       toast.success(result.message);
-      router.push(`/set-password?fps_id=${encodeURIComponent(fpsId)}&token=${encodeURIComponent(result.verification_token)}`);
+      sessionStorage.setItem('reset_token', result.token);
+      router.push(`/set-password?fps_id=${encodeURIComponent(fpsId)}`);
     } catch (err) {
       if (err instanceof ApiRequestError) toast.error(err.message);
       else toast.error('Verification failed. Please try again.');
@@ -68,7 +70,8 @@ function VerifyOtpForm() {
     if (cooldown > 0) return;
     setCooldown(45);
     try {
-      await api.post('/auth/forgot-password/request', { fps_id: fpsId, mobile: '' }, { skipAuth: true });
+      if (!mobile) throw new Error('Mobile number not available');
+      await api.post('/auth/forgot-password/request', { fps_id: fpsId, mobile }, { skipAuth: true });
       toast.success('OTP resent');
     } catch {
       toast.error('Failed to resend OTP');

@@ -4,6 +4,7 @@ import { hashPassword } from '../../shared/utils/hash.js';
 import { encryptMany } from '../../shared/utils/encrypt.js';
 import { AppError } from '../../shared/errors/AppError.js';
 import { ERROR_CODES } from '../../config/constants.js';
+import { enqueueEfpsSync } from '../../jobs/sync/efps-sync.worker.js';
 import type { RegisterDealerInput, UpdateDealerInput } from './dealer.schema.js';
 import type { Dealer } from '../../shared/types/models.js';
 
@@ -65,6 +66,14 @@ export class DealerService {
          VALUES ($1, TRUE, NOW() + INTERVAL '1 hour')`,
         [dealer.id]
       );
+
+      enqueueEfpsSync({
+        dealerId: dealer.id,
+        fpsId: dealer.fps_id,
+        triggeredBy: 'registration',
+      }).catch((err) => {
+        console.error(`[DealerService] Failed to enqueue initial sync for ${dealer.id}:`, err);
+      });
     }
 
     return dealer;

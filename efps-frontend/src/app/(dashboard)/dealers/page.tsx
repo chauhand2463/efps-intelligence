@@ -1,7 +1,7 @@
 'use client';
 import { useState, useMemo, useEffect } from 'react';
 import Link from 'next/link';
-import { Lock, Search, ChevronLeft, ChevronRight, User } from 'lucide-react';
+import { Lock, ChevronLeft, ChevronRight, User } from 'lucide-react';
 import toast from 'react-hot-toast';
 import styles from './Dealers.module.css';
 import { api, ApiRequestError } from '@/lib/api';
@@ -10,24 +10,20 @@ import type { DealerDto } from '@/lib/types';
 interface Dealer {
     no: number;
     fpsCode: string;
-    licenseNumber: string;
     dealerName: string;
     areaId: string;
     shopAddress: string;
     mainVillage: string;
-    linkedShops: string;
 }
 
 function toDealer(d: DealerDto, idx: number): Dealer {
     return {
         no: idx + 1,
         fpsCode: d.fps_id,
-        licenseNumber: '',
         dealerName: d.full_name,
         areaId: d.area_id ?? '',
         shopAddress: d.address ?? [d.district, d.taluka, d.village].filter(Boolean).join(', '),
         mainVillage: d.village ?? '',
-        linkedShops: '00',
     };
 }
 
@@ -61,7 +57,6 @@ export default function DealersPage() {
         })();
     }, []);
 
-    // Search filtration
     const filteredDealers = useMemo(() => {
         if (loading) return allDealers;
         if (!searchTerm.trim()) return allDealers;
@@ -69,37 +64,54 @@ export default function DealersPage() {
         return allDealers.filter(d => 
             d.dealerName.toLowerCase().includes(term) ||
             d.fpsCode.includes(term) ||
-            d.licenseNumber.toLowerCase().includes(term) ||
             d.mainVillage.toLowerCase().includes(term) ||
             d.areaId.toLowerCase().includes(term)
         );
     }, [searchTerm, allDealers, loading]);
 
+    const pageSize = parseInt(recordsPerPage, 10);
+    const totalPages = Math.max(1, Math.ceil(filteredDealers.length / pageSize));
+    const safeCurrentPage = Math.min(currentPage, totalPages);
+    const startIndex = (safeCurrentPage - 1) * pageSize;
+    const pageDealers = filteredDealers.slice(startIndex, startIndex + pageSize);
+
+    const getPageNumbers = () => {
+        const pages: (number | '...')[] = [];
+        if (totalPages <= 7) {
+            for (let i = 1; i <= totalPages; i++) pages.push(i);
+        } else {
+            pages.push(1);
+            if (safeCurrentPage > 3) pages.push('...');
+            const start = Math.max(2, safeCurrentPage - 1);
+            const end = Math.min(totalPages - 1, safeCurrentPage + 1);
+            for (let i = start; i <= end; i++) pages.push(i);
+            if (safeCurrentPage < totalPages - 2) pages.push('...');
+            pages.push(totalPages);
+        }
+        return pages;
+    };
+
     return (
         <div className={styles.container}>
-            {/* Portal Banner Header */}
             <header className={styles.portalHeader}>
                 <div className={styles.portalBrand}>
                     <h1>eFPS Master</h1>
                     <span className={styles.portalSubtitle}>Gujarat FPS Portal</span>
                 </div>
                 <div className={styles.portalNav}>
-                    <span className={styles.portalNavLink}>Directives</span>
-                    <span className={styles.portalNavLink}>Notifications</span>
-                    <span className={styles.portalNavLink}>System Status</span>
+                    <Link href="/notifications" className={styles.portalNavLink}>Notifications</Link>
+                    <Link href="/updates" className={styles.portalNavLink}>System Status</Link>
                     <div className={styles.avatar}>
                         <User size={14} />
                     </div>
-                    <button className={styles.quickActionsBtn}>Quick Actions</button>
                 </div>
             </header>
 
-            {/* Inner Dashboard Header */}
             <div className={styles.pageHeaderRow}>
                 <div className={styles.pageTitleSection}>
                     <h2>All Gujarat FPS Dealers List</h2>
                     <span className={styles.dealerPill}>
-                        Dealer: A.D. Chauhan (Morbi-4 — Permanent)
+                        Total: {allDealers.length} dealers
                     </span>
                 </div>
                 <Link href="/dashboard">
@@ -107,23 +119,19 @@ export default function DealersPage() {
                 </Link>
             </div>
 
-            {/* Privacy Alert */}
             <div className={styles.privacyNotice}>
                 <Lock size={16} />
-                <span>Privacy Notice: Dealers' personal information (mobile number, payment details, and other particulars) has been hidden for security reasons.</span>
+                <span>Privacy Notice: Dealers&apos; personal information (mobile number, payment details, and other particulars) has been hidden for security reasons.</span>
             </div>
 
-            {/* Content Table Card */}
             <div className={styles.contentCard}>
-                
-                {/* Search & Records per page row */}
                 <div className={styles.controlsRow}>
                     <div className={styles.recordsCountSelector}>
                         Show 
                         <select 
                             className={styles.selectCompact}
                             value={recordsPerPage}
-                            onChange={(e) => setRecordsPerPage(e.target.value)}
+                            onChange={(e) => { setRecordsPerPage(e.target.value); setCurrentPage(1); }}
                         >
                             <option value="10">10</option>
                             <option value="25">25</option>
@@ -147,45 +155,40 @@ export default function DealersPage() {
                     </div>
                 </div>
 
-                {/* Table */}
                 <div className={styles.tableContainer}>
                     <table className={styles.dealersTable}>
                         <thead>
                             <tr>
                                 <th>No.</th>
                                 <th>FPS Code</th>
-                                <th>License Number</th>
                                 <th>Dealer Name</th>
                                 <th>Area ID</th>
                                 <th>Shop Address</th>
                                 <th>Main Village</th>
-                                <th>Linked Shops</th>
                             </tr>
                         </thead>
                         <tbody>
                             {loading ? (
                                 <tr>
-                                    <td colSpan={8} style={{ textAlign: 'center', padding: '24px' }}>
+                                    <td colSpan={6} style={{ textAlign: 'center', padding: '24px' }}>
                                         Loading dealers...
                                     </td>
                                 </tr>
                             ) : filteredDealers.length === 0 ? (
                                 <tr>
-                                    <td colSpan={8} style={{ textAlign: 'center', padding: '24px' }}>
+                                    <td colSpan={6} style={{ textAlign: 'center', padding: '24px' }}>
                                         No matching dealers found.
                                     </td>
                                 </tr>
                             ) : (
-                                filteredDealers.map((d) => (
+                                pageDealers.map((d) => (
                                     <tr key={d.no}>
                                         <td>{d.no}</td>
                                         <td style={{ fontWeight: 600 }}>{d.fpsCode}</td>
-                                        <td>{d.licenseNumber}</td>
                                         <td>{d.dealerName}</td>
                                         <td>{d.areaId}</td>
                                         <td>{d.shopAddress}</td>
                                         <td>{d.mainVillage}</td>
-                                        <td style={{ textAlign: 'center' }}>{d.linkedShops}</td>
                                     </tr>
                                 ))
                             )}
@@ -193,29 +196,33 @@ export default function DealersPage() {
                     </table>
                 </div>
 
-                {/* Table Footer / Pagination */}
                 <div className={styles.tableFooterRow}>
                     <div>
-                        Showing 1 to {filteredDealers.length} of {searchTerm ? filteredDealers.length : allDealers.length.toLocaleString()} total dealers
+                        Showing {startIndex + 1} to {Math.min(startIndex + pageSize, filteredDealers.length)} of {filteredDealers.length} dealers
                     </div>
 
                     <div className={styles.pagination}>
-                        <button className={styles.pageBtn} disabled>
+                        <button className={styles.pageBtn} disabled={safeCurrentPage <= 1} onClick={() => setCurrentPage(safeCurrentPage - 1)}>
                             <ChevronLeft size={14} style={{ marginRight: '4px' }} /> Previous
                         </button>
-                        <button className={`${styles.pageBtn} ${styles.pageBtnActive}`}>1</button>
-                        <button className={styles.pageBtn}>2</button>
-                        <button className={styles.pageBtn}>3</button>
-                        <button className={styles.pageBtn}>4</button>
-                        <button className={styles.pageBtn}>5</button>
-                        <span className={styles.ellipsis}>...</span>
-                        <button className={styles.pageBtn}>34</button>
-                        <button className={styles.pageBtn}>
+                        {getPageNumbers().map((p, i) =>
+                            p === '...' ? (
+                                <span key={`ellipsis-${i}`} className={styles.ellipsis}>...</span>
+                            ) : (
+                                <button
+                                    key={p}
+                                    className={`${styles.pageBtn} ${p === safeCurrentPage ? styles.pageBtnActive : ''}`}
+                                    onClick={() => setCurrentPage(p as number)}
+                                >
+                                    {p}
+                                </button>
+                            )
+                        )}
+                        <button className={styles.pageBtn} disabled={safeCurrentPage >= totalPages} onClick={() => setCurrentPage(safeCurrentPage + 1)}>
                             Next <ChevronRight size={14} style={{ marginLeft: '4px' }} />
                         </button>
                     </div>
                 </div>
-
             </div>
         </div>
     );

@@ -99,3 +99,18 @@
   background-color: var(--surface-gray);
   color: var(--text-dark);
 }
+
+.backLink {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 14px;
+  color: var(--primary-navy);
+  text-decoration: none;
+  margin-bottom: 20px;
+  padding: 0;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-family: inherit;
+}

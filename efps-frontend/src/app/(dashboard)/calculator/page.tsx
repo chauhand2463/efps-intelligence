@@ -5,6 +5,7 @@ import { Calculator, Printer, AlertTriangle, Save, Info, Loader2 } from 'lucide-
 import { api } from '@/lib/api';
 import type { CommissionRate, Commission } from '@/lib/types';
 import styles from './Calculator.module.css';
+import toast from 'react-hot-toast';
 
 interface ItemCommission {
   id: string;
@@ -52,7 +53,7 @@ export default function CommissionCalculatorPage() {
         }
         setRates(ratesMap);
       } catch {
-        alert('Failed to load commission rates.');
+        toast.error('Failed to load commission rates.');
       } finally {
         setIsLoadingRates(false);
       }
@@ -84,7 +85,7 @@ export default function CommissionCalculatorPage() {
     e.preventDefault();
     const value = parseFloat(rateInputValue);
     if (isNaN(value) || value < 0) {
-      alert('Please enter a valid non-negative rate.');
+      toast.error('Please enter a valid non-negative rate.');
       return;
     }
     try {
@@ -98,9 +99,9 @@ export default function CommissionCalculatorPage() {
         [selectedSettingItem]: value,
       }));
       setRateInputValue('');
-      alert(`Rate for ${selectedSettingItem.toUpperCase()} successfully updated to ₹ ${value.toFixed(2)} per kg.`);
+      toast.success(`Rate for ${selectedSettingItem.toUpperCase()} successfully updated to ₹ ${value.toFixed(2)} per kg.`);
     } catch {
-      alert('Failed to save rate. Please try again.');
+      toast.error('Failed to save rate. Please try again.');
     }
   };
 
@@ -127,7 +128,6 @@ export default function CommissionCalculatorPage() {
 
   return (
     <div className={styles.container}>
-      {/* Header */}
       <div className={styles.header}>
         <div className={styles.headerIconBox}>
           <Calculator size={24} />
@@ -135,7 +135,6 @@ export default function CommissionCalculatorPage() {
         <h1 className={styles.title}>Commission Calculator</h1>
       </div>
 
-      {/* ZONE 1: FILTER BAR */}
       <section className={styles.filterCard}>
         <div className={styles.filterControls}>
           <div className={styles.filterGroup}>
@@ -175,13 +174,10 @@ export default function CommissionCalculatorPage() {
         </div>
       </section>
 
-      {/* ZONE 2: COMMISSION REPORT CARD */}
       <section className={styles.reportCard}>
-        {/* Header */}
         <div className={styles.reportHeader}>
           <div className={styles.reportHeaderLeft}>
             <h2 className={styles.reportTitle}>Monthly Commission Calculator ({activeMonth} {activeYear})</h2>
-            <span className={styles.distributionBadge}>Your Distribution: 0%</span>
           </div>
           <button className={styles.printBtn} onClick={() => window.print()}>
             <Printer size={18} />
@@ -189,27 +185,6 @@ export default function CommissionCalculatorPage() {
           </button>
         </div>
 
-        {/* Meta Info Grid */}
-        <div className={styles.metaGrid}>
-          <div className={styles.metaCol}>
-            <span className={styles.metaLabel}>Shop Owner</span>
-            <span className={styles.metaValue}>M.D. Chauhan</span>
-          </div>
-          <div className={styles.metaCol}>
-            <span className={styles.metaLabel}>Shop Number</span>
-            <span className={styles.metaValue}>3617</span>
-          </div>
-          <div className={styles.metaCol}>
-            <span className={styles.metaLabel}>Area ID</span>
-            <span className={styles.metaValue}>AMD-ZONE-4</span>
-          </div>
-          <div className={styles.metaCol}>
-            <span className={styles.metaLabel}>Full Address</span>
-            <span className={styles.metaValue}>Navrangpura, Ahmedabad, 380009</span>
-          </div>
-        </div>
-
-        {/* COMMISSION TABLE */}
         {isLoadingCalc ? (
           <div style={{ padding: '48px', textAlign: 'center', color: 'var(--text-muted)' }}>
             <Loader2 size={32} className="animate-spin" style={{ margin: '0 auto 16px' }} />
@@ -221,7 +196,7 @@ export default function CommissionCalculatorPage() {
           </div>
         ) : calculatedRows.length === 0 ? (
           <div style={{ padding: '48px', textAlign: 'center', color: 'var(--text-muted)' }}>
-            <p>Click "View Calculation" to see commission data.</p>
+            <p>Click &ldquo;View Calculation&rdquo; to see commission data.</p>
           </div>
         ) : (
           <div className={styles.tableWrapper}>
@@ -265,7 +240,6 @@ export default function CommissionCalculatorPage() {
         )}
       </section>
 
-      {/* ZONE 3: COMMISSION RATE SETTINGS */}
       <section className={styles.settingsCard}>
         <div className={styles.settingsHeader}>
           <Save className="text-amber-500" size={20} />

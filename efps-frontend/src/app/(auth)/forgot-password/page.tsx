@@ -24,7 +24,7 @@ export default function ForgotPasswordPage() {
     try {
       await api.post('/auth/forgot-password/request', { fps_id: fpsId.trim(), mobile: mobile.trim() }, { skipAuth: true });
       toast.success('If the FPS ID and mobile match our records, an OTP will be sent.');
-      router.push(`/verify-otp?fps_id=${encodeURIComponent(fpsId.trim())}`);
+      router.push(`/verify-otp?fps_id=${encodeURIComponent(fpsId.trim())}&mobile=${encodeURIComponent(mobile.trim())}`);
     } catch (err) {
       if (err instanceof ApiRequestError) toast.error(err.message);
       else toast.error('Request failed. Please try again.');

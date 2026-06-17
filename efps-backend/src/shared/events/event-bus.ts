@@ -15,30 +15,16 @@ export const EventTypes = {
 
 export type EventType = (typeof EventTypes)[keyof typeof EventTypes];
 
-type EventHandler<T = unknown> = (payload: T) => Promise<void>;
-
-class EventBus {
-  private handlers = new Map<string, EventHandler[]>();
-
-  on(event: string, handler: EventHandler) {
-    const existing = this.handlers.get(event) ?? [];
-    existing.push(handler);
-    this.handlers.set(event, existing);
-  }
-
+export class EventBus {
   async emit(event: string, payload: unknown) {
     const { enqueueDomainEvent } = await import('../../jobs/domain-events.queue.js');
     await enqueueDomainEvent(event, payload).catch((err) => {
       console.error(`[EventBus] Failed to enqueue ${event}:`, err);
     });
-
-    const handlers = this.handlers.get(event);
-    if (!handlers) return;
-    await Promise.allSettled(handlers.map((h) => h(payload)));
   }
 
   removeAll() {
-    this.handlers.clear();
+    // No-op: handlers are on the worker side
   }
 }
 

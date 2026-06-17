@@ -25,21 +25,9 @@ export async function authRoutes(app: FastifyInstance) {
     },
   }, loginHandler);
 
-  app.post('/auth/logout', {
-    preHandler: [authenticate],
-  }, logoutHandler);
+  app.post('/auth/logout', { preHandler: [authenticate] }, logoutHandler);
 
-  app.post('/auth/refresh', {
-    schema: {
-      body: {
-        type: 'object',
-        required: ['refresh_token'],
-        properties: {
-          refresh_token: { type: 'string' },
-        },
-      },
-    },
-  }, refreshHandler);
+  app.post('/auth/refresh', refreshHandler);
 
   app.post('/auth/forgot-password/request', {
     schema: {
@@ -71,10 +59,10 @@ export async function authRoutes(app: FastifyInstance) {
     schema: {
       body: {
         type: 'object',
-        required: ['fps_id', 'otp', 'new_password'],
+        required: ['fps_id', 'token', 'new_password'],
         properties: {
           fps_id: { type: 'string' },
-          otp: { type: 'string' },
+          token: { type: 'string' },
           new_password: { type: 'string' },
         },
       },

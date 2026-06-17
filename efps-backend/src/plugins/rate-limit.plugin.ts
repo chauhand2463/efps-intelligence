@@ -7,11 +7,12 @@ export async function registerRateLimit(app: FastifyInstance) {
   await app.register(rateLimit, {
     redis: getRedis(),
     global: true,
-    max: 100,
+    max: 500,
     timeWindow: '1 minute',
-    allowList: ['127.0.0.1'],
+    allowList: ['127.0.0.1', '::1', '::ffff:127.0.0.1'],
     keyGenerator: (request) => {
       if (request.url === '/health' || request.url === '/ready') return 'skip';
+      if (request.url?.startsWith('/api/v1/dealers/lookup')) return 'skip';
       return request.ip;
     },
     hook: 'onRequest',

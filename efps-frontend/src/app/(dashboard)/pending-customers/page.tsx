@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import toast from 'react-hot-toast';
-import { ClipboardList, Download, Printer, Info, CheckCircle, TrendingUp, RefreshCcw } from 'lucide-react';
+import { ClipboardList, Printer, Info, CheckCircle, TrendingUp, RefreshCcw, Loader2 } from 'lucide-react';
 import styles from './PendingCustomers.module.css';
 import { api } from '@/lib/api';
 import type { Beneficiary } from '@/lib/types';
@@ -43,7 +43,7 @@ export default function PendingCustomersPage() {
       setPendingData(pending);
       setPortabilityData(beneficiaries);
       setHasSearched(true);
-    } catch (err) {
+    } catch {
       toast.error('Failed to load data');
     } finally {
       setLoading(false);
@@ -85,9 +85,59 @@ export default function PendingCustomersPage() {
   const displayData = activeCategory === 1 ? filteredPending : filteredPortability;
   const showSuccessState = hasSearched && activeCategory === 1 && filteredPending.length === 0 && !loading;
 
+  const handleExportExcel = () => {
+    if (displayData.length === 0) {
+      toast.error('No data to export');
+      return;
+    }
+    const headers = activeCategory === 1
+      ? 'SrNo,Ration Card No,Card Holder Name,Category,Members,Last Received'
+      : 'SrNo,Ration Card No,Card Holder Name,Category,Members,Portability Shop';
+    const csv = [
+      headers,
+      ...displayData.map(c =>
+        `${c.srNo},${c.rationCard},${c.name},${c.category},${c.members},${'lastReceived' in c ? c.lastReceived : (c as { portabilityShop: string }).portabilityShop}`
+      ),
+    ].join('\n');
+    const blob = new Blob([csv], { type: 'text/csv' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `pending-customers-${new Date().toISOString().split('T')[0]}.csv`;
+    a.click();
+    URL.revokeObjectURL(url);
+    toast.success('CSV exported');
+  };
+
+  const handleDownloadSummary = () => {
+    if (portabilityData.length === 0) {
+      toast.error('No summary data available');
+      return;
+    }
+    const total = portabilityData.length;
+    const pending = pendingData.length;
+    const rate = total > 0 ? ((total - pending) / total * 100).toFixed(1) : '100.0';
+    const csv = [
+      `Monthly Summary - ${selectedMonth} ${selectedYear}`,
+      `Total Beneficiaries,${total}`,
+      `Pending Distribution,${pending}`,
+      `Distribution Rate,${rate}%`,
+      ',,',
+      'SrNo,Ration Card No,Card Holder Name',
+      ...pendingData.map((p, i) => `${i + 1},${p.ration_card_no},${p.head_of_family}`),
+    ].join('\n');
+    const blob = new Blob([csv], { type: 'text/csv' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `monthly-summary-${selectedMonth.toLowerCase()}-${selectedYear}.csv`;
+    a.click();
+    URL.revokeObjectURL(url);
+    toast.success('Monthly summary downloaded');
+  };
+
   return (
     <div className={styles.container}>
-      {/* Page Header */}
       <div className={styles.header}>
         <div className={styles.headerIconBox}>
           <ClipboardList size={22} />
@@ -95,36 +145,26 @@ export default function PendingCustomersPage() {
         <h1 className={styles.title}>Pending Customers List</h1>
       </div>
 
-      {/* Detail Report Card */}
       <section className={styles.detailCard}>
-        {/* Card Header */}
         <div className={styles.cardHeader}>
           <div className={styles.cardTitleRow}>
             <ClipboardList size={20} className={styles.cardTitleIcon} />
             <h3 className={styles.cardTitle}>Detail Report: Customers Pending to Receive Ration</h3>
           </div>
           <div className={styles.cardActionBtns}>
-            <button
-              className={styles.exportBtn}
-              onClick={() => alert('Exporting to Excel...')}
-            >
+            <button className={styles.exportBtn} onClick={handleExportExcel}>
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M9 3H5a2 2 0 0 0-2 2v4m6-6h10a2 2 0 0 1 2 2v4M9 3v18m0 0h10a2 2 0 0 0 2-2V9M9 21H5a2 2 0 0 1-2-2V9m0 0h18"/></svg>
               Export Excel
             </button>
-            <button
-              className={styles.printBtn}
-              onClick={() => window.print()}
-            >
+            <button className={styles.printBtn} onClick={() => window.print()}>
               <Printer size={16} />
               Print Report
             </button>
           </div>
         </div>
 
-        {/* Filter Row */}
         <div className={styles.filterBox}>
           <div className={styles.filterGrid}>
-            {/* Month / Year */}
             <div>
               <label className={styles.filterLabel}>Report Month</label>
               <div className={styles.monthYearRow}>
@@ -142,16 +182,12 @@ export default function PendingCustomersPage() {
                 >
                   {YEARS.map(y => <option key={y} value={y}>{y}</option>)}
                 </select>
-                <button
-                  className={styles.viewListBtn}
-                  onClick={() => fetchData()}
-                >
+                <button className={styles.viewListBtn} onClick={() => fetchData()}>
                   View List
                 </button>
               </div>
             </div>
 
-            {/* Segmented Toggle */}
             <div>
               <label className={styles.filterLabel}>Filter Category</label>
               <div className={styles.segmentedToggle}>
@@ -170,7 +206,6 @@ export default function PendingCustomersPage() {
               </div>
             </div>
 
-            {/* Search */}
             <div>
               <label className={styles.filterLabel}>Search Customer</label>
               <div className={styles.searchBoxWrapper}>
@@ -181,15 +216,11 @@ export default function PendingCustomersPage() {
                   value={searchQuery}
                   onChange={e => setSearchQuery(e.target.value)}
                 />
-                <button className={styles.searchBtn} type="button">
-                  Search
-                </button>
               </div>
             </div>
           </div>
         </div>
 
-        {/* Info Note */}
         <div className={styles.infoNote}>
           <Info size={18} className={styles.infoNoteIcon} />
           <p className={styles.infoNoteText}>
@@ -197,9 +228,9 @@ export default function PendingCustomersPage() {
           </p>
         </div>
 
-        {/* Loading State */}
         {loading ? (
           <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', padding: '48px 0', color: 'var(--text-muted)', fontSize: '14px' }}>
+            <Loader2 className="spin" size={24} style={{ marginRight: '8px' }} />
             Loading customers...
           </div>
         ) : showSuccessState ? (
@@ -213,10 +244,7 @@ export default function PendingCustomersPage() {
                 All your customers have received their grain for <strong>{selectedMonth}-{selectedYear}</strong>. None are pending!
               </p>
               <div className={styles.successActionRow}>
-                <button
-                  className={styles.downloadSummaryBtn}
-                  onClick={() => alert('Downloading Monthly Summary...')}
-                >
+                <button className={styles.downloadSummaryBtn} onClick={handleDownloadSummary}>
                   Download Monthly Summary
                 </button>
               </div>
@@ -224,13 +252,12 @@ export default function PendingCustomersPage() {
             <div className={styles.auditIllustration}>
               <span className={styles.auditBgIcon}>✓</span>
               <div className={styles.auditTextBlock}>
-                <p className={styles.auditLabel}>Efficiency Audit v4.2</p>
-                <p className={styles.auditDesc}>100% Distribution Compliance achieved for the current cycle.</p>
+                <p className={styles.auditLabel}>Efficiency Audit</p>
+                <p className={styles.auditDesc}>Distribution Compliance achieved for the current cycle.</p>
               </div>
             </div>
           </>
         ) : (
-          /* Pending Table */
           hasSearched && (
             <div className={styles.tableWrapper}>
               <table className={styles.table}>
@@ -275,14 +302,13 @@ export default function PendingCustomersPage() {
         )}
       </section>
 
-      {/* Stats Snapshot */}
       <div className={styles.statsRow}>
         <div className={styles.statCard}>
           <span className={styles.statLabel}>Total Beneficiaries</span>
           <p className={styles.statValue}>{portabilityData.length.toLocaleString()}</p>
           <div className={`${styles.statTrend} ${styles.statTrendGreen}`}>
             <TrendingUp size={14} />
-            2.4% vs last month
+            Active records
           </div>
         </div>
         <div className={styles.statCard}>
@@ -298,19 +324,18 @@ export default function PendingCustomersPage() {
           </div>
         </div>
         <div className={styles.statCard}>
-          <span className={styles.statLabel}>Portability In</span>
-          <p className={styles.statValue}>42</p>
+          <span className={styles.statLabel}>Pending</span>
+          <p className={styles.statValue}>{pendingData.length}</p>
           <div className={`${styles.statTrend} ${styles.statTrendNeutral}`}>
             <RefreshCcw size={14} />
-            External customers
+            Awaiting distribution
           </div>
         </div>
         <div className={styles.statCard}>
-          <span className={styles.statLabel}>Stock Balance (Wheat)</span>
-          <p className={styles.statValue}>45.2 <span className={styles.statValueUnit}>QT</span></p>
+          <span className={styles.statLabel}>Active Beneficiaries</span>
+          <p className={styles.statValue}>{portabilityData.filter(b => b.is_active).length}</p>
           <div className={`${styles.statTrend} ${styles.statTrendRed}`}>
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg>
-            Low Stock Alert
+            Current cycle
           </div>
         </div>
       </div>

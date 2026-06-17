@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import toast from 'react-hot-toast';
-import { Users, Info, ShieldCheck, Download, Search, Trash2, Save, RefreshCw, X, UserMinus } from 'lucide-react';
+import { Users, Download, Search, Trash2, Save, RefreshCw, X, UserMinus } from 'lucide-react';
 import styles from './Customers.module.css';
 import { useBeneficiaries } from '@/lib/api-hooks';
 import type { Beneficiary, CreateBeneficiaryInput } from '@/lib/types';
@@ -14,22 +14,17 @@ export default function CustomerRegisterPage() {
   const [searchedData, setSearchedData] = useState<Beneficiary[] | null>(null);
   const [searchLoading, setSearchLoading] = useState(false);
 
-  // Smart filters
   const [filterCategory, setFilterCategory] = useState('All Categories');
-  const [filterZone, setFilterZone] = useState('All Zones');
   const [filterStatus, setFilterStatus] = useState('All Records');
 
-  // Modal control
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [newCustomerName, setNewCustomerName] = useState('');
   const [newCustomerCard, setNewCustomerCard] = useState('');
-  const [newCustomerCategory, setNewCustomerCategory] = useState('BPL (Below Poverty Line)');
+  const [newCustomerCategory, setNewCustomerCategory] = useState('BPL');
   const [newCustomerMembers, setNewCustomerMembers] = useState(4);
   const [newCustomerMobile, setNewCustomerMobile] = useState('');
-  const [newCustomerAddress, setNewCustomerAddress] = useState('');
   const [saving, setSaving] = useState(false);
 
-  // Selection state
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
 
   const handleSearch = async () => {
@@ -51,17 +46,15 @@ export default function CustomerRegisterPage() {
   const handleAddCustomer = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!newCustomerName || !newCustomerCard) {
-      alert('Please fill in Name and Ration Card Number.');
+      toast.error('Please fill in Name and Ration Card Number.');
       return;
     }
-
     setSaving(true);
     try {
-      const catKey = newCustomerCategory.split(' ')[0] as CreateBeneficiaryInput['category'];
       await beneficiaries.create({
         head_of_family: newCustomerName,
         ration_card_no: newCustomerCard,
-        category: catKey,
+        category: newCustomerCategory as CreateBeneficiaryInput['category'],
         member_count: newCustomerMembers,
         mobile: newCustomerMobile || null,
       });
@@ -69,10 +62,10 @@ export default function CustomerRegisterPage() {
       setIsModalOpen(false);
       setNewCustomerName('');
       setNewCustomerCard('');
-      setNewCustomerCategory('BPL (Below Poverty Line)');
+      setNewCustomerCategory('BPL');
       setNewCustomerMembers(4);
       setNewCustomerMobile('');
-      setNewCustomerAddress('');
+      toast.success('Beneficiary created successfully');
     } catch {
       toast.error('Failed to create beneficiary');
     } finally {
@@ -82,7 +75,7 @@ export default function CustomerRegisterPage() {
 
   const handleDeleteSelected = async () => {
     if (selectedIds.length === 0) {
-      alert('No customers selected.');
+      toast.error('No customers selected.');
       return;
     }
     if (confirm(`Are you sure you want to delete ${selectedIds.length} customer(s)?`)) {
@@ -110,7 +103,26 @@ export default function CustomerRegisterPage() {
   };
 
   const handleSaveAllMobiles = () => {
-    alert('All localized customer mobile numbers synced to Government Main Registry successfully.');
+    toast.error('No API endpoint available for bulk mobile sync. Contact admin.');
+  };
+
+  const handleExportExcel = () => {
+    if (filteredCustomers.length === 0) {
+      toast.error('No data to export');
+      return;
+    }
+    const csv = [
+      'SrNo,Card Holder Name,Ration Card No,Category,Members,Mobile',
+      ...filteredCustomers.map((c, i) => `${i + 1},${c.head_of_family},${c.ration_card_no},${c.category ?? ''},${c.member_count},${c.mobile ?? ''}`),
+    ].join('\n');
+    const blob = new Blob([csv], { type: 'text/csv' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `customers-${new Date().toISOString().split('T')[0]}.csv`;
+    a.click();
+    URL.revokeObjectURL(url);
+    toast.success('CSV exported');
   };
 
   const toggleSelectAll = () => {
@@ -131,7 +143,7 @@ export default function CustomerRegisterPage() {
   const isLoading = listLoading || searchLoading;
 
   const filteredCustomers = activeData.filter(c => {
-    const matchesCategory = filterCategory === 'All Categories' || c.category === filterCategory.split(' ')[0];
+    const matchesCategory = filterCategory === 'All Categories' || c.category === filterCategory;
     let matchesStatus = true;
     if (filterStatus === 'Verified Only') {
       matchesStatus = c.mobile !== null && c.mobile !== '';
@@ -159,7 +171,6 @@ export default function CustomerRegisterPage() {
 
   return (
     <div className={styles.container}>
-      {/* Header */}
       <div className={styles.header}>
         <div className={styles.headerIconBox}>
           <Users size={24} />
@@ -167,61 +178,6 @@ export default function CustomerRegisterPage() {
         <h1 className={styles.title}>Customer Register</h1>
       </div>
 
-      {/* ZONE 1: Collapsible Info Banners */}
-      <section className={styles.banners}>
-        <div className={styles.bannerCard} style={{ borderLeft: '4px solid var(--accent-amber)' }}>
-          <div className={styles.bannerContent}>
-            <Info className="text-amber-500" size={20} />
-            <div className={styles.bannerInfo}>
-              <p className={styles.bannerTitle}>Annual Record Renewal Pending</p>
-              <p className={styles.bannerSub}>Update all customer mobile numbers by end of the current quarter.</p>
-            </div>
-          </div>
-          <button
-            className={styles.bannerBtn}
-            style={{ backgroundColor: 'var(--accent-amber)' }}
-            onClick={() => alert('Renewal form loaded')}
-          >
-            Click here
-          </button>
-        </div>
-
-        <div className={styles.bannerCard} style={{ borderLeft: '4px solid var(--accent-purple)' }}>
-          <div className={styles.bannerContent}>
-            <ShieldCheck className="text-purple-500" size={20} />
-            <div className={styles.bannerInfo}>
-              <p className={styles.bannerTitle}>New KYC Guidelines Issued</p>
-              <p className={styles.bannerSub}>Review the latest directive for Ration Card category verification.</p>
-            </div>
-          </div>
-          <button
-            className={styles.bannerBtn}
-            style={{ backgroundColor: 'var(--accent-purple)' }}
-            onClick={() => alert('KYC directive loaded')}
-          >
-            Click here
-          </button>
-        </div>
-
-        <div className={styles.bannerCard} style={{ borderLeft: '4px solid var(--accent-blue)' }}>
-          <div className={styles.bannerContent}>
-            <Download className="text-blue-500" size={20} />
-            <div className={styles.bannerInfo}>
-              <p className={styles.bannerTitle}>System Database Backup Ready</p>
-              <p className={styles.bannerSub}>Manual sync required for localized customer records from Warehouse Log 4.</p>
-            </div>
-          </div>
-          <button
-            className={styles.bannerBtn}
-            style={{ backgroundColor: 'var(--accent-blue)' }}
-            onClick={() => alert('Backup download triggered')}
-          >
-            Click here
-          </button>
-        </div>
-      </section>
-
-      {/* ZONE 2: Customer List Controls */}
       <section className={styles.searchSection}>
         <div className={styles.searchHeader}>
           <div className={styles.searchControls}>
@@ -229,7 +185,7 @@ export default function CustomerRegisterPage() {
               <Search size={18} />
               <span>Search Parameters</span>
             </h3>
-            <button className={styles.exportBtn} onClick={() => alert('Excel Exported')}>
+            <button className={styles.exportBtn} onClick={handleExportExcel}>
               <Download size={14} />
               <span>EXPORT EXCEL</span>
             </button>
@@ -250,7 +206,6 @@ export default function CustomerRegisterPage() {
           </div>
         </div>
 
-        {/* Smart Filters Sub-card */}
         <div className={styles.smartFiltersWrapper}>
           <p className={styles.smartFiltersTitle}>Smart Filters</p>
           <div className={styles.filtersGrid}>
@@ -262,22 +217,10 @@ export default function CustomerRegisterPage() {
                 onChange={(e) => setFilterCategory(e.target.value)}
               >
                 <option value="All Categories">All Categories</option>
-                <option value="BPL (Below Poverty Line)">BPL (Below Poverty Line)</option>
-                <option value="APL (Above Poverty Line)">APL (Above Poverty Line)</option>
-                <option value="AAY (Antyodaya Anna Yojana)">AAY (Antyodaya Anna Yojana)</option>
-              </select>
-            </div>
-
-            <div className={styles.filterCol}>
-              <label className={styles.filterLabel}>WARD/ZONE</label>
-              <select
-                className={styles.filterSelect}
-                value={filterZone}
-                onChange={(e) => setFilterZone(e.target.value)}
-              >
-                <option value="All Zones">All Zones</option>
-                <option value="North Sector A">North Sector A</option>
-                <option value="South Sector B">South Sector B</option>
+                <option value="BPL">BPL</option>
+                <option value="APL">APL</option>
+                <option value="AAY">AAY</option>
+                <option value="PHH">PHH</option>
               </select>
             </div>
 
@@ -299,7 +242,6 @@ export default function CustomerRegisterPage() {
                 className={styles.clearFiltersBtn}
                 onClick={() => {
                   setFilterCategory('All Categories');
-                  setFilterZone('All Zones');
                   setFilterStatus('All Records');
                   setSearchQuery('');
                   setSearchedData(null);
@@ -312,7 +254,6 @@ export default function CustomerRegisterPage() {
         </div>
       </section>
 
-      {/* ZONE 3: Action Row */}
       <section className={styles.actionsRow}>
         <div className={styles.actionBtnGroup}>
           <button className={styles.deleteBtn} onClick={handleDeleteSelected}>
@@ -329,12 +270,11 @@ export default function CustomerRegisterPage() {
         </div>
       </section>
 
-      {/* ZONE 4: Customer Table Card */}
       <section className={styles.tableCard}>
         <div className={styles.tableHeader}>
           <h3 className={styles.tableTitle}>CUSTOMER REGISTRY DATABASE</h3>
           <div className={styles.tableSyncInfo}>
-            <span className={styles.syncLabel}>Last Sync: Today 10:45 AM</span>
+            <span className={styles.syncLabel}>Synced with server</span>
             <span className={styles.syncIconBtn} onClick={() => reload()} title="Sync Now">
               <RefreshCw size={14} />
             </span>
@@ -360,14 +300,13 @@ export default function CustomerRegisterPage() {
                 <th className={styles.th}>Category</th>
                 <th className={styles.th}>Member</th>
                 <th className={styles.th}>Mobile</th>
-                <th className={styles.th}>Address</th>
                 <th className={`${styles.th} ${styles.thRight}`}>Action</th>
               </tr>
             </thead>
             <tbody>
               {filteredCustomers.length === 0 ? (
                 <tr>
-                  <td className={styles.emptyTd} colSpan={9}>
+                  <td className={styles.emptyTd} colSpan={8}>
                     <div className={styles.emptyStateWrapper}>
                       <div className={styles.emptyIconBox}>
                         <UserMinus size={36} />
@@ -399,7 +338,6 @@ export default function CustomerRegisterPage() {
                     <td className={styles.td}>{cust.category ?? '—'}</td>
                     <td className={styles.td}>{cust.member_count}</td>
                     <td className={styles.td}>{cust.mobile ?? '—'}</td>
-                    <td className={styles.td}>—</td>
                     <td className={`${styles.td} ${styles.tdRight}`}>
                       <button
                         style={{ background: 'none', border: 'none', color: 'var(--offline-red)', cursor: 'pointer', padding: 0, fontWeight: 600 }}
@@ -414,22 +352,8 @@ export default function CustomerRegisterPage() {
             </tbody>
           </table>
         </div>
-
-        {/* Footer Pagination */}
-        <div className={styles.paginationRow}>
-          <div className={styles.paginationLabel}>
-            PAGE {filteredCustomers.length > 0 ? 1 : 0} OF {filteredCustomers.length > 0 ? 1 : 0}
-          </div>
-          <div className={styles.paginationBtns}>
-            <button className={`${styles.pagerBtn} ${styles.pagerBtnDisabled}`} disabled><span className="material-symbols-outlined text-sm">first_page</span></button>
-            <button className={`${styles.pagerBtn} ${styles.pagerBtnDisabled}`} disabled><span className="material-symbols-outlined text-sm">chevron_left</span></button>
-            <button className={`${styles.pagerBtn} ${styles.pagerBtnDisabled}`} disabled><span className="material-symbols-outlined text-sm">chevron_right</span></button>
-            <button className={`${styles.pagerBtn} ${styles.pagerBtnDisabled}`} disabled><span className="material-symbols-outlined text-sm">last_page</span></button>
-          </div>
-        </div>
       </section>
 
-      {/* ADD CUSTOMER MODAL */}
       {isModalOpen && (
         <div className={styles.modalOverlay}>
           <div className={styles.modalCard}>
@@ -472,9 +396,10 @@ export default function CustomerRegisterPage() {
                   value={newCustomerCategory}
                   onChange={(e) => setNewCustomerCategory(e.target.value)}
                 >
-                  <option value="BPL (Below Poverty Line)">BPL (Below Poverty Line)</option>
-                  <option value="APL (Above Poverty Line)">APL (Above Poverty Line)</option>
-                  <option value="AAY (Antyodaya Anna Yojana)">AAY (Antyodaya Anna Yojana)</option>
+                  <option value="BPL">BPL</option>
+                  <option value="APL">APL</option>
+                  <option value="AAY">AAY</option>
+                  <option value="PHH">PHH</option>
                 </select>
               </div>
 
@@ -499,17 +424,6 @@ export default function CustomerRegisterPage() {
                   placeholder="10-digit mobile number (optional)"
                   value={newCustomerMobile}
                   onChange={(e) => setNewCustomerMobile(e.target.value)}
-                />
-              </div>
-
-              <div className={styles.inputGroup}>
-                <label className={styles.inputLabel}>Address</label>
-                <input
-                  className={styles.textInputModal}
-                  type="text"
-                  placeholder="Ward/Sector address details"
-                  value={newCustomerAddress}
-                  onChange={(e) => setNewCustomerAddress(e.target.value)}
                 />
               </div>
 

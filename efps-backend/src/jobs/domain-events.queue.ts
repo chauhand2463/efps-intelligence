@@ -220,7 +220,12 @@ const worker = new Worker(
         break;
       }
 
-      case EventTypes.ALLOCATION_UPDATED:
+      case EventTypes.ALLOCATION_UPDATED: {
+        const p = data as StockPayload;
+        const redis = getBullRedis();
+        await redis.del(`dashboard:${p.dealerId}`).catch(() => {});
+        break;
+      }
       case EventTypes.COMMISSION_CALCULATED:
       case EventTypes.DASHBOARD_REFRESH:
       case EventTypes.GOVT_SYNC_BATCH:

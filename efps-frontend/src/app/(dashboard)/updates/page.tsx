@@ -1,6 +1,7 @@
 'use client';
 
 import { RefreshCcw, Download, ExternalLink, HelpCircle, HeadphonesIcon, Info, ChevronRight, Puzzle, Terminal } from 'lucide-react';
+import toast from 'react-hot-toast';
 import styles from './Updates.module.css';
 
 interface DownloadItem {
@@ -48,10 +49,34 @@ function FileIcon({ type }: { type: 'extension' | 'driver' | 'terminal' }) {
   return <Download size={20} className={styles.fileIcon} />;
 }
 
+function getDownloadUrl(item: DownloadItem): string {
+  switch (item.name) {
+    case 'Google Chrome Extension — Direct Add Link':
+      return 'https://chromewebstore.google.com';
+    case 'Mozilla Firefox Extension — Direct Add Link':
+      return 'https://addons.mozilla.org';
+    case 'Mantra Driver 2.1.0.0':
+      return 'https://www.mantratec.com/downloads';
+    case 'Mantra RD Service 1.4.1':
+      return 'https://www.mantratec.com/downloads';
+    default:
+      return '';
+  }
+}
+
 export default function UpdatesPage() {
+  const handleAction = (item: DownloadItem) => {
+    const url = getDownloadUrl(item);
+    if (url) {
+      window.open(url, '_blank', 'noopener,noreferrer');
+      toast.success(`Opening ${item.name}...`);
+    } else {
+      toast.success(`Visit the eFPS support portal to download: ${item.name}`);
+    }
+  };
+
   return (
     <div className={styles.container}>
-      {/* Page Header */}
       <div className={styles.header}>
         <div className={styles.headerIconBox}>
           <RefreshCcw size={22} />
@@ -59,7 +84,6 @@ export default function UpdatesPage() {
         <h1 className={styles.title}>eFPS Updates &amp; Download Center</h1>
       </div>
 
-      {/* System Alert Banner */}
       <div className={styles.systemAlert}>
         <Info size={20} className={styles.alertIcon} />
         <div className={styles.alertTextBlock}>
@@ -70,7 +94,6 @@ export default function UpdatesPage() {
         </div>
       </div>
 
-      {/* Download Center Card */}
       <section className={styles.downloadCard}>
         <header className={styles.downloadCardHeader}>
           <Download size={20} className={styles.downloadCardHeaderIcon} />
@@ -105,7 +128,7 @@ export default function UpdatesPage() {
                     {item.type === 'link' ? (
                       <button
                         className={styles.openLinkBtn}
-                        onClick={() => alert(`Opening: ${item.name}`)}
+                        onClick={() => handleAction(item)}
                       >
                         <ExternalLink size={14} />
                         Open Link
@@ -113,7 +136,7 @@ export default function UpdatesPage() {
                     ) : (
                       <button
                         className={styles.downloadBtn}
-                        onClick={() => alert(`Downloading: ${item.name}`)}
+                        onClick={() => handleAction(item)}
                       >
                         <Download size={14} />
                         Download
@@ -127,9 +150,7 @@ export default function UpdatesPage() {
         </div>
       </section>
 
-      {/* Info Cards Row */}
       <div className={styles.infoCardsRow}>
-        {/* Installation Guide */}
         <div className={styles.infoCard}>
           <div className={styles.infoCardTop}>
             <div className={`${styles.infoCardIconBox} ${styles.infoCardIconBoxBlue}`}>
@@ -143,15 +164,11 @@ export default function UpdatesPage() {
           <p className={styles.infoCardBody}>
             Ensure you have administrative privileges on your terminal before installing Mantra RD services or driver updates.
           </p>
-          <button
-            className={styles.infoCardLink}
-            onClick={() => alert('Opening installation guide...')}
-          >
+          <button className={styles.infoCardLink} onClick={() => window.open('https://efps.gujarat.gov.in', '_blank', 'noopener,noreferrer')}>
             Read Guide <ChevronRight size={14} />
           </button>
         </div>
 
-        {/* Technical Support */}
         <div className={styles.infoCard}>
           <div className={styles.infoCardTop}>
             <div className={`${styles.infoCardIconBox} ${styles.infoCardIconBoxAmber}`}>
@@ -165,10 +182,7 @@ export default function UpdatesPage() {
           <p className={styles.infoCardBody}>
             Having trouble with a link or driver? Contact our 24/7 technical desk for remote assistance.
           </p>
-          <button
-            className={`${styles.infoCardLink} ${styles.infoCardLinkAmber}`}
-            onClick={() => alert('Connecting to support...')}
-          >
+          <button className={`${styles.infoCardLink} ${styles.infoCardLinkAmber}`} onClick={() => window.location.href = 'tel:9638104447'}>
             Contact Support <ChevronRight size={14} />
           </button>
         </div>

@@ -15,44 +15,38 @@ export class DashboardService {
       // Cache unavailable — fall through to DB query
     }
 
+    const firstOfMonth = new Date();
+    firstOfMonth.setDate(1);
+    const monthStr = firstOfMonth.toISOString().split('T')[0];
+
     const sql = `
       SELECT
-        (SELECT COALESCE(SUM(allocated_kg), 0) FROM stock_allocations WHERE dealer_id = $1) AS total_allocated,
-        (SELECT COALESCE(SUM(lifted_kg), 0) FROM stock_allocations WHERE dealer_id = $1) AS total_sold,
-        (SELECT COALESCE(SUM(quantity_kg), 0) FROM lifting_records WHERE dealer_id = $1 AND DATE_TRUNC('month', created_at) = DATE_TRUNC('month', NOW())) AS total_lifted_this_month,
-        (SELECT COUNT(*)::int FROM transactions WHERE dealer_id = $1) AS total_transactions,
-        (SELECT COALESCE(SUM(total_amount), 0) FROM transactions WHERE dealer_id = $1) AS total_revenue,
-        (SELECT COUNT(*)::int FROM beneficiaries WHERE dealer_id = $1) AS total_beneficiaries,
-        (SELECT COALESCE(SUM(net_commission), 0) FROM commissions WHERE dealer_id = $1 AND status = 'settled') AS total_commission,
-        (SELECT COALESCE(SUM(amount), 0) FROM income_entries WHERE dealer_id = $1) AS total_income,
-        (SELECT COALESCE(SUM(amount), 0) FROM expense_entries WHERE dealer_id = $1) AS total_expenses,
-        (SELECT COUNT(*)::int FROM dealer_ads WHERE dealer_id = $1) AS total_ads,
-        (SELECT COUNT(*)::int FROM social_audit_meetings WHERE dealer_id = $1) AS total_audits
+        (SELECT COUNT(*)::int FROM transactions WHERE transaction_date = CURRENT_DATE AND dealer_id = $1) AS today_transactions,
+        (SELECT COALESCE(SUM(quantity_kg), 0) FROM transactions WHERE transaction_date = CURRENT_DATE AND dealer_id = $1) AS today_quantity,
+        (SELECT COUNT(*)::int FROM transactions WHERE month = $2 AND dealer_id = $1) AS month_transactions,
+        (SELECT COALESCE(SUM(quantity_kg), 0) FROM transactions WHERE month = $2 AND dealer_id = $1) AS month_quantity,
+        (SELECT COUNT(*)::int FROM beneficiaries WHERE dealer_id = $1 AND is_active = TRUE) AS total_beneficiaries,
+        (SELECT COALESCE(SUM(allocated_kg), 0) FROM stock_allocations WHERE dealer_id = $1) AS allocated_kg,
+        (SELECT COALESCE(SUM(lifted_kg), 0) FROM stock_allocations WHERE dealer_id = $1) AS lifted_kg,
+        (SELECT COUNT(*)::int FROM beneficiaries b WHERE b.dealer_id = $1 AND b.is_active = TRUE AND NOT EXISTS (SELECT 1 FROM transactions t WHERE t.beneficiary_id = b.id AND t.month = $2)) AS pending_deliveries,
+        (SELECT COUNT(*)::int FROM stock_allocations WHERE dealer_id = $1 AND (allocated_kg - lifted_kg) < 50) AS low_stock_alerts,
+        (SELECT COALESCE(json_agg(json_build_object('commodity', commodity, 'quantity', quantity_kg, 'amount', total_amount)), '[]'::json) FROM (SELECT commodity, SUM(quantity_kg) AS quantity_kg, SUM(total_amount) AS total_amount FROM transactions WHERE dealer_id = $1 AND month = $2 GROUP BY commodity) sub) AS monthly_sales
     `;
 
-    const result = await query(sql, [dealerId]);
+    const result = await query(sql, [dealerId, monthStr]);
     const row = result.rows[0]!;
 
     const data = {
-      stock: {
-        total_allocated: Number(row.total_allocated),
-        total_sold: Number(row.total_sold),
-        pending_stock: Number(row.total_allocated) - Number(row.total_sold),
-      },
-      lifting_this_month: Number(row.total_lifted_this_month),
-      transactions: {
-        count: row.total_transactions,
-        revenue: Number(row.total_revenue),
-      },
-      beneficiaries: row.total_beneficiaries,
-      commission: Number(row.total_commission),
-      finance: {
-        income: Number(row.total_income),
-        expenses: Number(row.total_expenses),
-        net: Number(row.total_income) - Number(row.total_expenses),
-      },
-      ads_count: row.total_ads,
-      audits_count: row.total_audits,
+      today_transactions: row.today_transactions,
+      today_quantity: Number(row.today_quantity),
+      month_transactions: row.month_transactions,
+      month_quantity: Number(row.month_quantity),
+      total_beneficiaries: row.total_beneficiaries,
+      allocated_kg: Number(row.allocated_kg),
+      lifted_kg: Number(row.lifted_kg),
+      pending_deliveries: row.pending_deliveries,
+      low_stock_alerts: row.low_stock_alerts,
+      monthly_sales: row.monthly_sales as Array<{ commodity: string; quantity: number; amount: number }>,
     };
 
     try {

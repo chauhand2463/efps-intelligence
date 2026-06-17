@@ -1,6 +1,6 @@
 import { query } from '../../config/database.js';
 import { getRedis } from '../../config/redis.js';
-import { hashPassword, verifyPassword, hashOtp, hashToken } from '../../shared/utils/hash.js';
+import { hashPassword, verifyPassword, hashOtp, verifyOtpHash, hashToken } from '../../shared/utils/hash.js';
 import { signAccessToken, signRefreshToken, verifyAccessToken, verifyRefreshToken } from '../../shared/utils/token.js';
 import { generateOtp } from '../../shared/utils/otp.js';
 import { AuthError, SessionNotFoundError } from '../../shared/errors/AuthError.js';
@@ -61,8 +61,6 @@ export class AuthService {
     await redis.sadd('online_dealers', dealer.id);
 
     return {
-      access_token: accessToken,
-      refresh_token: refreshToken,
       dealer: {
         id: dealer.id,
         fps_id: dealer.fps_id,
@@ -71,16 +69,31 @@ export class AuthService {
         role: dealer.role,
         is_verified: dealer.is_verified,
       },
+      tokens: {
+        access_token: accessToken,
+        refresh_token: refreshToken,
+      },
     };
   }
 
-  async logout(accessToken: string, dealerId: string) {
+  async logout(accessToken: string, dealerId: string, refreshToken?: string) {
     const redis = getRedis();
 
-    const decoded = JSON.parse(Buffer.from(accessToken.split('.')[1]!, 'base64url').toString());
-    const expiresIn = decoded.exp - Math.floor(Date.now() / 1000);
-    if (expiresIn > 0) {
-      await redis.set(`blacklist:token:${accessToken}`, '1', 'EX', expiresIn);
+    try {
+      const payload = JSON.parse(Buffer.from(accessToken.split('.')[1]!, 'base64url').toString());
+      const expiresIn = payload.exp - Math.floor(Date.now() / 1000);
+      if (expiresIn > 0) {
+        await redis.set(`blacklist:token:${accessToken}`, '1', 'EX', expiresIn);
+      }
+    } catch {
+      // skip blacklisting if token can't be decoded
+    }
+
+    if (refreshToken) {
+      const refreshTokenHash = hashToken(refreshToken);
+      await query(`DELETE FROM sessions WHERE refresh_token_hash = $1`, [refreshTokenHash]);
+    } else {
+      await query(`DELETE FROM sessions WHERE dealer_id = $1`, [dealerId]);
     }
 
     await redis.del(`dealer:${dealerId}:online`);
@@ -138,8 +151,10 @@ export class AuthService {
     );
 
     return {
-      access_token: newAccessToken,
-      refresh_token: newRefreshToken,
+      tokens: {
+        access_token: newAccessToken,
+        refresh_token: newRefreshToken,
+      },
     };
   }
 
@@ -195,8 +210,7 @@ export class AuthService {
       throw new AppError('Maximum OTP attempts exceeded. Please request a new OTP.', 400, ERROR_CODES.OTP_MAX_ATTEMPTS);
     }
 
-    const inputOtpHash = hashOtp(input.otp);
-    if (inputOtpHash !== otpRecord.otp_hash) {
+    if (!verifyOtpHash(input.otp, otpRecord.otp_hash)) {
       await query(`UPDATE otp_requests SET attempts = attempts + 1 WHERE id = $1`, [otpRecord.id]);
       throw new ValidationError('Invalid OTP');
     }
@@ -211,12 +225,12 @@ export class AuthService {
 
     return {
       message: 'OTP verified successfully',
-      verification_token: verificationToken,
+      token: verificationToken,
     };
   }
 
   async forgotPasswordReset(input: ForgotPasswordResetInput) {
-    const decoded = verifyAccessToken(input.otp);
+    const decoded = verifyAccessToken(input.token);
     if (decoded.sub !== input.fps_id) {
       throw new AuthError('TOKEN_INVALID', 'Invalid verification token');
     }

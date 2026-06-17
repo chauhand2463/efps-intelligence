@@ -4,14 +4,12 @@ import { AuthError, SessionNotFoundError } from '../errors/AuthError.js';
 import { getRedis } from '../../config/redis.js';
 
 export async function authenticate(request: FastifyRequest, reply: FastifyReply) {
+  const cookieToken = request.cookies.access_token;
   const authHeader = request.headers.authorization;
-  if (!authHeader || !authHeader.startsWith('Bearer ')) {
-    throw new AuthError('TOKEN_INVALID', 'Missing or invalid authorization header');
-  }
+  const token = cookieToken ?? (authHeader?.startsWith('Bearer ') ? authHeader.split(' ')[1] : undefined);
 
-  const token = authHeader.split(' ')[1];
   if (!token) {
-    throw new AuthError('TOKEN_INVALID', 'Missing access token');
+    throw new AuthError('TOKEN_INVALID', 'Missing or invalid authorization header');
   }
 
   let payload;
