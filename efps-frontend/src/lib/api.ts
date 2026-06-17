@@ -15,24 +15,15 @@ export class ApiRequestError extends Error {
   }
 }
 
-let accessToken: string | null = null;
-let refreshPromise: Promise<string | null> | null = null;
-let pendingRequests: Array<{
-  resolve: (token: string | null) => void;
-  reject: (err: unknown) => void;
-}> = [];
-
-export function setAccessToken(token: string | null) {
-  accessToken = token;
-}
-
-export function getAccessToken(): string | null {
-  return accessToken;
-}
-
 function generateRequestId(): string {
   return Math.random().toString(36).substring(2, 10);
 }
+
+let refreshPromise: Promise<boolean> | null = null;
+let pendingRequests: Array<{
+  resolve: () => void;
+  reject: (err: unknown) => void;
+}> = [];
 
 const apiClient: AxiosInstance = axios.create({
   baseURL: BASE_URL,
@@ -41,35 +32,10 @@ const apiClient: AxiosInstance = axios.create({
   timeout: 15000,
 });
 
-const refreshClient = axios.create({
-  baseURL: BASE_URL,
-  withCredentials: true,
-  headers: { 'Content-Type': 'application/json' },
-  timeout: 10000,
-});
-
 apiClient.interceptors.request.use((config: InternalAxiosRequestConfig) => {
   config.headers.set('X-Request-Id', generateRequestId());
-  if (accessToken) {
-    config.headers.set('Authorization', `Bearer ${accessToken}`);
-  }
   return config;
 });
-
-async function doRefresh(): Promise<string | null> {
-  try {
-    const res = await refreshClient.post('/auth/refresh', {});
-    const body = res.data as ApiResponse<{ access_token: string }>;
-    if (body.success && body.data.access_token) {
-      accessToken = body.data.access_token;
-      return accessToken;
-    }
-    return null;
-  } catch {
-    accessToken = null;
-    return null;
-  }
-}
 
 apiClient.interceptors.response.use(
   (response) => response,
@@ -90,34 +56,21 @@ apiClient.interceptors.response.use(
     originalRequest._retry = true;
 
     if (!refreshPromise) {
-      refreshPromise = doRefresh().finally(() => {
+      refreshPromise = apiClient.post('/auth/refresh', {}).then(() => true).catch(() => false).finally(() => {
         refreshPromise = null;
       });
     }
 
-    if (pendingRequests.length === 0) {
-      refreshPromise.then((newToken) => {
-        const q = pendingRequests;
-        pendingRequests = [];
-        if (newToken) {
-          q.forEach((p) => p.resolve(newToken));
-        } else {
-          q.forEach((p) => p.reject(error));
-        }
-      });
-    }
-
-    return new Promise<string | null>((resolve, reject) => {
+    return new Promise<void>((resolve, reject) => {
       pendingRequests.push({ resolve, reject });
 
       if (pendingRequests.length === 1) {
-        refreshPromise!.then((newToken) => {
+        refreshPromise!.then((ok) => {
           const q = pendingRequests;
           pendingRequests = [];
-          if (newToken) {
-            originalRequest.headers.set('Authorization', `Bearer ${newToken}`);
-            resolve(apiClient(originalRequest));
-            q.slice(1).forEach((p) => p.resolve(newToken));
+          if (ok) {
+            resolve(apiClient(originalRequest) as any);
+            q.slice(1).forEach((p) => p.resolve());
           } else {
             const err = new ApiRequestError(401, 'TOKEN_EXPIRED', 'Session expired. Please login again.');
             q.forEach((p) => p.reject(err));

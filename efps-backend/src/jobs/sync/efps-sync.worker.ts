@@ -5,11 +5,17 @@ import { query } from '../../config/database.js';
 import { decrypt } from '../../shared/utils/encrypt.js';
 import { logger } from '../../shared/utils/logger.js';
 import { eventBus, EventTypes } from '../../shared/events/index.js';
+import { CircuitBreaker } from '../../shared/utils/circuit-breaker.js';
 import crypto from 'crypto';
 
 const QUEUE_NAME = 'efps-sync';
 const INTERNAL_SYNC_URL = process.env.INTERNAL_SYNC_URL || 'http://localhost:3000/api/internal/sync';
 const SERVICE_TOKEN = process.env.INTERNAL_SYNC_SECRET || process.env.INTERNAL_SERVICE_TOKEN || '';
+
+const efpsCircuitBreaker = new CircuitBreaker('efps-portal', {
+  failureThreshold: 3,
+  resetTimeoutMs: 60_000,
+});
 
 export interface EfpsSyncPayload {
   dealerId: string;
@@ -296,6 +302,18 @@ export const efpsSyncWorker = new Worker<EfpsSyncPayload>(
 
     await markJobStatus(syncJobId, dealerId, 'running');
 
+    // Fast-fail if circuit breaker is open
+    if (efpsCircuitBreaker.getState() === 'OPEN') {
+      const msg = `eFPS portal circuit breaker is OPEN — portal may be down. Skipping sync for ${fpsId}.`;
+      logger.warn({ dealerId, fpsId, traceId, circuitState: 'OPEN' }, msg);
+      await markJobStatus(syncJobId, dealerId, 'failed', msg);
+      await query(
+        `UPDATE sync_scheduler_config SET sync_status = 'failed' WHERE dealer_id = $1`,
+        [dealerId]
+      );
+      return { success: false, fpsId, error: msg };
+    }
+
     try {
       const { username, password } = await getCredentials(dealerId);
 
@@ -309,20 +327,26 @@ export const efpsSyncWorker = new Worker<EfpsSyncPayload>(
         ],
       });
 
-      const context = await browser.newContext({
-        userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
-        viewport: { width: 1280, height: 720 },
+      const scrapeResult = await efpsCircuitBreaker.call(async () => {
+        const context = await browser!.newContext({
+          userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
+          viewport: { width: 1280, height: 720 },
+        });
+
+        const page = await context.newPage();
+
+        await loginToEfps(page, username, password);
+
+        const [beneficiaryRows, transactionRows, stockRows] = await Promise.all([
+          scrapeBeneficiaries(page),
+          scrapeTransactions(page),
+          scrapeStockAllocations(page),
+        ]);
+
+        return { beneficiaryRows, transactionRows, stockRows };
       });
 
-      const page = await context.newPage();
-
-      await loginToEfps(page, username, password);
-
-      const [beneficiaryRows, transactionRows, stockRows] = await Promise.all([
-        scrapeBeneficiaries(page),
-        scrapeTransactions(page),
-        scrapeStockAllocations(page),
-      ]);
+      const { beneficiaryRows, transactionRows, stockRows } = scrapeResult;
 
       const workers: { type: string; records: Record<string, unknown>[] }[] = [];
       if (beneficiaryRows.length > 0) {
@@ -386,7 +410,7 @@ export const efpsSyncWorker = new Worker<EfpsSyncPayload>(
         stock: stockRows.length,
       };
     } catch (error: any) {
-      logger.error({ dealerId, fpsId, error: error.message, traceId }, 'eFPS Playwright sync failed');
+      logger.error({ dealerId, fpsId, error: error.message, traceId, circuitState: efpsCircuitBreaker.getState() }, 'eFPS Playwright sync failed');
 
       await markJobStatus(syncJobId, dealerId, 'failed', error.message);
 

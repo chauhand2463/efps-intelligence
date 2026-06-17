@@ -9,37 +9,50 @@ import {
   forgotPasswordVerifySchema, forgotPasswordResetSchema, changePasswordSchema,
 } from './auth.schema.js';
 
+const ACCESS_COOKIE_OPTS = {
+  httpOnly: true,
+  secure: config.NODE_ENV === 'production',
+  sameSite: 'strict' as const,
+  path: '/api/v1',
+  maxAge: 15 * 60,
+};
+
 const REFRESH_COOKIE_OPTS = {
   httpOnly: true,
   secure: config.NODE_ENV === 'production',
-  sameSite: 'lax' as const,
+  sameSite: 'strict' as const,
   path: '/api/v1/auth/refresh',
   maxAge: 30 * 24 * 60 * 60,
 };
+
+function setAccessCookie(reply: FastifyReply, token: string) {
+  reply.setCookie('access_token', token, ACCESS_COOKIE_OPTS);
+}
 
 function setRefreshCookie(reply: FastifyReply, token: string) {
   reply.setCookie('refresh_token', token, REFRESH_COOKIE_OPTS);
 }
 
-function clearRefreshCookie(reply: FastifyReply) {
+function clearAuthCookies(reply: FastifyReply) {
+  reply.clearCookie('access_token', { path: '/api/v1' });
   reply.clearCookie('refresh_token', { path: '/api/v1/auth/refresh' });
 }
 
 export async function loginHandler(request: FastifyRequest, reply: FastifyReply) {
   const body = loginSchema.parse(request.body);
   const result = await authService.login(body, request.headers['user-agent'], request.ip);
+  setAccessCookie(reply, result.access_token);
   setRefreshCookie(reply, result.refresh_token);
-  return sendSuccess(reply, { dealer: result.dealer, access_token: result.access_token });
+  return sendSuccess(reply, { dealer: result.dealer });
 }
 
 export async function logoutHandler(request: FastifyRequest, reply: FastifyReply) {
-  const authHeader = request.headers.authorization;
-  const accessToken = authHeader?.startsWith('Bearer ') ? authHeader.split(' ')[1] : undefined;
+  const accessToken = request.cookies.access_token;
   const refreshToken = request.cookies.refresh_token;
   const dealerId = request.user?.id;
 
   await authService.logout(accessToken, dealerId, refreshToken);
-  clearRefreshCookie(reply);
+  clearAuthCookies(reply);
   return sendSuccess(reply, { message: 'Logged out successfully' });
 }
 
@@ -58,8 +71,9 @@ export async function refreshHandler(request: FastifyRequest, reply: FastifyRepl
 
     const result = await authService.refresh(refreshToken, ip, requestId as string | undefined);
 
+    setAccessCookie(reply, result.access_token);
     setRefreshCookie(reply, result.refresh_token);
-    return sendSuccess(reply, { access_token: result.access_token, dealer: result.dealer });
+    return sendSuccess(reply, { dealer: result.dealer });
   } catch (err) {
     if (err instanceof AuthError || (err instanceof Error && (err as any).statusCode === 401)) {
       throw err;
