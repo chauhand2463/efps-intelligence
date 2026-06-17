@@ -1,7 +1,7 @@
 import type { FastifyRequest, FastifyReply } from 'fastify';
 import { z } from 'zod';
 import { commissionService } from './commission.service.js';
-import { setCommissionRateSchema, listCommissionSchema, settlementSchema } from './commission.schema.js';
+import { setCommissionRateSchema, listCommissionSchema, settlementSchema, savePaymentsSchema } from './commission.schema.js';
 import { sendSuccess, sendCreated } from '../../shared/utils/response.js';
 
 const calculateQuerySchema = z.object({
@@ -41,5 +41,11 @@ export async function getSettlementHistoryHandler(request: FastifyRequest, reply
 export async function createSettlementHandler(request: FastifyRequest, reply: FastifyReply) {
   const body = settlementSchema.parse(request.body);
   const result = await commissionService.createSettlement(request.user!.id, body);
+  return sendCreated(reply, result);
+}
+
+export async function savePaymentsHandler(request: FastifyRequest, reply: FastifyReply) {
+  const body = savePaymentsSchema.parse(request.body);
+  const result = await commissionService.savePayments(request.user!.id, body);
   return sendCreated(reply, result);
 }

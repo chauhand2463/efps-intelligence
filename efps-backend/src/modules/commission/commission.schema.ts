@@ -16,6 +16,17 @@ export const settlementSchema = z.object({
   month: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
 });
 
+const paymentItemSchema = z.object({
+  commission_id: z.string().uuid(),
+  amount_paid: z.number().min(0),
+  deposit_date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
+});
+
+export const savePaymentsSchema = z.object({
+  payments: z.array(paymentItemSchema).min(1),
+});
+
 export type SetCommissionRateInput = z.infer<typeof setCommissionRateSchema>;
 export type ListCommissionInput = z.infer<typeof listCommissionSchema>;
 export type SettlementInput = z.infer<typeof settlementSchema>;
+export type SavePaymentsInput = z.infer<typeof savePaymentsSchema>;

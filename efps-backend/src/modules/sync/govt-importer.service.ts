@@ -73,8 +73,8 @@ export class GovtImporterService {
           const category = this.mapCategory(row.cardCategory);
 
           const existing = await client.query(
-            `SELECT id, govt_data_hash, dealer_id, sync_version FROM beneficiaries WHERE ration_card_no = $1`,
-            [row.rationCardNo]
+            `SELECT id, govt_data_hash, dealer_id, sync_version FROM beneficiaries WHERE dealer_id = $1 AND ration_card_no = $2`,
+            [dealerId, row.rationCardNo]
           );
 
           await client.query(

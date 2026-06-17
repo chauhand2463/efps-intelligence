@@ -3,7 +3,7 @@ import { AppError } from '../../shared/errors/AppError.js';
 import { ERROR_CODES } from '../../config/constants.js';
 import { parsePaginationParams, buildPaginationMeta } from '../../shared/utils/pagination.js';
 import { eventBus, EventTypes } from '../../shared/events/index.js';
-import type { SetCommissionRateInput, ListCommissionInput, SettlementInput } from './commission.schema.js';
+import type { SetCommissionRateInput, ListCommissionInput, SettlementInput, SavePaymentsInput } from './commission.schema.js';
 
 export class CommissionService {
   async setRate(input: SetCommissionRateInput) {
@@ -150,6 +150,23 @@ export class CommissionService {
       });
     }
 
+    return results;
+  }
+
+  async savePayments(dealerId: string, input: SavePaymentsInput) {
+    const results = [];
+    for (const payment of input.payments) {
+      const result = await query(
+        `UPDATE commissions
+         SET amount_paid = $1, deposit_date = $2, status = 'settled', updated_at = NOW()
+         WHERE id = $3 AND dealer_id = $4 AND status = 'pending'
+         RETURNING *`,
+        [payment.amount_paid, payment.deposit_date, payment.commission_id, dealerId]
+      );
+      if (result.rows[0]) {
+        results.push(result.rows[0]);
+      }
+    }
     return results;
   }
 }

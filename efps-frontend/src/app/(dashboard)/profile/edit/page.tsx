@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { 
-  User, CheckSquare, Star, Users, Save, FileText 
+  User, CheckSquare, Star, Users, Save, FileText, AlertTriangle, X
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import styles from './Profile.module.css';
@@ -25,6 +25,7 @@ export default function FpsProfileDashboardPage() {
   const initialRef = useRef<Record<string, string>>({
     shopName: '', address: '', areaId: '', mobileNumber: '', fpsuId: '',
   });
+  const [showResetConfirm, setShowResetConfirm] = useState(false);
 
   useEffect(() => {
     (async () => {
@@ -81,13 +82,15 @@ export default function FpsProfileDashboardPage() {
   };
 
   const handleReset = () => {
-    if (confirm('Are you sure you want to reset changes?')) {
-      const init = initialRef.current;
-      setShopName(init.shopName);
-      setAddress(init.address);
-      setAreaId(init.areaId);
-      setMobileNumber(init.mobileNumber);
-    }
+    const init = initialRef.current;
+    setShopName(init.shopName);
+    setAddress(init.address);
+    setAreaId(init.areaId);
+    setMobileNumber(init.mobileNumber);
+  };
+
+  const handleResetConfirm = () => {
+    setShowResetConfirm(true);
   };
 
   const totalCards = aayCards + phhCards;
@@ -253,7 +256,7 @@ export default function FpsProfileDashboardPage() {
           </div>
 
           <div className={styles.actions}>
-            <button type="button" className={styles.cancelBtn} onClick={handleReset}>
+            <button type="button" className={styles.cancelBtn} onClick={handleResetConfirm}>
               Cancel Changes
             </button>
             <button type="submit" className={styles.saveBtn} disabled={saving}>
@@ -263,6 +266,40 @@ export default function FpsProfileDashboardPage() {
           </div>
         </form>
       </div>
+
+      {showResetConfirm && (
+        <div className={styles.modalOverlay} style={{
+          position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)',
+          display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000
+        }}>
+          <div style={{
+            background: '#fff', borderRadius: 12, padding: 24, maxWidth: 400, width: '90%',
+            boxShadow: '0 20px 60px rgba(0,0,0,0.3)'
+          }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 16 }}>
+              <AlertTriangle size={24} style={{ color: '#DC2626', flexShrink: 0 }} />
+              <h3 style={{ margin: 0, fontSize: 16, fontWeight: 600 }}>Reset Changes</h3>
+            </div>
+            <p style={{ color: '#475569', fontSize: 14, lineHeight: 1.5, marginBottom: 24 }}>
+              Are you sure you want to reset changes?
+            </p>
+            <div style={{ display: 'flex', gap: 12, justifyContent: 'flex-end' }}>
+              <button
+                style={{ padding: '8px 20px', borderRadius: 8, border: '1px solid #E2E8F0', background: '#fff', cursor: 'pointer', fontSize: 14 }}
+                onClick={() => setShowResetConfirm(false)}
+              >
+                No
+              </button>
+              <button
+                style={{ padding: '8px 20px', borderRadius: 8, border: 'none', background: '#DC2626', color: '#fff', cursor: 'pointer', fontSize: 14, fontWeight: 600 }}
+                onClick={() => { setShowResetConfirm(false); handleReset(); }}
+              >
+                Yes, Reset
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

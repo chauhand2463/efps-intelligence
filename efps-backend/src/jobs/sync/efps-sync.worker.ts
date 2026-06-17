@@ -16,6 +16,7 @@ export interface EfpsSyncPayload {
   fpsId: string;
   triggeredBy: 'registration' | 'scheduled' | 'manual';
   syncMode?: 'full' | 'incremental' | 'priority';
+  syncJobId?: string;
 }
 
 interface DealerCredentialRow {
@@ -261,29 +262,27 @@ async function postToInternalApi(
   return result.data ?? { processed: 0, quarantined: 0 };
 }
 
-async function markJobStatus(dealerId: string, status: string, errorMessage?: string) {
+async function markJobStatus(syncJobId: string | undefined, dealerId: string, status: string, errorMessage?: string) {
+  if (!syncJobId) return;
   if (status === 'running') {
     await query(
       `UPDATE sync_jobs SET status = 'running', started_at = NOW()
-       WHERE dealer_id = $1 AND status = 'pending'
-       ORDER BY created_at DESC LIMIT 1`,
-      [dealerId]
+       WHERE id = $1 AND dealer_id = $2 AND status = 'pending'`,
+      [syncJobId, dealerId]
     );
   }
   if (status === 'success') {
     await query(
       `UPDATE sync_jobs SET status = 'success', completed_at = NOW()
-       WHERE dealer_id = $1 AND status = 'running'
-       ORDER BY created_at DESC LIMIT 1`,
-      [dealerId]
+       WHERE id = $1 AND dealer_id = $2 AND status = 'running'`,
+      [syncJobId, dealerId]
     );
   }
   if (status === 'failed' && errorMessage) {
     await query(
       `UPDATE sync_jobs SET status = 'failed', completed_at = NOW(), error_message = $2
-       WHERE dealer_id = $1 AND status = 'running'
-       ORDER BY created_at DESC LIMIT 1`,
-      [dealerId, errorMessage]
+       WHERE id = $1 AND dealer_id = $3 AND status = 'running'`,
+      [syncJobId, errorMessage, dealerId]
     );
   }
 }
@@ -291,11 +290,11 @@ async function markJobStatus(dealerId: string, status: string, errorMessage?: st
 export const efpsSyncWorker = new Worker<EfpsSyncPayload>(
   QUEUE_NAME,
   async (job: Job<EfpsSyncPayload>) => {
-    const { dealerId, fpsId, triggeredBy, syncMode } = job.data;
+    const { dealerId, fpsId, triggeredBy, syncMode, syncJobId } = job.data;
     let browser: Browser | null = null;
     const traceId = crypto.randomUUID().slice(0, 8);
 
-    await markJobStatus(dealerId, 'running');
+    await markJobStatus(syncJobId, dealerId, 'running');
 
     try {
       const { username, password } = await getCredentials(dealerId);
@@ -339,7 +338,7 @@ export const efpsSyncWorker = new Worker<EfpsSyncPayload>(
       if (workers.length === 0) {
         logger.warn({ dealerId, fpsId, traceId }, 'No data scraped from eFPS portal');
         await Promise.all([
-          markJobStatus(dealerId, 'success'),
+          markJobStatus(syncJobId, dealerId, 'success'),
           query(`UPDATE dealers SET last_sync_at = NOW() WHERE id = $1`, [dealerId]),
           query(
             `UPDATE sync_scheduler_config SET last_sync_at = NOW(), next_sync_at = NOW() + (sync_interval_mins || ' minutes')::interval, sync_status = 'success', consecutive_failures = 0 WHERE dealer_id = $1`,
@@ -351,7 +350,7 @@ export const efpsSyncWorker = new Worker<EfpsSyncPayload>(
 
       const apiResult = await postToInternalApi(
         dealerId,
-        undefined,
+        syncJobId,
         syncMode ?? 'full',
         workers,
         traceId
@@ -360,7 +359,7 @@ export const efpsSyncWorker = new Worker<EfpsSyncPayload>(
       const recordCount = apiResult.processed + apiResult.quarantined;
 
       await Promise.all([
-        markJobStatus(dealerId, 'success'),
+        markJobStatus(syncJobId, dealerId, 'success'),
         query(`UPDATE dealers SET last_sync_at = NOW() WHERE id = $1`, [dealerId]),
         query(
           `UPDATE sync_scheduler_config SET last_sync_at = NOW(), next_sync_at = NOW() + (sync_interval_mins || ' minutes')::interval, sync_status = 'success', consecutive_failures = 0 WHERE dealer_id = $1`,
@@ -389,7 +388,7 @@ export const efpsSyncWorker = new Worker<EfpsSyncPayload>(
     } catch (error: any) {
       logger.error({ dealerId, fpsId, error: error.message, traceId }, 'eFPS Playwright sync failed');
 
-      await markJobStatus(dealerId, 'failed', error.message);
+      await markJobStatus(syncJobId, dealerId, 'failed', error.message);
 
       await query(
         `UPDATE sync_scheduler_config SET sync_status = 'failed', consecutive_failures = consecutive_failures + 1 WHERE dealer_id = $1`,

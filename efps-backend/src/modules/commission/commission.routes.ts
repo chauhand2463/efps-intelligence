@@ -5,6 +5,7 @@ import {
   setCommissionRateHandler, getCommissionRatesHandler,
   calculateCommissionHandler, listCommissionsHandler,
   getSettlementHistoryHandler, createSettlementHandler,
+  savePaymentsHandler,
 } from './commission.controller.js';
 
 export async function commissionRoutes(app: FastifyInstance) {
@@ -14,4 +15,5 @@ export async function commissionRoutes(app: FastifyInstance) {
   app.get('/commission', { preHandler: [authenticate] }, listCommissionsHandler);
   app.get('/commission/settlements', { preHandler: [authenticate] }, getSettlementHistoryHandler);
   app.post('/commission/settle', { preHandler: [authenticate] }, createSettlementHandler);
+  app.post('/commission/payments', { preHandler: [authenticate] }, savePaymentsHandler);
 }

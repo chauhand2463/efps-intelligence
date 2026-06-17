@@ -1,21 +1,84 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
-import { RefreshCw, Database, Clock, AlertTriangle, CheckCircle, XCircle, Loader2, BarChart3, Users, Package, ChevronRight } from 'lucide-react';
+import { useEffect, useRef, useState, useCallback } from 'react';
+import { RefreshCw, Database, Clock, AlertTriangle, CheckCircle, XCircle, Loader2, BarChart3, Users, Package, Upload, FileText, Trash2, FileSpreadsheet } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { useSync } from '@/lib/api-hooks';
-import type { SyncJob, SyncDashboardData } from '@/lib/types';
+import type { SyncJob, SyncDashboardData, ImportResult } from '@/lib/types';
 import styles from './Sync.module.css';
+import * as XLSX from 'xlsx';
+
+interface ImportBeneficiaryRow {
+  hofAsPerNFSA: string;
+  rationCardNo: string;
+  cardCategory: string;
+  familyMember: number;
+  cardHolderName: string;
+  lpgStatus: string;
+  pngStatus: string;
+  address: string;
+  village: string;
+}
+
+function mapRow(data: Record<string, string>): ImportBeneficiaryRow {
+  return {
+    hofAsPerNFSA: data.hofaspernfsa || data.hof_as_per_nfsa || data.head_of_family || data.hofaspernfsa_name || '',
+    rationCardNo: data.rationcardno || data.ration_card_no || data.rcno || data.rationcard || '',
+    cardCategory: data.cardcategory || data.card_category || data.category || data.cardtype || 'NFSA-AAY',
+    familyMember: parseInt(data.familymember || data.family_member || data.members || data.membercount || '1', 10) || 1,
+    cardHolderName: data.cardholdername || data.card_holder_name || data.holdername || '',
+    lpgStatus: data.lpgstatus || data.lpg_status || '',
+    pngStatus: data.pngstatus || data.png_status || '',
+    address: data.address || '',
+    village: data.village || '',
+  };
+}
+
+function parseCsv(text: string): ImportBeneficiaryRow[] {
+  const lines = text.split(/\r?\n/).map(l => l.trim()).filter(Boolean);
+  if (lines.length < 2) return [];
+  const headers = lines[0].split(',').map(h => h.trim().toLowerCase());
+  const rows: ImportBeneficiaryRow[] = [];
+  for (let i = 1; i < lines.length; i++) {
+    const vals = lines[i].split(',').map(v => v.trim().replace(/^"|"$/g, ''));
+    const row: Record<string, string> = {};
+    headers.forEach((h, idx) => { row[h] = vals[idx] ?? ''; });
+    rows.push(mapRow(row));
+  }
+  return rows;
+}
+
+function parseExcel(data: ArrayBuffer): ImportBeneficiaryRow[] {
+  const workbook = XLSX.read(data, { type: 'array' });
+  const sheetName = workbook.SheetNames[0];
+  if (!sheetName) return [];
+  const raw = XLSX.utils.sheet_to_json<Record<string, string>>(workbook.Sheets[sheetName], { defval: '' });
+  const rows: ImportBeneficiaryRow[] = [];
+  for (const item of raw) {
+    const normalized: Record<string, string> = {};
+    for (const [key, val] of Object.entries(item)) {
+      normalized[key.toLowerCase().replace(/[\s-]+/g, '')] = String(val ?? '');
+    }
+    rows.push(mapRow(normalized));
+  }
+  return rows;
+}
 
 export default function SyncPage() {
   const sync = useSync();
   const syncRef = useRef(sync);
   useEffect(() => { syncRef.current = sync; });
 
-  const [activeTab, setActiveTab] = useState<'status' | 'history'>('status');
+  const [activeTab, setActiveTab] = useState<'status' | 'history' | 'csv'>('status');
   const [dashboard, setDashboard] = useState<SyncDashboardData | null>(null);
   const [loading, setLoading] = useState(true);
   const [syncing, setSyncing] = useState(false);
+
+  const [importRows, setImportRows] = useState<ImportBeneficiaryRow[]>([]);
+  const [importFileName, setImportFileName] = useState('');
+  const [importing, setImporting] = useState(false);
+  const [importResult, setImportResult] = useState<ImportResult & { fileName: string } | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const loadDashboard = async () => {
     try {
@@ -41,6 +104,53 @@ export default function SyncPage() {
       toast.error(err instanceof Error ? err.message : 'Failed to trigger sync');
     } finally {
       setSyncing(false);
+    }
+  };
+
+  const handleFileSelect = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    setImportResult(null);
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const isExcel = /\.xlsx?$/i.test(file.name);
+    const reader = new FileReader();
+    reader.onload = (ev) => {
+      let rows: ImportBeneficiaryRow[];
+      if (isExcel) {
+        rows = parseExcel(ev.target!.result as ArrayBuffer);
+      } else {
+        rows = parseCsv(ev.target!.result as string);
+      }
+      if (rows.length === 0) {
+        toast.error('No valid rows found. Check headers (need rationCardNo, hofAsPerNFSA).');
+        return;
+      }
+      setImportRows(rows);
+      setImportFileName(file.name);
+      toast.success(`Parsed ${rows.length} rows from ${file.name}`);
+    };
+    reader.onerror = () => { toast.error('Failed to read file'); };
+    if (isExcel) {
+      reader.readAsArrayBuffer(file);
+    } else {
+      reader.readAsText(file);
+    }
+  }, []);
+
+  const handleImport = async () => {
+    if (importRows.length === 0) return;
+    setImporting(true);
+    try {
+      const result = await syncRef.current.importCsv(importRows);
+      setImportResult({ ...result, fileName: importFileName });
+      setImportRows([]);
+      setImportFileName('');
+      if (fileInputRef.current) fileInputRef.current.value = '';
+      loadDashboard();
+      toast.success(`Imported ${result.newRecords} new, ${result.updatedRecords} updated`);
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : 'Import failed');
+    } finally {
+      setImporting(false);
     }
   };
 
@@ -140,7 +250,12 @@ export default function SyncPage() {
         >
           Sync History
         </button>
-        <div className={styles.tabIndicator} style={{ left: activeTab === 'status' ? '0' : '50%' }} />
+        <button
+          className={`${styles.tab} ${activeTab === 'csv' ? styles.tabActive : ''}`}
+          onClick={() => setActiveTab('csv')}
+        >
+          Import
+        </button>
       </div>
 
       {activeTab === 'status' && (
@@ -191,6 +306,114 @@ export default function SyncPage() {
                     {lastSync.error_detail.map((e, i) => <p key={i} className={styles.errorLine}>{e}</p>)}
                   </div>
                 )}
+              </div>
+            </div>
+          )}
+        </div>
+      )}
+
+      {activeTab === 'csv' && (
+        <div className={styles.csvSection}>
+          <div className={styles.csvHeader}>
+            <h3>Import Beneficiaries from File</h3>
+            <p>Upload a <strong>CSV</strong> or <strong>Excel (.xlsx)</strong> file exported from your government portal. Required columns: <code>rationCardNo</code>, <code>hofAsPerNFSA</code>.</p>
+          </div>
+
+          {!importResult && (
+            <div className={styles.csvUploadArea}>
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept=".csv,.xlsx,.xls"
+                onChange={handleFileSelect}
+                className={styles.csvFileInput}
+                id="import-file-input"
+              />
+              <label htmlFor="import-file-input" className={styles.csvDropZone}>
+                <Upload size={32} />
+                <strong>Click to select a file</strong>
+                <span>Supports CSV (.csv) and Excel (.xlsx, .xls) — max 10,000 rows</span>
+              </label>
+            </div>
+          )}
+
+          {importRows.length > 0 && !importResult && (
+            <div className={styles.csvPreview}>
+              <div className={styles.csvPreviewHeader}>
+                <span>
+                  {/\.xlsx?$/i.test(importFileName) ? <FileSpreadsheet size={14} /> : <FileText size={14} />}
+                  {importFileName} ({importRows.length} rows)
+                </span>
+                <button className={styles.csvClearBtn} onClick={() => { setImportRows([]); setImportFileName(''); if (fileInputRef.current) fileInputRef.current.value = ''; }}>
+                  <Trash2 size={14} /> Clear
+                </button>
+              </div>
+              <div className={styles.csvTableWrap}>
+                <table className={styles.csvTable}>
+                  <thead>
+                    <tr>
+                      <th>#</th>
+                      <th>Ration Card No</th>
+                      <th>Head of Family</th>
+                      <th>Category</th>
+                      <th>Members</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {importRows.slice(0, 100).map((row, i) => (
+                      <tr key={i}>
+                        <td>{i + 1}</td>
+                        <td>{row.rationCardNo}</td>
+                        <td>{row.hofAsPerNFSA}</td>
+                        <td>{row.cardCategory}</td>
+                        <td>{row.familyMember}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+              {importRows.length > 100 && <p className={styles.csvMore}>... and {importRows.length - 100} more rows</p>}
+              <button className={styles.csvImportBtn} onClick={handleImport} disabled={importing}>
+                {importing ? <Loader2 size={16} className="spin" /> : <Database size={16} />}
+                {importing ? 'Importing...' : `Import ${importRows.length} Beneficiaries`}
+              </button>
+            </div>
+          )}
+
+          {importResult && (
+            <div className={styles.csvResult}>
+              <CheckCircle size={24} className={styles.csvResultIcon} />
+              <div className={styles.csvResultBody}>
+                <h4>Import Complete — {importResult.fileName}</h4>
+                <div className={styles.csvResultStats}>
+                  <div className={styles.csvResultStat}>
+                    <span className={styles.csvResultStatValue}>{importResult.totalRecords}</span>
+                    <span className={styles.csvResultStatLabel}>Total</span>
+                  </div>
+                  <div className={styles.csvResultStat}>
+                    <span className={styles.csvResultStatValue} style={{ color: 'var(--online-green)' }}>{importResult.newRecords}</span>
+                    <span className={styles.csvResultStatLabel}>New</span>
+                  </div>
+                  <div className={styles.csvResultStat}>
+                    <span className={styles.csvResultStatValue} style={{ color: '#2563eb' }}>{importResult.updatedRecords}</span>
+                    <span className={styles.csvResultStatLabel}>Updated</span>
+                  </div>
+                  <div className={styles.csvResultStat}>
+                    <span className={styles.csvResultStatValue}>{importResult.unchangedRecords}</span>
+                    <span className={styles.csvResultStatLabel}>Unchanged</span>
+                  </div>
+                  {importResult.errorCount > 0 && (
+                    <div className={styles.csvResultStat}>
+                      <span className={styles.csvResultStatValue} style={{ color: 'var(--offline-red)' }}>{importResult.errorCount}</span>
+                      <span className={styles.csvResultStatLabel}>Errors</span>
+                    </div>
+                  )}
+                </div>
+                <p className={styles.csvResultHash}>Batch ID: <code>{importResult.batchId}</code></p>
+                <div className={styles.csvResultActions}>
+                  <a href="/customers" className={styles.csvViewBtn}>View Beneficiaries</a>
+                  <button className={styles.csvResetBtn} onClick={() => { setImportResult(null); loadDashboard(); }}>Import Another File</button>
+                </div>
               </div>
             </div>
           )}

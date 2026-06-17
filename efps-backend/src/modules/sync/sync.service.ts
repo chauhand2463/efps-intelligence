@@ -77,11 +77,13 @@ export class SyncService {
     const d = dealer.rows[0] as { id: string; fps_id: string; sync_enabled: boolean };
     const syncMode = syncType === 'priority' ? 'priority' : 'full';
 
-    await query(
+    const syncJob = await query(
       `INSERT INTO sync_jobs (dealer_id, status, sync_mode, triggered_by)
-       VALUES ($1, 'pending', $2, 'manual')`,
+       VALUES ($1, 'pending', $2, 'manual')
+       RETURNING id`,
       [dealerId, syncMode]
     );
+    const syncJobId = syncJob.rows[0]!.id as string;
 
     const hasCredentials = await query(
       `SELECT id FROM dealer_credentials WHERE dealer_id = $1`,
@@ -94,6 +96,7 @@ export class SyncService {
         fpsId: d.fps_id,
         triggeredBy: 'manual',
         syncMode,
+        syncJobId,
       });
     } else {
       await enqueueGovtSync({

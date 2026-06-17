@@ -247,6 +247,8 @@ export interface Commission {
   tds_percent: number;
   tds_deducted: number;
   net_commission: number;
+  amount_paid: number | null;
+  deposit_date: string | null;
   status: string;
   created_at: string;
 }
@@ -335,6 +337,16 @@ export interface SyncDashboardData {
   totalStockAllocations: number;
   recentQuarantined: number;
   queueLength: number;
+}
+
+export interface ImportResult {
+  batchId: string;
+  totalRecords: number;
+  newRecords: number;
+  updatedRecords: number;
+  unchangedRecords: number;
+  deletedRecords: number;
+  errorCount: number;
 }
 
 export interface QuarantineSummary {

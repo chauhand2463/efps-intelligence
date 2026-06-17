@@ -111,23 +111,30 @@ async function upsertBeneficiaries(dealerId: string, records: Record<string, unk
   for (const rec of records) {
     const { external_id } = computeBeneficiaryKey(dealerId, rec);
     const version = (rec.version as number) ?? 1;
+    const rc = (rec.ration_card_no ?? '') as string;
 
     const existing = await pool.query(
-      `SELECT version FROM beneficiaries WHERE dealer_id = $1 AND external_id = $2`,
-      [dealerId, external_id]
+      `SELECT version FROM beneficiaries WHERE dealer_id = $1 AND ration_card_no = $2`,
+      [dealerId, rc]
     );
 
     if (existing.rows.length > 0 && existing.rows[0].version >= version) continue;
 
+    const beneficiaryName = (rec.beneficiary_name ?? '') as string;
+    const mobileVal = (rec.mobile_no ?? rec.mobile ?? '') as string;
+
     await pool.query(
-      `INSERT INTO beneficiaries (dealer_id, external_id, ration_card_no, beneficiary_name, father_name, address, district, taluka, mobile_no, date_of_issue, ration_type, category, status, source_synced_at, sync_job_id, version)
-       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16)
-       ON CONFLICT (dealer_id, external_id) DO UPDATE SET
+      `INSERT INTO beneficiaries (dealer_id, external_id, ration_card_no, head_of_family, beneficiary_name, father_name, address, district, taluka, mobile, mobile_no, date_of_issue, ration_type, category, status, source_synced_at, sync_job_id, version)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18)
+       ON CONFLICT (ration_card_no) DO UPDATE SET
+         external_id = COALESCE(EXCLUDED.external_id, beneficiaries.external_id),
+         head_of_family = EXCLUDED.head_of_family,
          beneficiary_name = EXCLUDED.beneficiary_name,
          father_name = EXCLUDED.father_name,
          address = EXCLUDED.address,
          district = EXCLUDED.district,
          taluka = EXCLUDED.taluka,
+         mobile = EXCLUDED.mobile,
          mobile_no = EXCLUDED.mobile_no,
          date_of_issue = EXCLUDED.date_of_issue,
          ration_type = EXCLUDED.ration_type,
@@ -139,9 +146,9 @@ async function upsertBeneficiaries(dealerId: string, records: Record<string, unk
          updated_at = NOW()`,
       [
         dealerId, external_id,
-        rec.ration_card_no, rec.beneficiary_name, rec.father_name ?? '',
+        rc, beneficiaryName, beneficiaryName, rec.father_name ?? '',
         rec.address ?? '', rec.district ?? rec.district_name ?? '', rec.taluka ?? rec.taluka_name ?? '',
-        rec.mobile_no ?? rec.mobile ?? '', rec.date_of_issue ?? null,
+        mobileVal, mobileVal, rec.date_of_issue ?? null,
         rec.ration_type ?? '', rec.category ?? '', rec.status ?? 'active',
         rec.source_synced_at ?? new Date().toISOString(),
         syncJobId ?? null, version,
@@ -165,10 +172,18 @@ async function upsertTransactions(dealerId: string, records: Record<string, unkn
 
     if (existing.rows.length > 0 && existing.rows[0].version >= version) continue;
 
+    const rc = (rec.ration_card_no ?? '') as string;
+    const benResult = await pool.query(
+      `SELECT id FROM beneficiaries WHERE dealer_id = $1 AND ration_card_no = $2 LIMIT 1`,
+      [dealerId, rc]
+    );
+    const beneficiaryId = benResult.rows[0]?.id ?? null;
+
     await pool.query(
-      `INSERT INTO transactions (dealer_id, transaction_hash, ration_card_no, beneficiary_name, transaction_date, commodity, allocated_quantity, lifted_quantity, amount_paid, transaction_id, shop_no, month, year, status, source_synced_at, sync_job_id, version)
-       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17)
+      `INSERT INTO transactions (dealer_id, beneficiary_id, transaction_hash, ration_card_no, beneficiary_name, transaction_date, commodity, allocated_quantity, lifted_quantity, amount_paid, transaction_id, shop_no, month, year, status, source_synced_at, sync_job_id, version)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18)
        ON CONFLICT (dealer_id, transaction_hash) DO UPDATE SET
+         beneficiary_id = COALESCE(EXCLUDED.beneficiary_id, transactions.beneficiary_id),
          beneficiary_name = EXCLUDED.beneficiary_name,
          transaction_date = EXCLUDED.transaction_date,
          commodity = EXCLUDED.commodity,
@@ -185,8 +200,8 @@ async function upsertTransactions(dealerId: string, records: Record<string, unkn
          version = EXCLUDED.version,
          updated_at = NOW()`,
       [
-        dealerId, transaction_hash,
-        rec.ration_card_no, rec.beneficiary_name ?? '', rec.transaction_date,
+        dealerId, beneficiaryId, transaction_hash,
+        rc, rec.beneficiary_name ?? '', rec.transaction_date,
         rec.commodity, rec.allocated_quantity ?? 0, rec.lifted_quantity ?? 0, rec.amount_paid ?? 0,
         rec.transaction_id ?? '', rec.shop_no ?? '', rec.month ?? '', rec.year ?? '',
         rec.status ?? 'completed',
@@ -204,6 +219,8 @@ async function upsertStockAllocations(dealerId: string, records: Record<string, 
   for (const rec of records) {
     const { month, commodity } = computeStockKey(dealerId, rec);
     const version = (rec.version as number) ?? 1;
+    const aq = rec.allocated_quantity ?? 0;
+    const lq = rec.lifted_quantity ?? 0;
 
     const existing = await pool.query(
       `SELECT version FROM stock_allocations WHERE dealer_id = $1 AND month = $2 AND commodity = $3`,
@@ -213,11 +230,13 @@ async function upsertStockAllocations(dealerId: string, records: Record<string, 
     if (existing.rows.length > 0 && existing.rows[0].version >= version) continue;
 
     await pool.query(
-      `INSERT INTO stock_allocations (dealer_id, commodity, allocated_quantity, lifted_quantity, month, year, month_year, unit, status, source_synced_at, sync_job_id, version)
-       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)
+      `INSERT INTO stock_allocations (dealer_id, commodity, allocated_quantity, lifted_quantity, allocated_kg, lifted_kg, month, year, month_year, unit, status, source_synced_at, sync_job_id, version)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14)
        ON CONFLICT (dealer_id, month, commodity) DO UPDATE SET
          allocated_quantity = EXCLUDED.allocated_quantity,
          lifted_quantity = EXCLUDED.lifted_quantity,
+         allocated_kg = EXCLUDED.allocated_kg,
+         lifted_kg = EXCLUDED.lifted_kg,
          year = EXCLUDED.year,
          month_year = EXCLUDED.month_year,
          unit = EXCLUDED.unit,
@@ -227,7 +246,7 @@ async function upsertStockAllocations(dealerId: string, records: Record<string, 
          version = EXCLUDED.version,
          updated_at = NOW()`,
       [
-        dealerId, commodity, rec.allocated_quantity ?? 0, rec.lifted_quantity ?? 0,
+        dealerId, commodity, aq, lq, aq, lq,
         month, rec.year ?? rec.month_year?.toString().split(' ')[1] ?? '',
         rec.month_year ?? '', rec.unit ?? 'Kg', rec.status ?? 'pending',
         rec.source_synced_at ?? new Date().toISOString(),
@@ -245,6 +264,7 @@ async function upsertLiftingRecords(dealerId: string, records: Record<string, un
     const month = rec.month as string;
     const commodity = rec.commodity as string;
     const version = (rec.version as number) ?? 1;
+    const lq = rec.lifted_quantity ?? 0;
 
     const existing = await pool.query(
       `SELECT version FROM lifting_records WHERE dealer_id = $1 AND month = $2 AND commodity = $3 AND year = $4`,
@@ -254,11 +274,12 @@ async function upsertLiftingRecords(dealerId: string, records: Record<string, un
     if (existing.rows.length > 0 && existing.rows[0].version >= version) continue;
 
     await pool.query(
-      `INSERT INTO lifting_records (dealer_id, commodity, allocated_quantity, lifted_quantity, month, year, unit, status, source_synced_at, sync_job_id, version)
-       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
+      `INSERT INTO lifting_records (dealer_id, commodity, allocated_quantity, lifted_quantity, quantity_kg, month, year, unit, status, source_synced_at, sync_job_id, version)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)
        ON CONFLICT (dealer_id, month, commodity, year) DO UPDATE SET
          allocated_quantity = EXCLUDED.allocated_quantity,
          lifted_quantity = EXCLUDED.lifted_quantity,
+         quantity_kg = EXCLUDED.quantity_kg,
          unit = EXCLUDED.unit,
          status = EXCLUDED.status,
          source_synced_at = EXCLUDED.source_synced_at,
@@ -266,7 +287,7 @@ async function upsertLiftingRecords(dealerId: string, records: Record<string, un
          version = EXCLUDED.version,
          updated_at = NOW()`,
       [
-        dealerId, commodity, rec.allocated_quantity ?? 0, rec.lifted_quantity ?? 0,
+        dealerId, commodity, rec.allocated_quantity ?? 0, lq, lq,
         month, rec.year ?? '', rec.unit ?? 'Kg', rec.status ?? 'pending',
         rec.source_synced_at ?? new Date().toISOString(),
         syncJobId ?? null, version,

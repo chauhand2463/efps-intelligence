@@ -69,10 +69,19 @@ export class DealerService {
         [dealer.id, input.source_url ?? null]
       );
 
+      const syncJob = await query(
+        `INSERT INTO sync_jobs (dealer_id, status, sync_mode, triggered_by)
+         VALUES ($1, 'pending', 'full', 'registration')
+         RETURNING id`,
+        [dealer.id]
+      );
+      const syncJobId = syncJob.rows[0]!.id as string;
+
       enqueueEfpsSync({
         dealerId: dealer.id,
         fpsId: dealer.fps_id,
         triggeredBy: 'registration',
+        syncJobId,
       }).catch((err) => {
         console.error(`[DealerService] Failed to enqueue initial sync for ${dealer.id}:`, err);
       });

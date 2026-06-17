@@ -1,8 +1,8 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import toast from 'react-hot-toast';
-import { Users, Download, Search, Trash2, Save, RefreshCw, X, UserMinus } from 'lucide-react';
+import { Users, Download, Search, Trash2, Save, RefreshCw, X, UserMinus, AlertTriangle } from 'lucide-react';
 import styles from './Customers.module.css';
 import { useBeneficiaries } from '@/lib/api-hooks';
 import type { Beneficiary, CreateBeneficiaryInput } from '@/lib/types';
@@ -26,6 +26,7 @@ export default function CustomerRegisterPage() {
   const [saving, setSaving] = useState(false);
 
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
+  const [confirmState, setConfirmState] = useState<{ message: string; onConfirm: () => void } | null>(null);
 
   const handleSearch = async () => {
     if (!searchQuery.trim()) {
@@ -73,33 +74,41 @@ export default function CustomerRegisterPage() {
     }
   };
 
-  const handleDeleteSelected = async () => {
+  const handleDeleteSelected = () => {
     if (selectedIds.length === 0) {
       toast.error('No customers selected.');
       return;
     }
-    if (confirm(`Are you sure you want to delete ${selectedIds.length} customer(s)?`)) {
-      for (const id of selectedIds) {
-        try {
-          await beneficiaries.remove(id);
-        } catch {
-          toast.error(`Failed to deactivate beneficiary ${id}`);
+    setConfirmState({
+      message: `Are you sure you want to delete ${selectedIds.length} customer(s)?`,
+      onConfirm: async () => {
+        for (const id of selectedIds) {
+          try {
+            await beneficiaries.remove(id);
+          } catch {
+            toast.error(`Failed to deactivate beneficiary ${id}`);
+          }
         }
-      }
-      setSelectedIds([]);
-      await reload();
-    }
+        setSelectedIds([]);
+        setConfirmState(null);
+        await reload();
+      },
+    });
   };
 
-  const handleDeleteOne = async (id: string, name: string) => {
-    if (confirm(`Delete ${name}?`)) {
-      try {
-        await beneficiaries.remove(id);
-        await reload();
-      } catch {
-        toast.error('Failed to deactivate beneficiary');
-      }
-    }
+  const handleDeleteOne = (id: string, name: string) => {
+    setConfirmState({
+      message: `Delete ${name}?`,
+      onConfirm: async () => {
+        try {
+          await beneficiaries.remove(id);
+          setConfirmState(null);
+          await reload();
+        } catch {
+          toast.error('Failed to deactivate beneficiary');
+        }
+      },
+    });
   };
 
   const handleSaveAllMobiles = () => {
@@ -452,6 +461,28 @@ export default function CustomerRegisterPage() {
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {confirmState && (
+        <div className={styles.modalOverlay}>
+          <div className={styles.modalCard} style={{ maxWidth: 420 }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 20 }}>
+              <AlertTriangle size={24} style={{ color: '#DC2626', flexShrink: 0 }} />
+              <h3 className={styles.modalTitle} style={{ margin: 0, fontSize: 16 }}>Confirm</h3>
+            </div>
+            <p style={{ color: '#475569', fontSize: 14, lineHeight: 1.5, marginBottom: 24 }}>
+              {confirmState.message}
+            </p>
+            <div className={styles.modalBtnGroup}>
+              <button type="button" className={styles.cancelBtn} onClick={() => setConfirmState(null)}>
+                No
+              </button>
+              <button type="button" className={styles.confirmBtn} style={{ backgroundColor: '#DC2626' }} onClick={confirmState.onConfirm}>
+                Yes, Delete
+              </button>
+            </div>
           </div>
         </div>
       )}

@@ -42,11 +42,20 @@ const worker = new Worker(
 
       const syncMode = row.sync_mode ?? 'full';
 
+      const syncJob = await query(
+        `INSERT INTO sync_jobs (dealer_id, status, sync_mode, triggered_by)
+         VALUES ($1, 'pending', $2, 'scheduled')
+         RETURNING id`,
+        [row.dealer_id, syncMode]
+      );
+      const syncJobId = syncJob.rows[0]!.id as string;
+
       await enqueueEfpsSync({
         dealerId: row.dealer_id,
         fpsId: row.fps_id,
         triggeredBy: 'scheduled',
         syncMode,
+        syncJobId,
       });
 
       const consecutiveFailures = row.consecutive_failures ?? 0;

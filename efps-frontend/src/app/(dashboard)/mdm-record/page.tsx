@@ -19,18 +19,18 @@ interface CommodityRow {
 }
 
 const INITIAL_ROWS: CommodityRow[] = [
-  { id: 1,  name: 'MDM Wheat',          openingStock: 5734, income: 1036, distribution: 772,  rate: 1.28 },
-  { id: 2,  name: 'MDM Fortified Rice', openingStock: 3170, income: 1445, distribution: 704,  rate: 1.50 },
-  { id: 3,  name: 'MDM Tuverdal',       openingStock: 2980, income: -412, distribution: 1990, rate: 1.50 },
-  { id: 4,  name: 'MDM Oil (Pouch)',    openingStock: 4175, income: -826, distribution: 1579, rate: 1.76 },
-  { id: 5,  name: 'ICDS Wheat',         openingStock: 1344, income: -197, distribution: 1903, rate: 2.23 },
-  { id: 6,  name: 'ICDS Fortified Rice',openingStock: 1281, income: -838, distribution: 914,  rate: 3.28 },
-  { id: 7,  name: 'ICDS Tuverdal',      openingStock: 1990, income: -177, distribution: 1581, rate: 1.99 },
-  { id: 8,  name: 'ICDS Oil',           openingStock: 3380, income: -1823,distribution: 742,  rate: 1.44 },
-  { id: 9,  name: 'ICDS Chana',         openingStock: 4100, income: -1407,distribution: 1462, rate: 2.32 },
-  { id: 10, name: 'ICDS Salt',          openingStock: 3133, income: -1170,distribution: 1521, rate: 2.01 },
-  { id: 11, name: 'MDM Chana',          openingStock: 1437, income: -1441,distribution: 1359, rate: 2.38 },
-  { id: 12, name: 'MDM Salt',           openingStock: 2991, income: -803, distribution: 1988, rate: 1.96 },
+  { id: 1,  name: 'MDM Wheat',          openingStock: 0, income: 0, distribution: 0, rate: 0 },
+  { id: 2,  name: 'MDM Fortified Rice', openingStock: 0, income: 0, distribution: 0, rate: 0 },
+  { id: 3,  name: 'MDM Tuverdal',       openingStock: 0, income: 0, distribution: 0, rate: 0 },
+  { id: 4,  name: 'MDM Oil (Pouch)',    openingStock: 0, income: 0, distribution: 0, rate: 0 },
+  { id: 5,  name: 'ICDS Wheat',         openingStock: 0, income: 0, distribution: 0, rate: 0 },
+  { id: 6,  name: 'ICDS Fortified Rice',openingStock: 0, income: 0, distribution: 0, rate: 0 },
+  { id: 7,  name: 'ICDS Tuverdal',      openingStock: 0, income: 0, distribution: 0, rate: 0 },
+  { id: 8,  name: 'ICDS Oil',           openingStock: 0, income: 0, distribution: 0, rate: 0 },
+  { id: 9,  name: 'ICDS Chana',         openingStock: 0, income: 0, distribution: 0, rate: 0 },
+  { id: 10, name: 'ICDS Salt',          openingStock: 0, income: 0, distribution: 0, rate: 0 },
+  { id: 11, name: 'MDM Chana',          openingStock: 0, income: 0, distribution: 0, rate: 0 },
+  { id: 12, name: 'MDM Salt',           openingStock: 0, income: 0, distribution: 0, rate: 0 },
 ];
 
 function mapApiRow(item: any, id: number): CommodityRow {

@@ -11,6 +11,7 @@ import type { Commission } from '@/lib/types';
 import toast from 'react-hot-toast';
 
 interface Transaction {
+  commissionId: string;
   srNo: string;
   fpsUid: string;
   transactionType: string;
@@ -44,12 +45,13 @@ export default function BankCommissionPage() {
       const commissionList: Commission[] = res.data ?? [];
 
       const mapped: Transaction[] = commissionList.map((c, idx) => ({
+        commissionId: c.id,
         srNo: String(idx + 1).padStart(2, '0'),
         fpsUid: c.dealer_id ? c.dealer_id.substring(0, 9) : '',
         transactionType: `${c.commodity}${c.status ? ` (${c.status})` : ''}`,
         payableAmount: c.gross_commission,
-        amountPaid: c.net_commission.toFixed(2),
-        depositDate: c.created_at ? c.created_at.substring(0, 10) : '',
+        amountPaid: (c.amount_paid ?? c.net_commission).toFixed(2),
+        depositDate: c.deposit_date ?? (c.created_at ? c.created_at.substring(0, 10) : ''),
       }));
 
       setTransactions(mapped);
@@ -102,18 +104,17 @@ export default function BankCommissionPage() {
   const handleSave = async () => {
     setSaving(true);
     try {
-      await api.post('/sync/bank-info', {
-        month: getMonthParam(),
-        commission_payments: transactions.map(t => ({
-          fps_uid: t.fpsUid,
-          payable_amount: t.payableAmount,
+      await api.post('/commission/payments', {
+        payments: transactions.map(t => ({
+          commission_id: t.commissionId,
           amount_paid: parseFloat(t.amountPaid) || 0,
-          deposit_date: t.depositDate,
+          deposit_date: t.depositDate || new Date().toISOString().split('T')[0],
         })),
       });
-      toast.success('Bank Commission data saved successfully!');
+      toast.success('Commission payments recorded successfully!');
+      loadData();
     } catch {
-      toast.error('Failed to save commission data');
+      toast.error('Failed to save commission payments');
     } finally {
       setSaving(false);
     }

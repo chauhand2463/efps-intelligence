@@ -349,6 +349,276 @@
   font-weight: 500;
 }
 
+.csvSection {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.csvHeader h3 {
+  margin: 0 0 8px 0;
+  font-size: 16px;
+  color: var(--text-dark);
+}
+
+.csvHeader p {
+  margin: 0;
+  font-size: 13px;
+  color: var(--text-muted);
+  line-height: 1.5;
+}
+
+.csvHeader code {
+  background-color: rgba(27, 58, 107, 0.06);
+  padding: 1px 6px;
+  border-radius: 4px;
+  font-size: 12px;
+}
+
+.csvUploadArea {
+  border: 2px dashed var(--border-light);
+  border-radius: 12px;
+  padding: 40px 20px;
+  text-align: center;
+  transition: border-color 0.2s;
+}
+
+.csvUploadArea:hover {
+  border-color: var(--primary-navy);
+}
+
+.csvFileInput {
+  display: none;
+}
+
+.csvDropZone {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  color: var(--text-muted);
+}
+
+.csvDropZone strong {
+  color: var(--text-dark);
+  font-size: 15px;
+}
+
+.csvDropZone span {
+  font-size: 12px;
+}
+
+.csvPreview {
+  background-color: var(--surface-gray);
+  border: 1px solid var(--border-light);
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.csvPreviewHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--border-light);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-dark);
+}
+
+.csvPreviewHeader span {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.csvClearBtn {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 10px;
+  border: 1px solid var(--border-light);
+  border-radius: 6px;
+  background: white;
+  font-size: 12px;
+  color: var(--offline-red);
+  cursor: pointer;
+}
+
+.csvClearBtn:hover {
+  background-color: rgba(239, 68, 68, 0.06);
+}
+
+.csvTableWrap {
+  overflow-x: auto;
+  max-height: 360px;
+  overflow-y: auto;
+}
+
+.csvTable {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+.csvTable th {
+  padding: 10px 14px;
+  text-align: left;
+  background-color: rgba(27, 58, 107, 0.03);
+  border-bottom: 1px solid var(--border-light);
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-muted);
+  position: sticky;
+  top: 0;
+}
+
+.csvTable td {
+  padding: 8px 14px;
+  border-bottom: 1px solid var(--border-light);
+  color: var(--text-dark);
+}
+
+.csvTable tr:hover {
+  background-color: rgba(27, 58, 107, 0.02);
+}
+
+.csvMore {
+  text-align: center;
+  padding: 8px;
+  font-size: 12px;
+  color: var(--text-muted);
+  margin: 0;
+  border-top: 1px solid var(--border-light);
+}
+
+.csvImportBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  padding: 12px;
+  background-color: var(--primary-navy);
+  color: white;
+  border: none;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.csvImportBtn:hover:not(:disabled) {
+  background-color: var(--primary-dark);
+}
+
+.csvImportBtn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.csvResult {
+  display: flex;
+  gap: 20px;
+  background-color: var(--surface-gray);
+  border: 1px solid var(--border-light);
+  border-radius: 12px;
+  padding: 24px;
+  align-items: flex-start;
+}
+
+.csvResultIcon {
+  color: var(--online-green);
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.csvResultBody h4 {
+  margin: 0 0 16px 0;
+  font-size: 16px;
+  color: var(--text-dark);
+}
+
+.csvResultStats {
+  display: flex;
+  gap: 24px;
+  margin-bottom: 16px;
+}
+
+.csvResultStat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.csvResultStatValue {
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--text-dark);
+}
+
+.csvResultStatLabel {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-muted);
+  margin-top: 2px;
+}
+
+.csvResultHash {
+  font-size: 12px;
+  color: var(--text-muted);
+  margin: 0 0 16px 0;
+}
+
+.csvResultHash code {
+  background-color: rgba(27, 58, 107, 0.06);
+  padding: 1px 6px;
+  border-radius: 4px;
+}
+
+.csvResetBtn {
+  padding: 8px 16px;
+  border: 1px solid var(--border-light);
+  border-radius: 8px;
+  background: white;
+  color: var(--primary-navy);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.csvResetBtn:hover {
+  background-color: var(--surface-gray);
+}
+
+.csvResultActions {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.csvViewBtn {
+  display: inline-flex;
+  align-items: center;
+  padding: 8px 16px;
+  border: none;
+  border-radius: 8px;
+  background-color: var(--primary-navy);
+  color: white;
+  font-size: 13px;
+  font-weight: 600;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.csvViewBtn:hover {
+  background-color: var(--primary-dark);
+}
+
 .center {
   display: flex;
   flex-direction: column;

@@ -192,7 +192,7 @@ export function useAds() {
 }
 
 // --- Sync ---
-import type { SyncJob, SyncDashboardData, QuarantineSummary } from './types';
+import type { SyncJob, SyncDashboardData, ImportResult, QuarantineSummary } from './types';
 
 export function useSync() {
   const getBankInfo = () =>
@@ -203,5 +203,17 @@ export function useSync() {
   const getSelfSyncStatus = () => api.get('/sync/self/status');
   const getSelfDashboard = () => api.get<SyncDashboardData>('/sync/self/dashboard');
   const triggerPrioritySync = () => api.post('/sync/self/trigger', { sync_type: 'priority' });
-  return { getBankInfo, updateBankInfo, triggerSelfSync, getSelfSyncStatus, getSelfDashboard, triggerPrioritySync };
+  const importCsv = (rows: {
+    hofAsPerNFSA: string;
+    rationCardNo: string;
+    cardCategory?: string;
+    familyMember?: number;
+    cardHolderName?: string;
+    lpgStatus?: string;
+    pngStatus?: string;
+    address?: string;
+    village?: string;
+  }[]) =>
+    api.post<ImportResult>('/sync/import/csv', { rows });
+  return { getBankInfo, updateBankInfo, triggerSelfSync, getSelfSyncStatus, getSelfDashboard, triggerPrioritySync, importCsv };
 }
