@@ -2,10 +2,11 @@ import { FastifyRequest, FastifyReply } from 'fastify';
 import { syncPayloadSchema } from './internal-sync.schema.js';
 import { processSyncPayload } from './internal-sync.service.js';
 import { insertSystemEvent } from '../../shared/sync/system-events.service.js';
+import { config } from '../../config/index.js';
 import crypto from 'crypto';
 
-const SERVICE_TOKEN = process.env.INTERNAL_SYNC_SECRET || process.env.INTERNAL_SERVICE_TOKEN;
-const TOKEN_HASH = SERVICE_TOKEN ? crypto.createHash('sha256').update(SERVICE_TOKEN).digest('hex') : null;
+const SERVICE_TOKEN = config.INTERNAL_SYNC_SECRET;
+const TOKEN_HASH = crypto.createHash('sha256').update(SERVICE_TOKEN).digest('hex');
 
 function verifyServiceToken(request: FastifyRequest): boolean {
   const token = request.headers['x-service-token'] as string | undefined;

@@ -1,20 +1,39 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { Package, Inbox, AlertTriangle } from 'lucide-react';
+import { Package, Inbox, AlertTriangle, Plus, X, Loader2 } from 'lucide-react';
 import { api } from '@/lib/api';
+import { useLifting } from '@/lib/api-hooks';
 import type { StockAllocation } from '@/lib/types';
 import { Card } from '@/components/ui/Card';
-import { Skeleton, SkeletonCard } from '@/components/ui/Skeleton';
+import { SkeletonCard } from '@/components/ui/Skeleton';
 import { EmptyState } from '@/components/ui/EmptyState';
 import { Button } from '@/components/ui/Button';
 import styles from './IncomingStock.module.css';
 import toast from 'react-hot-toast';
 
+const COMMODITIES = ['Rice', 'Wheat', 'Sugar', 'Kerosene', 'Oil', 'Pulses'] as const;
+
+function toMonthInput(d: Date) {
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, '0');
+  return `${y}-${m}-01`;
+}
+
 export default function IncomingStockPage() {
   const [stockData, setStockData] = useState<StockAllocation[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
+  const [showForm, setShowForm] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+
+  const [formCommodity, setFormCommodity] = useState<string>('Rice');
+  const [formQuantity, setFormQuantity] = useState('');
+  const [formVehicle, setFormVehicle] = useState('');
+  const [formWarehouse, setFormWarehouse] = useState('');
+  const [formNotes, setFormNotes] = useState('');
+
+  const lifting = useLifting();
 
   const fetchStock = async () => {
     setLoading(true);
@@ -32,6 +51,39 @@ export default function IncomingStockPage() {
 
   useEffect(() => { fetchStock(); }, []);
 
+  useEffect(() => {
+    if (showForm) {
+      setTimeout(() => window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' }), 100);
+    }
+  }, [showForm]);
+
+  async function handleSubmitEntry() {
+    const qty = parseFloat(formQuantity);
+    if (!qty || qty <= 0) { toast.error('Enter a valid quantity'); return; }
+    setSubmitting(true);
+    try {
+      await lifting.create({
+        commodity: formCommodity as any,
+        quantity_kg: qty,
+        month: toMonthInput(new Date()),
+        vehicle_no: formVehicle.trim() || undefined,
+        warehouse: formWarehouse.trim() || undefined,
+        notes: formNotes.trim() || undefined,
+      });
+      toast.success('Stock entry recorded');
+      setShowForm(false);
+      setFormQuantity('');
+      setFormVehicle('');
+      setFormWarehouse('');
+      setFormNotes('');
+      fetchStock();
+    } catch (err: any) {
+      toast.error(err?.message || 'Failed to record stock entry');
+    } finally {
+      setSubmitting(false);
+    }
+  }
+
   const getType = (commodity: string) => {
     if (commodity === 'Rice' || commodity === 'Wheat') return 'Grains';
     if (commodity === 'Sugar') return 'Sugar';
@@ -47,9 +99,100 @@ export default function IncomingStockPage() {
         </div>
         <div className={styles.headerContent}>
           <h1 className={styles.title}>Stock Allocations</h1>
-          <p className={styles.description}>View and manage monthly stock allocations</p>
+          <p className={styles.description}>View allocations and record incoming stock</p>
         </div>
+        <Button size="sm" variant="primary" onClick={() => setShowForm(!showForm)} style={{ marginLeft: 'auto' }}>
+          <Plus size={16} />
+          {showForm ? 'Cancel' : 'Record Stock Entry'}
+        </Button>
       </div>
+
+      {showForm && (
+        <Card>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16 }}>
+            <h3 style={{ margin: 0, fontSize: 15, fontWeight: 600, color: 'var(--text-dark)' }}>New Stock Entry</h3>
+            <button type="button" onClick={() => setShowForm(false)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-muted)' }}>
+              <X size={18} />
+            </button>
+          </div>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginBottom: 12 }}>
+            <div>
+              <label style={{ display: 'block', fontSize: 12, fontWeight: 600, color: 'var(--text-dark)', marginBottom: 4 }}>Commodity</label>
+              <select
+                value={formCommodity}
+                onChange={e => setFormCommodity(e.target.value)}
+                style={{
+                  width: '100%', height: 42, padding: '0 12px', fontSize: 14,
+                  border: '1px solid var(--border-light)', borderRadius: 10,
+                  fontFamily: 'inherit', color: 'var(--text-dark)',
+                }}
+              >
+                {COMMODITIES.map(c => <option key={c} value={c}>{c}</option>)}
+              </select>
+            </div>
+            <div>
+              <label style={{ display: 'block', fontSize: 12, fontWeight: 600, color: 'var(--text-dark)', marginBottom: 4 }}>Quantity (kg) *</label>
+              <input
+                type="number" step="0.001" min="0"
+                placeholder="e.g. 500"
+                value={formQuantity}
+                onChange={e => setFormQuantity(e.target.value)}
+                style={{
+                  width: '100%', height: 42, padding: '0 12px', fontSize: 14,
+                  border: '1px solid var(--border-light)', borderRadius: 10,
+                  fontFamily: 'inherit', color: 'var(--text-dark)',
+                }}
+              />
+            </div>
+            <div>
+              <label style={{ display: 'block', fontSize: 12, fontWeight: 600, color: 'var(--text-dark)', marginBottom: 4 }}>Vehicle No. <span style={{ color: 'var(--text-muted)', fontWeight: 400 }}>(opt)</span></label>
+              <input
+                type="text" placeholder="GJ-01-XX-1234"
+                value={formVehicle}
+                onChange={e => setFormVehicle(e.target.value)}
+                style={{
+                  width: '100%', height: 42, padding: '0 12px', fontSize: 14,
+                  border: '1px solid var(--border-light)', borderRadius: 10,
+                  fontFamily: 'inherit', color: 'var(--text-dark)',
+                }}
+              />
+            </div>
+            <div>
+              <label style={{ display: 'block', fontSize: 12, fontWeight: 600, color: 'var(--text-dark)', marginBottom: 4 }}>Warehouse <span style={{ color: 'var(--text-muted)', fontWeight: 400 }}>(opt)</span></label>
+              <input
+                type="text" placeholder="Warehouse name"
+                value={formWarehouse}
+                onChange={e => setFormWarehouse(e.target.value)}
+                style={{
+                  width: '100%', height: 42, padding: '0 12px', fontSize: 14,
+                  border: '1px solid var(--border-light)', borderRadius: 10,
+                  fontFamily: 'inherit', color: 'var(--text-dark)',
+                }}
+              />
+            </div>
+          </div>
+          <div style={{ marginBottom: 16 }}>
+            <label style={{ display: 'block', fontSize: 12, fontWeight: 600, color: 'var(--text-dark)', marginBottom: 4 }}>Notes <span style={{ color: 'var(--text-muted)', fontWeight: 400 }}>(opt)</span></label>
+            <input
+              type="text" placeholder="Any remarks"
+              value={formNotes}
+              onChange={e => setFormNotes(e.target.value)}
+              style={{
+                width: '100%', height: 42, padding: '0 12px', fontSize: 14,
+                border: '1px solid var(--border-light)', borderRadius: 10,
+                fontFamily: 'inherit', color: 'var(--text-dark)',
+              }}
+            />
+          </div>
+          <div style={{ display: 'flex', gap: 8, justifyContent: 'flex-end' }}>
+            <Button size="sm" variant="secondary" onClick={() => setShowForm(false)}>Cancel</Button>
+            <Button size="sm" variant="primary" onClick={handleSubmitEntry} disabled={submitting}>
+              {submitting ? <Loader2 size={16} className="spin" /> : <Plus size={16} />}
+              {submitting ? 'Saving...' : 'Save Entry'}
+            </Button>
+          </div>
+        </Card>
+      )}
 
       {error && (
         <div className={styles.errorBanner}>
@@ -73,10 +216,10 @@ export default function IncomingStockPage() {
           <EmptyState
             icon={<Inbox size={48} />}
             title="No stock allocations found"
-            description="No stock records for the current cycle."
+            description="No stock records for the current cycle. Record incoming stock to create allocations."
             action={
-              <Button size="sm" variant="secondary" onClick={fetchStock}>
-                Refresh
+              <Button size="sm" variant="secondary" onClick={() => setShowForm(true)}>
+                <Plus size={16} /> Record Stock Entry
               </Button>
             }
           />

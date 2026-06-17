@@ -4,7 +4,7 @@ import { useState, type FormEvent } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import toast from 'react-hot-toast';
-import { ArrowLeft, Search, CheckCircle, XCircle, User, MapPin, Building, Lock, UserPlus, Loader2, Globe, ChevronDown, Check, Shield } from 'lucide-react';
+import { ArrowLeft, Search, CheckCircle, XCircle, User, MapPin, Building, Lock, UserPlus, Loader2, Globe, ChevronDown, Check, Shield, Sparkles } from 'lucide-react';
 import { api, ApiRequestError } from '@/lib/api';
 import { AuthCard } from '@/components/auth/AuthCard';
 import { ProgressStepper } from '@/components/auth/ProgressStepper';
@@ -14,6 +14,20 @@ import styles from './Register.module.css';
 interface LookupResult {
   exists: boolean;
   dealer: { fps_id: string; full_name: string } | null;
+}
+
+interface GovtLookupResult {
+  exists: boolean;
+  dealer: {
+    full_name: string;
+    mobile: string;
+    address: string;
+    district: string;
+    taluka: string;
+    village: string;
+    shop_name: string;
+    area_id: string;
+  } | null;
 }
 
 const STEPS = [
@@ -38,6 +52,7 @@ export default function RegisterPage() {
   const [district, setDistrict] = useState('');
   const [taluka, setTaluka] = useState('');
   const [areaId, setAreaId] = useState('');
+  const [govtAutoFilled, setGovtAutoFilled] = useState(false);
 
   const [enableSync, setEnableSync] = useState(false);
   const [efpsUsername, setEfpsUsername] = useState('');
@@ -54,15 +69,33 @@ export default function RegisterPage() {
     if (trimmed.length < 3 || trimmed.length > 20) { toast.error('FPS ID must be 3-20 characters'); return; }
     setLookupState('loading');
     try {
-      const result = await api.get<LookupResult>(`/dealers/lookup/${trimmed}`, { skipAuth: true });
-      if (result.exists && result.dealer) {
-        setLookupName(result.dealer.full_name);
-        setFullName(result.dealer.full_name);
+      const [localResult, govtResult] = await Promise.all([
+        api.get<LookupResult>(`/dealers/lookup/${trimmed}`, { skipAuth: true }),
+        api.get<GovtLookupResult>(`/dealers/govt-lookup/${trimmed}`, { skipAuth: true }).catch(() => null),
+      ]);
+
+      if (localResult.exists && localResult.dealer) {
+        setLookupName(localResult.dealer.full_name);
+        setFullName(localResult.dealer.full_name);
         setLookupState('found');
         toast.success('FPS ID verified!');
       } else {
         setLookupState('notfound');
-        toast('FPS ID not found — you can fill in details manually.', { icon: 'ℹ️' });
+      }
+
+      if (govtResult?.exists && govtResult.dealer) {
+        const g = govtResult.dealer;
+        setFullName(g.full_name);
+        if (g.address) setAddress(g.address);
+        if (g.district) setDistrict(g.district);
+        if (g.taluka) setTaluka(g.taluka);
+        if (g.area_id) setAreaId(g.area_id);
+        if (g.mobile) setMobile(g.mobile);
+        setGovtAutoFilled(true);
+        setLookupState('found');
+        toast.success('Shop details loaded from government portal');
+      } else if (!localResult.exists) {
+        toast('FPS ID not found — fill details manually.', { icon: 'ℹ️' });
       }
     } catch (err) {
       setLookupState('idle');
@@ -193,6 +226,12 @@ export default function RegisterPage() {
                 <p style={{ margin: '8px 0 0 0', fontSize: 12, color: '#10B981', display: 'flex', alignItems: 'center', gap: 4 }}>
                   <Shield size={14} />
                   Verified as <strong>{lookupName}</strong>
+                  {govtAutoFilled && (
+                    <span style={{ color: '#2563EB', display: 'inline-flex', alignItems: 'center', gap: 3, marginLeft: 4 }}>
+                      <Sparkles size={13} />
+                      Auto-filled from govt portal
+                    </span>
+                  )}
                 </p>
               )}
             </div>

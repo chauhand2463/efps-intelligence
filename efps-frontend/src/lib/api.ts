@@ -139,14 +139,14 @@ async function request<T>(
 }
 
 export const api = {
-  get: <T>(path: string, opts?: { skipAuth?: boolean }) =>
+  get: <T>(path: string, opts?: { skipAuth?: boolean; rawResponse?: boolean }) =>
     request<T>('GET', path, undefined, opts),
-  post: <T>(path: string, body?: unknown, opts?: { skipAuth?: boolean }) =>
+  post: <T>(path: string, body?: unknown, opts?: { skipAuth?: boolean; rawResponse?: boolean }) =>
     request<T>('POST', path, body, opts),
-  put: <T>(path: string, body?: unknown) =>
-    request<T>('PUT', path, body),
-  patch: <T>(path: string, body?: unknown) =>
-    request<T>('PATCH', path, body),
-  delete: <T>(path: string) =>
-    request<T>('DELETE', path),
+  put: <T>(path: string, body?: unknown, opts?: { skipAuth?: boolean; rawResponse?: boolean }) =>
+    request<T>('PUT', path, body, opts),
+  patch: <T>(path: string, body?: unknown, opts?: { skipAuth?: boolean; rawResponse?: boolean }) =>
+    request<T>('PATCH', path, body, opts),
+  delete: <T>(path: string, opts?: { skipAuth?: boolean; rawResponse?: boolean }) =>
+    request<T>('DELETE', path, undefined, opts),
 };

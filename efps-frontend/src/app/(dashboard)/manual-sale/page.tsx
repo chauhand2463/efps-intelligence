@@ -96,7 +96,35 @@ export default function ManualSalePage() {
 
     setProgress({ current: 0, total: parsedRows.length });
 
-    const commodity = itemName.trim();
+    const monthsMap: Record<string, string> = {
+      January: '01',
+      February: '02',
+      March: '03',
+      April: '04',
+      May: '05',
+      June: '06',
+      July: '07',
+      August: '08',
+      September: '09',
+      October: '10',
+      November: '11',
+      December: '12',
+    };
+
+    const formattedMonth = `${reportYear}-${monthsMap[reportMonth] || '01'}-01`;
+
+    const normalizeCommodity = (name: string): string => {
+      const lower = name.toLowerCase();
+      if (lower.includes('rice')) return 'Rice';
+      if (lower.includes('wheat')) return 'Wheat';
+      if (lower.includes('sugar')) return 'Sugar';
+      if (lower.includes('kerosene')) return 'Kerosene';
+      if (lower.includes('oil')) return 'Oil';
+      if (lower.includes('pulse') || lower.includes('dal')) return 'Pulses';
+      return name;
+    };
+
+    const commodity = normalizeCommodity(itemName.trim());
     const allErrors: ProcessResult['errors'] = [];
     let successCount = 0;
 
@@ -122,7 +150,7 @@ export default function ManualSalePage() {
 
         await api.post('/transactions', {
           beneficiary_id: beneficiaryId,
-          month: reportMonth,
+          month: formattedMonth,
           commodity,
           quantity_kg: row.quantity,
           mode: 'manual',
@@ -283,7 +311,7 @@ export default function ManualSalePage() {
               <input 
                 className={styles.textInput}
                 type="text"
-                placeholder="e.g. Wheat, Rice, Sugar, Salt..."
+                placeholder="e.g. Wheat, Rice, Sugar, Pulses..."
                 list="items-list"
                 value={itemName}
                 onChange={(e) => setItemName(e.target.value)}
@@ -292,9 +320,11 @@ export default function ManualSalePage() {
               />
               <datalist id="items-list">
                 <option value="Wheat" />
-                <option value="Rice (AAY)" />
+                <option value="Rice" />
                 <option value="Sugar" />
-                <option value="Salt (Iodized)" />
+                <option value="Kerosene" />
+                <option value="Oil" />
+                <option value="Pulses" />
               </datalist>
             </div>
 

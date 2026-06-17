@@ -33,12 +33,12 @@ export default function MonthlySalesReportPage() {
       try {
         const [stockResult, txResult, summaryResult] = await Promise.allSettled([
           api.get<StockAllocation[]>('/stock'),
-          api.get<ApiResponse<Transaction[]>>('/transactions?limit=5000'),
+          api.get<Transaction[]>('/transactions?limit=5000'),
           api.get<DashboardSummary>('/dashboard/summary'),
         ]);
 
         const stock = stockResult.status === 'fulfilled' ? stockResult.value : [];
-        const transactions = txResult.status === 'fulfilled' ? txResult.value.data : [];
+        const transactions = txResult.status === 'fulfilled' ? (txResult.value ?? []) : [];
         const summary = summaryResult.status === 'fulfilled' ? summaryResult.value : null;
 
         const txByCommodity: Record<string, number> = {};

@@ -55,7 +55,7 @@ async function main() {
         auditFlushWorker, smsOtpWorker, dailyReportWorker,
         sessionCleanupWorker, govtDataSyncWorker, syncSchedulerWorker,
         efpsSyncWorker, domainEventsWorker,
-      ];
+      ].filter((w): w is Exclude<typeof w, null | undefined> => !!w);
       await Promise.all(workers.map(w => w.close()));
 
       await closeRedis();

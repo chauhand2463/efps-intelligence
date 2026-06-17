@@ -42,8 +42,7 @@ export default function StockRecordPage() {
       );
       const openingBalance = allocation?.allocated_kg ?? 0;
 
-      const txResult = await api.get<ApiResponse<Transaction[]>>(`/transactions?month=${monthToApi(selectedMonth, selectedYear)}&commodity=${selectedItem}`);
-      const transactions = txResult?.data ?? [];
+      const transactions = await api.get<Transaction[]>(`/transactions?month=${monthToApi(selectedMonth, selectedYear)}&commodity=${selectedItem}`) ?? [];
 
       const grouped: Record<string, Transaction[]> = {};
       for (const tx of transactions) {
@@ -165,8 +164,7 @@ export default function StockRecordPage() {
               const stockAllocations = await api.get<StockAllocation[]>('/stock');
               const allocation = (stockAllocations ?? []).find(s => s.commodity === item);
               const opening = allocation?.allocated_kg ?? 0;
-              const txResult = await api.get<ApiResponse<Transaction[]>>(`/transactions?month=${monthToApi(selectedMonth, selectedYear)}&commodity=${item}`);
-              const transactions = txResult?.data ?? [];
+              const transactions = await api.get<Transaction[]>(`/transactions?month=${monthToApi(selectedMonth, selectedYear)}&commodity=${item}`) ?? [];
               const grouped: Record<string, Transaction[]> = {};
               for (const tx of transactions) {
                 const date = tx.transaction_date.split('T')[0];

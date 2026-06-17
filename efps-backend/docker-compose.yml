@@ -50,6 +50,9 @@ services:
       REDIS_URL: redis://redis:6379
       JWT_ACCESS_SECRET: ${JWT_ACCESS_SECRET}
       JWT_REFRESH_SECRET: ${JWT_REFRESH_SECRET}
+      ENCRYPTION_KEY: ${ENCRYPTION_KEY}
+      INTERNAL_SYNC_SECRET: ${INTERNAL_SYNC_SECRET}
+      CORS_ALLOWED_ORIGINS: ${CORS_ALLOWED_ORIGINS:-http://localhost:3001,http://localhost:5173}
       LOG_LEVEL: info
     depends_on:
       postgres:
@@ -76,6 +79,12 @@ services:
       DATABASE_URL: postgresql://postgres:postgres@postgres:5432/efps_dev
       REDIS_URL: redis://redis:6379
       ENCRYPTION_KEY: ${ENCRYPTION_KEY}
+      JWT_ACCESS_SECRET: ${JWT_ACCESS_SECRET}
+      JWT_REFRESH_SECRET: ${JWT_REFRESH_SECRET}
+      INTERNAL_SYNC_SECRET: ${INTERNAL_SYNC_SECRET}
+      INTERNAL_SYNC_URL: http://app:3000/api/internal/sync
+      START_SYNC_WORKER: 'true'
+      MOCK_GOVT_PORTAL: ${MOCK_GOVT_PORTAL:-true}
     depends_on:
       postgres:
         condition: service_healthy

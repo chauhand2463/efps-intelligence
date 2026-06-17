@@ -22,6 +22,11 @@ const envSchema = z.object({
 
   ENCRYPTION_KEY: z.string().length(64),
 
+  INTERNAL_SYNC_SECRET: z.string().min(32).default('change-me-to-a-very-long-secret-key-at-least-32-chars'),
+  INTERNAL_SYNC_URL: z.string().url().default('http://localhost:3000/api/internal/sync'),
+  START_SYNC_WORKER: z.preprocess((val) => val === 'true' || val === true, z.boolean()).default(false),
+  MOCK_GOVT_PORTAL: z.preprocess((val) => val === 'true' || val === true, z.boolean()).default(true),
+
   SMS_PROVIDER: z.enum(['msg91', 'twilio', 'mock']).default('mock'),
   MSG91_AUTH_KEY: z.string().optional(),
   MSG91_SENDER_ID: z.string().default('EFPSMS'),

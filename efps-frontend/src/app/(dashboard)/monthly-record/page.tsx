@@ -33,10 +33,10 @@ export default function MonthlyRecordPage() {
       try {
         const [stockResult, liftingResult] = await Promise.all([
           api.get<StockAllocation[]>('/stock'),
-          api.get<ApiResponse<LiftingEntry[]>>(`/lifting?month=${monthToApi(month, year)}`),
+          api.get<LiftingEntry[]>(`/lifting?month=${monthToApi(month, year)}`),
         ]);
 
-        const liftingList = liftingResult?.data ?? [];
+        const liftingList = liftingResult ?? [];
 
         const liftingByCommodity: Record<string, number> = {};
         for (const entry of liftingList) {

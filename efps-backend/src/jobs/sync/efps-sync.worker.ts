@@ -1,16 +1,18 @@
 import { Worker, Job, Queue } from 'bullmq';
 import { chromium, Browser, Page } from 'playwright';
+import { createWorker } from 'tesseract.js';
 import { getBullRedis } from '../../config/redis.js';
 import { query } from '../../config/database.js';
 import { decrypt } from '../../shared/utils/encrypt.js';
 import { logger } from '../../shared/utils/logger.js';
 import { eventBus, EventTypes } from '../../shared/events/index.js';
 import { CircuitBreaker } from '../../shared/utils/circuit-breaker.js';
+import { config } from '../../config/index.js';
 import crypto from 'crypto';
 
 const QUEUE_NAME = 'efps-sync';
-const INTERNAL_SYNC_URL = process.env.INTERNAL_SYNC_URL || 'http://localhost:3000/api/internal/sync';
-const SERVICE_TOKEN = process.env.INTERNAL_SYNC_SECRET || process.env.INTERNAL_SERVICE_TOKEN || '';
+const INTERNAL_SYNC_URL = config.INTERNAL_SYNC_URL;
+const SERVICE_TOKEN = config.INTERNAL_SYNC_SECRET;
 
 const efpsCircuitBreaker = new CircuitBreaker('efps-portal', {
   failureThreshold: 3,
@@ -103,16 +105,43 @@ async function loginToEfps(page: Page, username: string, password: string): Prom
     timeout: 30000,
   });
 
-  await page.fill('input[name="username"]', username);
-  await page.fill('input[name="password"]', password);
-  await page.click('button[type="submit"]');
+  // ASP.NET WebForms includes __RequestVerificationToken as a hidden input;
+  // the native form POST (triggered by clicking btnlogin) sends it automatically.
+  // No manual extraction needed here, but the token exists in the DOM if ever required.
 
-  await page.waitForURL('**/dashboard**', { timeout: 15000 });
+  // Locate and screenshot CAPTCHA image
+  const captchaImg = await page.$('img[src*="GetCaptchaImage"]');
+  if (!captchaImg) throw new Error('CAPTCHA image element not found');
+  const captchaBuffer = await captchaImg.screenshot();
 
-  const errorEl = await page.$('.error-message, .alert-danger');
+  // Solve CAPTCHA via Tesseract OCR
+  const worker = await createWorker('eng');
+  const { data: { text } } = await worker.recognize(captchaBuffer);
+  await worker.terminate();
+  const captchaText = text.replace(/[^a-zA-Z0-9]/g, '').trim();
+  if (!captchaText) throw new Error('CAPTCHA OCR returned empty text');
+
+  // Fill login form with real selectors discovered from DOM inspection
+  await page.fill('input#txtuser', username);
+  await page.fill('input#txtpass', password);
+  await page.fill('input[name="clientCaptcha"]', captchaText);
+
+  // Submit via the correct login button
+  await page.click('button#btnlogin');
+
+  // Wait for navigation away from the Login page (ASP.NET postback redirect)
+  await page.waitForURL(
+    (url: URL) => !url.pathname.toLowerCase().includes('/login'),
+    { timeout: 15000 }
+  );
+
+  // Check for error messages (common ASP.NET patterns)
+  const errorEl = await page.$('.error-message, .alert-danger, #lblMessage');
   if (errorEl) {
     const errorText = await errorEl.textContent();
-    throw new Error(`eFPS login failed: ${errorText}`);
+    if (errorText && errorText.trim()) {
+      throw new Error(`eFPS login failed: ${errorText}`);
+    }
   }
 }
 
@@ -293,74 +322,129 @@ async function markJobStatus(syncJobId: string | undefined, dealerId: string, st
   }
 }
 
-export const efpsSyncWorker = new Worker<EfpsSyncPayload>(
-  QUEUE_NAME,
-  async (job: Job<EfpsSyncPayload>) => {
-    const { dealerId, fpsId, triggeredBy, syncMode, syncJobId } = job.data;
-    let browser: Browser | null = null;
-    const traceId = crypto.randomUUID().slice(0, 8);
+export let efpsSyncWorker: Worker<EfpsSyncPayload> | null = null;
 
-    await markJobStatus(syncJobId, dealerId, 'running');
+if (config.START_SYNC_WORKER) {
+  efpsSyncWorker = new Worker<EfpsSyncPayload>(
+    QUEUE_NAME,
+    async (job: Job<EfpsSyncPayload>) => {
+      const { dealerId, fpsId, triggeredBy, syncMode, syncJobId } = job.data;
+      let browser: Browser | null = null;
+      const traceId = crypto.randomUUID().slice(0, 8);
 
-    // Fast-fail if circuit breaker is open
-    if (efpsCircuitBreaker.getState() === 'OPEN') {
-      const msg = `eFPS portal circuit breaker is OPEN — portal may be down. Skipping sync for ${fpsId}.`;
-      logger.warn({ dealerId, fpsId, traceId, circuitState: 'OPEN' }, msg);
-      await markJobStatus(syncJobId, dealerId, 'failed', msg);
-      await query(
-        `UPDATE sync_scheduler_config SET sync_status = 'failed' WHERE dealer_id = $1`,
-        [dealerId]
-      );
-      return { success: false, fpsId, error: msg };
-    }
+      await markJobStatus(syncJobId, dealerId, 'running');
 
-    try {
-      const { username, password } = await getCredentials(dealerId);
-
-      browser = await chromium.launch({
-        headless: true,
-        args: [
-          '--no-sandbox',
-          '--disable-setuid-sandbox',
-          '--disable-dev-shm-usage',
-          '--disable-gpu',
-        ],
-      });
-
-      const scrapeResult = await efpsCircuitBreaker.call(async () => {
-        const context = await browser!.newContext({
-          userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
-          viewport: { width: 1280, height: 720 },
-        });
-
-        const page = await context.newPage();
-
-        await loginToEfps(page, username, password);
-
-        const [beneficiaryRows, transactionRows, stockRows] = await Promise.all([
-          scrapeBeneficiaries(page),
-          scrapeTransactions(page),
-          scrapeStockAllocations(page),
-        ]);
-
-        return { beneficiaryRows, transactionRows, stockRows };
-      });
-
-      const { beneficiaryRows, transactionRows, stockRows } = scrapeResult;
-
-      const workers: { type: string; records: Record<string, unknown>[] }[] = [];
-      if (beneficiaryRows.length > 0) {
-        workers.push({ type: 'beneficiary', records: mapBeneficiaries(beneficiaryRows) });
-      }
-      if (transactionRows.length > 0) {
-        workers.push({ type: 'transaction', records: mapTransactions(transactionRows) });
-      }
-      if (stockRows.length > 0) {
-        workers.push({ type: 'stock_allocation', records: mapStockAllocations(stockRows) });
+      // Fast-fail if circuit breaker is open
+      if (efpsCircuitBreaker.getState() === 'OPEN') {
+        const msg = `eFPS portal circuit breaker is OPEN — portal may be down. Skipping sync for ${fpsId}.`;
+        logger.warn({ dealerId, fpsId, traceId, circuitState: 'OPEN' }, msg);
+        await markJobStatus(syncJobId, dealerId, 'failed', msg);
+        await query(
+          `UPDATE sync_scheduler_config SET sync_status = 'failed' WHERE dealer_id = $1`,
+          [dealerId]
+        );
+        return { success: false, fpsId, error: msg };
       }
 
-      if (workers.length === 0) {
-        logger.warn({ dealerId, fpsId, traceId }, 'No data scraped from eFPS portal');
+      try {
+        let scrapeResult;
+
+        if (config.MOCK_GOVT_PORTAL) {
+          logger.info({ dealerId, fpsId, traceId }, 'eFPS Portal Mock Mode active — generating mock sync data');
+          
+          // Generate realistic mock beneficiaries
+          const mockBeneficiaries: BeneficiaryRow[] = [
+            { rationCardNo: `GJ${fpsId}001`, headOfFamily: 'Arvindbhai Patel', memberCount: 4, category: 'NFSA-PHH', mobile: '9988776655' },
+            { rationCardNo: `GJ${fpsId}002`, headOfFamily: 'Savitaben Shah', memberCount: 5, category: 'NFSA-AAY', mobile: '9876543210' },
+            { rationCardNo: `GJ${fpsId}003`, headOfFamily: 'Rajeshbhai Mehta', memberCount: 3, category: 'APL', mobile: '9012345678' },
+          ];
+
+          // Generate mock transactions for today
+          const todayStr: string = new Date().toISOString().split('T')[0] ?? '';
+          const mockTransactions: TransactionRow[] = [
+            { transactionDate: todayStr, commodity: 'Wheat', quantityKg: 15, pricePerKg: 2, totalAmount: 30, beneficiaryRationCard: `GJ${fpsId}001`, mode: 'pos' },
+            { transactionDate: todayStr, commodity: 'Rice', quantityKg: 20, pricePerKg: 3, totalAmount: 60, beneficiaryRationCard: `GJ${fpsId}001`, mode: 'pos' },
+            { transactionDate: todayStr, commodity: 'Sugar', quantityKg: 2.5, pricePerKg: 15, totalAmount: 37.5, beneficiaryRationCard: `GJ${fpsId}002`, mode: 'pos' },
+          ];
+
+          // Generate mock stock allocations for the current month
+          const currentMonthStr: string = todayStr.substring(0, 7) + '-01';
+          const mockStock: StockRow[] = [
+            { commodity: 'Wheat', allocatedKg: 1000, liftedKg: 850, month: currentMonthStr },
+            { commodity: 'Rice', allocatedKg: 800, liftedKg: 600, month: currentMonthStr },
+            { commodity: 'Sugar', allocatedKg: 150, liftedKg: 150, month: currentMonthStr },
+          ];
+
+          scrapeResult = { beneficiaryRows: mockBeneficiaries, transactionRows: mockTransactions, stockRows: mockStock };
+        } else {
+          const { username, password } = await getCredentials(dealerId);
+
+          browser = await chromium.launch({
+            headless: true,
+            args: [
+              '--no-sandbox',
+              '--disable-setuid-sandbox',
+              '--disable-dev-shm-usage',
+              '--disable-gpu',
+            ],
+          });
+
+          scrapeResult = await efpsCircuitBreaker.call(async () => {
+            const context = await browser!.newContext({
+              userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
+              viewport: { width: 1280, height: 720 },
+            });
+
+            const page = await context.newPage();
+
+            await loginToEfps(page, username, password);
+
+            const [beneficiaryRows, transactionRows, stockRows] = await Promise.all([
+              scrapeBeneficiaries(page),
+              scrapeTransactions(page),
+              scrapeStockAllocations(page),
+            ]);
+
+            return { beneficiaryRows, transactionRows, stockRows };
+          });
+        }
+
+        const { beneficiaryRows, transactionRows, stockRows } = scrapeResult;
+
+        const workers: { type: string; records: Record<string, unknown>[] }[] = [];
+        if (beneficiaryRows.length > 0) {
+          workers.push({ type: 'beneficiary', records: mapBeneficiaries(beneficiaryRows) });
+        }
+        if (transactionRows.length > 0) {
+          workers.push({ type: 'transaction', records: mapTransactions(transactionRows) });
+        }
+        if (stockRows.length > 0) {
+          workers.push({ type: 'stock_allocation', records: mapStockAllocations(stockRows) });
+        }
+
+        if (workers.length === 0) {
+          logger.warn({ dealerId, fpsId, traceId }, 'No data scraped from eFPS portal');
+          await Promise.all([
+            markJobStatus(syncJobId, dealerId, 'success'),
+            query(`UPDATE dealers SET last_sync_at = NOW() WHERE id = $1`, [dealerId]),
+            query(
+              `UPDATE sync_scheduler_config SET last_sync_at = NOW(), next_sync_at = NOW() + (sync_interval_mins || ' minutes')::interval, sync_status = 'success', consecutive_failures = 0 WHERE dealer_id = $1`,
+              [dealerId]
+            ),
+          ]);
+          return { success: true, fpsId, recordCount: 0, beneficiaries: 0, transactions: 0, stock: 0 };
+        }
+
+        const apiResult = await postToInternalApi(
+          dealerId,
+          syncJobId,
+          syncMode ?? 'full',
+          workers,
+          traceId
+        );
+
+        const recordCount = apiResult.processed + apiResult.quarantined;
+
         await Promise.all([
           markJobStatus(syncJobId, dealerId, 'success'),
           query(`UPDATE dealers SET last_sync_at = NOW() WHERE id = $1`, [dealerId]),
@@ -369,78 +453,58 @@ export const efpsSyncWorker = new Worker<EfpsSyncPayload>(
             [dealerId]
           ),
         ]);
-        return { success: true, fpsId, recordCount: 0, beneficiaries: 0, transactions: 0, stock: 0 };
-      }
 
-      const apiResult = await postToInternalApi(
-        dealerId,
-        syncJobId,
-        syncMode ?? 'full',
-        workers,
-        traceId
-      );
+        await eventBus.emit(EventTypes.SYNC_COMPLETED, {
+          syncType: 'efps-govt',
+          entityCount: recordCount,
+          fpsId,
+        } as Record<string, unknown>);
 
-      const recordCount = apiResult.processed + apiResult.quarantined;
+        logger.info({ dealerId, fpsId, recordCount, traceId, processed: apiResult.processed, quarantined: apiResult.quarantined }, 'eFPS Playwright sync completed via Internal API');
 
-      await Promise.all([
-        markJobStatus(syncJobId, dealerId, 'success'),
-        query(`UPDATE dealers SET last_sync_at = NOW() WHERE id = $1`, [dealerId]),
-        query(
-          `UPDATE sync_scheduler_config SET last_sync_at = NOW(), next_sync_at = NOW() + (sync_interval_mins || ' minutes')::interval, sync_status = 'success', consecutive_failures = 0 WHERE dealer_id = $1`,
+        return {
+          success: true,
+          fpsId,
+          recordCount,
+          processed: apiResult.processed,
+          quarantined: apiResult.quarantined,
+          beneficiaries: beneficiaryRows.length,
+          transactions: transactionRows.length,
+          stock: stockRows.length,
+        };
+      } catch (error: any) {
+        logger.error({ dealerId, fpsId, error: error.message, traceId, circuitState: efpsCircuitBreaker.getState() }, 'eFPS Playwright sync failed');
+
+        await markJobStatus(syncJobId, dealerId, 'failed', error.message);
+
+        await query(
+          `UPDATE sync_scheduler_config SET sync_status = 'failed', consecutive_failures = consecutive_failures + 1 WHERE dealer_id = $1`,
           [dealerId]
-        ),
-      ]);
+        );
 
-      await eventBus.emit(EventTypes.SYNC_COMPLETED, {
-        syncType: 'efps-govt',
-        entityCount: recordCount,
-        fpsId,
-      } as Record<string, unknown>);
-
-      logger.info({ dealerId, fpsId, recordCount, traceId, processed: apiResult.processed, quarantined: apiResult.quarantined }, 'eFPS Playwright sync completed via Internal API');
-
-      return {
-        success: true,
-        fpsId,
-        recordCount,
-        processed: apiResult.processed,
-        quarantined: apiResult.quarantined,
-        beneficiaries: beneficiaryRows.length,
-        transactions: transactionRows.length,
-        stock: stockRows.length,
-      };
-    } catch (error: any) {
-      logger.error({ dealerId, fpsId, error: error.message, traceId, circuitState: efpsCircuitBreaker.getState() }, 'eFPS Playwright sync failed');
-
-      await markJobStatus(syncJobId, dealerId, 'failed', error.message);
-
-      await query(
-        `UPDATE sync_scheduler_config SET sync_status = 'failed', consecutive_failures = consecutive_failures + 1 WHERE dealer_id = $1`,
-        [dealerId]
-      );
-
-      throw error;
-    } finally {
-      if (browser) {
-        await browser.close();
+        throw error;
+      } finally {
+        if (browser) {
+          await browser.close();
+        }
       }
-    }
-  },
-  {
-    connection: getBullRedis() as any,
-    concurrency: 1,
-    limiter: {
-      max: 10,
-      duration: 60000,
     },
-  }
-);
+    {
+      connection: getBullRedis() as any,
+      concurrency: 1,
+      limiter: {
+        max: 10,
+        duration: 60000,
+      },
+    }
+  );
 
-efpsSyncWorker.on('completed', (job) => {
-  logger.info({ fpsId: job.data.fpsId }, 'eFPS sync worker completed');
-});
+  efpsSyncWorker.on('completed', (job) => {
+    logger.info({ fpsId: job.data.fpsId }, 'eFPS sync worker completed');
+  });
 
-efpsSyncWorker.on('failed', (job, err) => {
-  if (!job) return;
-  logger.error({ fpsId: job.data.fpsId, error: err.message }, 'eFPS sync worker failed');
-});
+  efpsSyncWorker.on('failed', (job, err) => {
+    if (!job) return;
+    logger.error({ fpsId: job.data.fpsId, error: err.message }, 'eFPS sync worker failed');
+  });
+}

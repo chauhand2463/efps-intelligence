@@ -40,12 +40,12 @@ export function usePaginatedList<T>(
 // --- Beneficiaries ---
 export function useBeneficiaries() {
   const list = (page = 1, limit = 20) =>
-    api.get<ApiResponse<Beneficiary[]>>(`/beneficiaries?page=${page}&limit=${limit}`)
-      .then(r => r as unknown as { data: Beneficiary[]; meta: PaginationMeta });
+    api.get<ApiResponse<Beneficiary[]>>(`/beneficiaries?page=${page}&limit=${limit}`, { rawResponse: true })
+      .then(r => ({ data: r.data, meta: r.meta! }));
 
   const search = (q: string, page = 1, limit = 20) =>
-    api.get<ApiResponse<Beneficiary[]>>(`/beneficiaries/search?q=${encodeURIComponent(q)}&page=${page}&limit=${limit}`)
-      .then(r => r as unknown as { data: Beneficiary[]; meta: PaginationMeta });
+    api.get<ApiResponse<Beneficiary[]>>(`/beneficiaries/search?q=${encodeURIComponent(q)}&page=${page}&limit=${limit}`, { rawResponse: true })
+      .then(r => ({ data: r.data, meta: r.meta! }));
 
   const createFn = (input: CreateBeneficiaryInput) => api.post<Beneficiary>('/beneficiaries', input);
   const updateFn = ({ id, input }: { id: string; input: UpdateBeneficiaryInput }) => api.patch<Beneficiary>(`/beneficiaries/${id}`, input);
@@ -64,8 +64,8 @@ export function useTransactions() {
     let path = `/transactions?page=${page}&limit=${limit}`;
     if (month) path += `&month=${month}`;
     if (commodity) path += `&commodity=${commodity}`;
-    return api.get<ApiResponse<Transaction[]>>(path)
-      .then(r => r as unknown as { data: Transaction[]; meta: PaginationMeta });
+    return api.get<ApiResponse<Transaction[]>>(path, { rawResponse: true })
+      .then(r => ({ data: r.data, meta: r.meta! }));
   };
 
   const create = (input: CreateTransactionInput) => api.post<Transaction>('/transactions', input);
@@ -88,8 +88,8 @@ export function useStock() {
     let path = `/stock/history?page=${page}&limit=${limit}`;
     if (month) path += `&month=${month}`;
     if (commodity) path += `&commodity=${commodity}`;
-    return api.get<ApiResponse<StockAllocation[]>>(path)
-      .then(r => r as unknown as { data: StockAllocation[]; meta: PaginationMeta });
+    return api.get<ApiResponse<StockAllocation[]>>(path, { rawResponse: true })
+      .then(r => ({ data: r.data, meta: r.meta! }));
   };
   return { getCurrent, getHistory };
 }
@@ -97,8 +97,8 @@ export function useStock() {
 // --- Notifications ---
 export function useNotifications() {
   const list = (page = 1, limit = 20) =>
-    api.get<ApiResponse<Notification[]>>(`/notifications?page=${page}&limit=${limit}`)
-      .then(r => r as unknown as { data: Notification[]; meta: PaginationMeta });
+    api.get<ApiResponse<Notification[]>>(`/notifications?page=${page}&limit=${limit}`, { rawResponse: true })
+      .then(r => ({ data: r.data, meta: r.meta! }));
 
   const markRead = (id: string) => api.patch<Notification>(`/notifications/${id}/read`);
   const markAllRead = () => api.patch<{ marked_read: number }>('/notifications/read-all');
@@ -115,15 +115,15 @@ export function useFinance() {
   const listIncome = (page = 1, limit = 20, month?: string) => {
     let path = `/finance/income?page=${page}&limit=${limit}`;
     if (month) path += `&month=${month}`;
-    return api.get<ApiResponse<IncomeEntry[]>>(path)
-      .then(r => r as unknown as { data: IncomeEntry[]; meta: PaginationMeta });
+    return api.get<ApiResponse<IncomeEntry[]>>(path, { rawResponse: true })
+      .then(r => ({ data: r.data, meta: r.meta! }));
   };
 
   const listExpenses = (page = 1, limit = 20, month?: string) => {
     let path = `/finance/expenses?page=${page}&limit=${limit}`;
     if (month) path += `&month=${month}`;
-    return api.get<ApiResponse<ExpenseEntry[]>>(path)
-      .then(r => r as unknown as { data: ExpenseEntry[]; meta: PaginationMeta });
+    return api.get<ApiResponse<ExpenseEntry[]>>(path, { rawResponse: true })
+      .then(r => ({ data: r.data, meta: r.meta! }));
   };
 
   const getProfitLoss = (month?: string) => {
@@ -149,8 +149,8 @@ export function useCommission() {
   const list = (page = 1, limit = 20, month?: string) => {
     let path = `/commission?page=${page}&limit=${limit}`;
     if (month) path += `&month=${month}`;
-    return api.get<ApiResponse<Commission[]>>(path)
-      .then(r => r as unknown as { data: Commission[]; meta: PaginationMeta });
+    return api.get<ApiResponse<Commission[]>>(path, { rawResponse: true })
+      .then(r => ({ data: r.data, meta: r.meta! }));
   };
   return { getRates, calculate, list };
 }
@@ -162,8 +162,8 @@ export function useLifting() {
   const list = (page = 1, limit = 20, month?: string) => {
     let path = `/lifting?page=${page}&limit=${limit}`;
     if (month) path += `&month=${month}`;
-    return api.get<ApiResponse<LiftingEntry[]>>(path)
-      .then(r => r as unknown as { data: LiftingEntry[]; meta: PaginationMeta });
+    return api.get<ApiResponse<LiftingEntry[]>>(path, { rawResponse: true })
+      .then(r => ({ data: r.data, meta: r.meta! }));
   };
 
   return { create, list };
@@ -186,8 +186,8 @@ export function useProfile() {
 // --- Ads ---
 export function useAds() {
   const list = (page = 1, limit = 20) =>
-    api.get<ApiResponse<Ad[]>>(`/ads?page=${page}&limit=${limit}`)
-      .then(r => r as unknown as { data: Ad[]; meta: PaginationMeta });
+    api.get<ApiResponse<Ad[]>>(`/ads?page=${page}&limit=${limit}`, { rawResponse: true })
+      .then(r => ({ data: r.data, meta: r.meta! }));
   return { list: usePaginatedList('ads', list) };
 }
 
