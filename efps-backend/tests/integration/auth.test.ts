@@ -18,6 +18,14 @@ const TEST_DEALER = {
 let app: Awaited<ReturnType<typeof buildApp>>;
 let pool: pg.Pool;
 
+function extractCookie(cookies: { name: string; value: string }[], name: string): string | undefined {
+  return cookies.find(c => c.name === name)?.value;
+}
+
+function makeCookieHeader(tokens: Record<string, string>): string {
+  return Object.entries(tokens).map(([k, v]) => `${k}=${v}`).join('; ');
+}
+
 beforeAll(async () => {
   pool = new pg.Pool({ connectionString: process.env.DATABASE_URL! });
 
@@ -54,6 +62,8 @@ describe('Auth Integration', () => {
   let refreshToken: string;
   let dealerId: string;
 
+  function authCookie() { return makeCookieHeader({ access_token: accessToken, refresh_token: refreshToken }); }
+
   it('POST /auth/login — valid credentials returns tokens', async () => {
     const res = await app.inject({
       method: 'POST',
@@ -67,13 +77,13 @@ describe('Auth Integration', () => {
     expect(res.statusCode).toBe(200);
     const body = JSON.parse(res.payload);
     expect(body.success).toBe(true);
-    expect(body.data.access_token).toBeTruthy();
-    expect(body.data.refresh_token).toBeTruthy();
     expect(body.data.dealer.fps_id).toBe(TEST_DEALER.fps_id);
     expect(body.data.dealer.role).toBe('dealer');
 
-    accessToken = body.data.access_token;
-    refreshToken = body.data.refresh_token;
+    accessToken = extractCookie(res.cookies, 'access_token')!;
+    refreshToken = extractCookie(res.cookies, 'refresh_token')!;
+    expect(accessToken).toBeTruthy();
+    expect(refreshToken).toBeTruthy();
     dealerId = body.data.dealer.id;
   });
 
@@ -109,28 +119,31 @@ describe('Auth Integration', () => {
     const res = await app.inject({
       method: 'POST',
       url: '/api/v1/auth/refresh',
-      payload: {
-        refresh_token: refreshToken,
+      headers: {
+        cookie: `refresh_token=${refreshToken}`,
       },
     });
 
     expect(res.statusCode).toBe(200);
     const body = JSON.parse(res.payload);
     expect(body.success).toBe(true);
-    expect(body.data.access_token).toBeTruthy();
-    expect(body.data.refresh_token).toBeTruthy();
-    expect(body.data.refresh_token).not.toBe(refreshToken);
 
-    accessToken = body.data.access_token;
-    refreshToken = body.data.refresh_token;
+    const newAccessToken = extractCookie(res.cookies, 'access_token')!;
+    const newRefreshToken = extractCookie(res.cookies, 'refresh_token')!;
+    expect(newAccessToken).toBeTruthy();
+    expect(newRefreshToken).toBeTruthy();
+    expect(newRefreshToken).not.toBe(refreshToken);
+
+    accessToken = newAccessToken;
+    refreshToken = newRefreshToken;
   });
 
   it('POST /auth/refresh — invalid token returns 401', async () => {
     const res = await app.inject({
       method: 'POST',
       url: '/api/v1/auth/refresh',
-      payload: {
-        refresh_token: 'invalid-jwt-token',
+      headers: {
+        cookie: 'refresh_token=invalid-jwt-token',
       },
     });
 
@@ -144,7 +157,7 @@ describe('Auth Integration', () => {
       method: 'GET',
       url: '/api/v1/auth/me',
       headers: {
-        authorization: `Bearer ${accessToken}`,
+        cookie: authCookie(),
       },
     });
 
@@ -172,7 +185,7 @@ describe('Auth Integration', () => {
       method: 'POST',
       url: '/api/v1/auth/logout',
       headers: {
-        authorization: `Bearer ${accessToken}`,
+        cookie: authCookie(),
       },
     });
 
@@ -186,7 +199,7 @@ describe('Auth Integration', () => {
       method: 'GET',
       url: '/api/v1/auth/me',
       headers: {
-        authorization: `Bearer ${accessToken}`,
+        cookie: authCookie(),
       },
     });
 

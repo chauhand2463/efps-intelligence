@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { hashPassword, verifyPassword, hashOtp, hashToken } from '../../src/shared/utils/hash.js';
+import { hashPassword, verifyPassword, hashOtp, verifyOtpHash, hashToken } from '../../src/shared/utils/hash.js';
 
 describe('Hash utilities', () => {
   it('should hash and verify password correctly', async () => {
@@ -15,15 +15,19 @@ describe('Hash utilities', () => {
     expect(isInvalid).toBe(false);
   });
 
-  it('should hash OTP consistently', () => {
+  it('should produce different OTP hashes each time (random salt)', () => {
     const otp = '123456';
     const hash1 = hashOtp(otp);
     const hash2 = hashOtp(otp);
-    expect(hash1).toBe(hash2);
+    expect(hash1).not.toBe(hash2);
     expect(hash1).not.toBe(otp);
+  });
 
-    const hash3 = hashOtp('654321');
-    expect(hash1).not.toBe(hash3);
+  it('should verify OTP hash correctly', () => {
+    const otp = '123456';
+    const hash = hashOtp(otp);
+    expect(verifyOtpHash(otp, hash)).toBe(true);
+    expect(verifyOtpHash('654321', hash)).toBe(false);
   });
 
   it('should hash tokens consistently', () => {

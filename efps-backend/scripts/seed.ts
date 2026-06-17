@@ -77,8 +77,8 @@ async function seed() {
   for (const dealerId of dealerIds) {
     for (const a of allocations) {
       await pool.query(
-        `INSERT INTO stock_allocations (dealer_id, month, commodity, allocated_kg)
-         VALUES ($1, $2, $3, $4)
+        `INSERT INTO stock_allocations (dealer_id, month, commodity, allocated_kg, allocated_quantity, lifted_quantity, unit)
+         VALUES ($1, $2, $3, $4, $4, 0, 'Kg')
          ON CONFLICT (dealer_id, month, commodity) DO NOTHING`,
         [dealerId, monthStr, a.commodity, a.kg]
       );
