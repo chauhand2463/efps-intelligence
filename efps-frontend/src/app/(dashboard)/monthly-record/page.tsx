@@ -4,6 +4,7 @@ import {
     Bell, Settings, AlertTriangle, FileText, Printer, Image, Loader2 
 } from 'lucide-react';
 import { api } from '@/lib/api';
+import { monthToApi } from '@/lib/utils';
 import type { StockAllocation, LiftingEntry, ApiResponse } from '@/lib/types';
 import styles from './MonthlyRecord.module.css';
 import toast from 'react-hot-toast';
@@ -32,17 +33,17 @@ export default function MonthlyRecordPage() {
       try {
         const [stockResult, liftingResult] = await Promise.all([
           api.get<StockAllocation[]>('/stock'),
-          api.get<ApiResponse<LiftingEntry[]>>(`/lifting?month=${month}`),
+          api.get<ApiResponse<LiftingEntry[]>>(`/lifting?month=${monthToApi(month, year)}`),
         ]);
 
-        const liftingList = liftingResult.data;
+        const liftingList = liftingResult?.data ?? [];
 
         const liftingByCommodity: Record<string, number> = {};
         for (const entry of liftingList) {
           liftingByCommodity[entry.commodity] = (liftingByCommodity[entry.commodity] || 0) + entry.quantity_kg;
         }
 
-        const computedRows: MonthlyRow[] = stockResult.map((stock) => {
+        const computedRows: MonthlyRow[] = (stockResult ?? []).map((stock) => {
           const opening = stock.allocated_kg;
           const newIncome = liftingByCommodity[stock.commodity] || 0;
           const total = opening + newIncome;

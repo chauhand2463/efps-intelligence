@@ -1,21 +1,32 @@
 'use client';
 
-import { useState, type FormEvent } from 'react';
+import { useEffect, useState, type FormEvent } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import toast from 'react-hot-toast';
-import { User, Lock, Eye, EyeOff, ArrowRight } from 'lucide-react';
+import { Lock, Eye, EyeOff, ArrowRight, Store } from 'lucide-react';
 import { useAuth } from '@/lib/auth-context';
 import { ApiRequestError } from '@/lib/api';
+import { AuthCard } from '@/components/auth/AuthCard';
 import styles from './Login.module.css';
 
 export default function LoginPage() {
-  const { login } = useAuth();
+  const { login, user, isInitialized } = useAuth();
   const router = useRouter();
   const [showPassword, setShowPassword] = useState(false);
   const [fpsId, setFpsId] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    if (isInitialized && user) {
+      router.replace('/dashboard');
+    }
+  }, [isInitialized, user, router]);
+
+  if (isInitialized && user) {
+    return null;
+  }
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
@@ -26,7 +37,7 @@ export default function LoginPage() {
     setLoading(true);
     try {
       await login(fpsId.trim(), password);
-      router.push('/dashboard');
+      router.replace('/dashboard');
     } catch (err) {
       if (err instanceof ApiRequestError) {
         toast.error(err.message);
@@ -39,79 +50,95 @@ export default function LoginPage() {
   }
 
   return (
-    <div className={styles.container}>
-      <div className="card" style={{ width: '100%', maxWidth: '480px' }}>
-        <div className={styles.header}>
-          <h2 className={styles.title}>Welcome Back</h2>
-          <p className="text-muted">Sign in to your EFPS dashboard</p>
+    <AuthCard maxWidth={480}>
+      <div className={styles.header}>
+        <div className={styles.logo}>
+          <Store size={22} />
         </div>
-
-        <hr className={styles.divider} />
-
-        <form className={styles.form} onSubmit={handleSubmit}>
-          <div className={styles.formGroup}>
-            <label className="label">FPSU ID / AREA ID</label>
-            <div className={styles.inputWrapper}>
-              <User size={20} className={styles.inputIcon} />
-              <input
-                type="text"
-                placeholder="Enter your FPSU ID"
-                className={styles.input}
-                value={fpsId}
-                onChange={e => setFpsId(e.target.value)}
-                disabled={loading}
-              />
-            </div>
-          </div>
-
-          <div className={styles.formGroup}>
-            <div className={styles.labelRow}>
-              <label className="label">PASSWORD</label>
-              <Link href="/forgot-password" className={styles.forgotLink}>Forgot Password?</Link>
-            </div>
-            <div className={styles.inputWrapper}>
-              <Lock size={20} className={styles.inputIcon} />
-              <input
-                type={showPassword ? 'text' : 'password'}
-                placeholder="Enter your password"
-                className={styles.input}
-                value={password}
-                onChange={e => setPassword(e.target.value)}
-                disabled={loading}
-              />
-              <button
-                type="button"
-                className={styles.toggleIcon}
-                onClick={() => setShowPassword(v => !v)}
-                tabIndex={-1}
-              >
-                {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
-              </button>
-            </div>
-          </div>
-
-          <button type="submit" className={styles.submitButton} disabled={loading}>
-            {loading ? 'Signing in...' : 'Login to Dashboard'}
-            {!loading && <ArrowRight size={20} />}
-          </button>
-        </form>
-
-        <div className={styles.orDivider}>
-          <div className={styles.line} />
-          <span>OR</span>
-          <div className={styles.line} />
-        </div>
-
-        <div className={styles.secondaryLinks}>
-          <Link href="/register" className={styles.createAccount}>Create New Account</Link>
-          <Link href="/change-profile" className={styles.changeProfile}>Change Profile / Reset Password</Link>
-        </div>
+        <h1 className={styles.title}>Sign in</h1>
+        <p className={styles.subtitle}>Enter your credentials to access your dashboard</p>
       </div>
 
-      <div className={styles.sslBadge}>
-        <Lock size={16} />
-        <span>256-BIT SSL ENCRYPTED</span>
+      <form className={styles.form} onSubmit={handleSubmit} autoComplete="on">
+        <div className={styles.field}>
+          <label className={styles.label} htmlFor="fpsId">FPSU ID / Area ID</label>
+          <div className={styles.inputWrap}>
+            <svg className={styles.inputIcon} width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            <input
+              id="fpsId"
+              type="text"
+              placeholder="Enter your FPSU ID"
+              className={styles.input}
+              value={fpsId}
+              onChange={e => setFpsId(e.target.value)}
+              disabled={loading}
+              autoFocus
+              autoComplete="username"
+            />
+          </div>
+        </div>
+
+        <div className={styles.field}>
+          <div className={styles.labelRow}>
+            <label className={styles.label} htmlFor="password">Password</label>
+            <Link href="/forgot-password" className={styles.forgotLink}>Forgot password?</Link>
+          </div>
+          <div className={styles.inputWrap}>
+            <Lock size={18} className={styles.inputIcon} />
+            <input
+              id="password"
+              type={showPassword ? 'text' : 'password'}
+              placeholder="Enter your password"
+              className={styles.input}
+              value={password}
+              onChange={e => setPassword(e.target.value)}
+              disabled={loading}
+              autoComplete="current-password"
+            />
+            <button
+              type="button"
+              className={styles.toggleBtn}
+              onClick={() => setShowPassword(v => !v)}
+              tabIndex={-1}
+              aria-label={showPassword ? 'Hide password' : 'Show password'}
+            >
+              {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+            </button>
+          </div>
+        </div>
+
+        <button type="submit" className={styles.submitBtn} disabled={loading}>
+          {loading ? (
+            <>
+              <div className={styles.spinner} />
+              Signing in
+            </>
+          ) : (
+            <>
+              Sign in
+              <ArrowRight size={18} />
+            </>
+          )}
+        </button>
+      </form>
+
+      <div className={styles.divider}>
+        <div className={styles.dividerLine} />
+        <span className={styles.dividerText}>OR</span>
+        <div className={styles.dividerLine} />
       </div>
-    </div>
+
+      <div className={styles.links}>
+        <Link href="/register" className={styles.linkPrimary}>Create new account</Link>
+        <Link href="/change-profile" className={styles.linkSecondary}>Change profile / Reset password</Link>
+      </div>
+
+      <div className={styles.footer}>
+        <div className={styles.sslBadge}>
+          <Lock size={12} />
+          <span>256-bit SSL encrypted</span>
+        </div>
+      </div>
+    </AuthCard>
   );
 }

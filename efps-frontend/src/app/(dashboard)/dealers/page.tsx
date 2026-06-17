@@ -38,13 +38,14 @@ export default function DealersPage() {
         (async () => {
             try {
                 const data = await api.get<DealerDto[]>('/admin/dealers');
-                setAllDealers(data.map(toDealer));
+                setAllDealers((data ?? []).map(toDealer));
             } catch (err) {
                 if (err instanceof ApiRequestError && err.statusCode === 403) {
                     try {
                         const fallback = await api.get<DealerDto[]>('/directory');
-                        setAllDealers(fallback.map(toDealer));
+                        setAllDealers((fallback ?? []).map(toDealer));
                     } catch {
+                        toast.error('Failed to load dealers from directory');
                         setAllDealers([]);
                     }
                 } else {

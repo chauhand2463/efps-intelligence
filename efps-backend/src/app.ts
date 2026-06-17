@@ -1,3 +1,4 @@
+import crypto from 'node:crypto';
 import Fastify from 'fastify';
 import compress from '@fastify/compress';
 import Prometheus from 'prom-client';
@@ -31,6 +32,9 @@ import { directoryRoutes } from './modules/directory/directory.routes.js';
 import { dashboardRoutes } from './modules/dashboard/dashboard.routes.js';
 import { hierarchyRoutes } from './modules/hierarchy/hierarchy.routes.js';
 import { registerEventHandlers } from './shared/events/index.js';
+import { internalSyncRouter } from './modules/internal-sync/internal-sync.router.js';
+
+
 
 export async function buildApp() {
   registerEventHandlers();
@@ -44,14 +48,15 @@ export async function buildApp() {
     trustProxy: true,
     bodyLimit: 10 * 1024 * 1024,
     requestIdHeader: 'X-Request-Id',
+    genReqId: () => crypto.randomUUID().slice(0, 8),
     keepAliveTimeout: 60000,
     connectionTimeout: 30000,
   });
 
   app.setErrorHandler(errorHandler);
 
-  await registerAuthPlugin(app);
   await registerCors(app);
+  await registerAuthPlugin(app);
   await app.register(compress, { global: true, threshold: 1024 });
   await registerHelmet(app);
   await registerRateLimit(app);
@@ -65,11 +70,28 @@ export async function buildApp() {
   const startTime = Date.now();
 
   app.get('/health', async () => {
+    try {
+      await pool.query('SELECT 1');
+    } catch {
+      return { status: 'degraded', detail: 'database unreachable' };
+    }
+
+    let queueOk = false;
+    try {
+      const redis = getRedis();
+      await redis.ping();
+      queueOk = true;
+    } catch {
+      // queue health best-effort
+    }
+
     return {
       status: 'ok',
       version: '1.0.0',
       uptime: Math.floor((Date.now() - startTime) / 1000),
       timestamp: new Date().toISOString(),
+      database: 'connected',
+      queue: queueOk ? 'connected' : 'disconnected',
     };
   });
 
@@ -100,6 +122,8 @@ export async function buildApp() {
       timestamp: new Date().toISOString(),
     };
   });
+
+  await app.register(internalSyncRouter);
 
   app.get('/metrics', async (_request, reply) => {
     const metrics = await Prometheus.register.metrics();

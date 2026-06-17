@@ -4,9 +4,8 @@ import { AuthError, SessionNotFoundError } from '../errors/AuthError.js';
 import { getRedis } from '../../config/redis.js';
 
 export async function authenticate(request: FastifyRequest, reply: FastifyReply) {
-  const cookieToken = request.cookies.access_token;
   const authHeader = request.headers.authorization;
-  const token = cookieToken ?? (authHeader?.startsWith('Bearer ') ? authHeader.split(' ')[1] : undefined);
+  const token = authHeader?.startsWith('Bearer ') ? authHeader.split(' ')[1] : request.cookies.access_token;
 
   if (!token) {
     throw new AuthError('TOKEN_INVALID', 'Missing or invalid authorization header');
@@ -22,15 +21,20 @@ export async function authenticate(request: FastifyRequest, reply: FastifyReply)
     throw new AuthError('TOKEN_INVALID', 'Invalid access token');
   }
 
-  const redis = getRedis();
-  const isBlacklisted = await redis.get(`blacklist:token:${token}`);
-  if (isBlacklisted) {
-    throw new SessionNotFoundError();
-  }
+  try {
+    const redis = getRedis();
+    const isBlacklisted = await redis.get(`blacklist:token:${token}`);
+    if (isBlacklisted) {
+      throw new SessionNotFoundError();
+    }
 
-  const onlineKey = `dealer:${payload.sub}:online`;
-  await redis.expire(onlineKey, 900);
-  await redis.sadd('online_dealers', payload.sub);
+    const onlineKey = `dealer:${payload.sub}:online`;
+    await redis.expire(onlineKey, 900);
+    await redis.sadd('online_dealers', payload.sub);
+  } catch (err) {
+    if (err instanceof SessionNotFoundError) throw err;
+    // Redis unavailable — allow auth to proceed (degraded mode)
+  }
 
   request.user = {
     id: payload.sub,

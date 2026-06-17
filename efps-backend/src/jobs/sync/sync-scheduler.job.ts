@@ -1,7 +1,7 @@
 import { Queue, Worker, type Job } from 'bullmq';
 import { getBullRedis } from '../../config/redis.js';
 import { query } from '../../config/database.js';
-import { enqueueGovtSync } from './govt-data-sync.job.js';
+import { enqueueEfpsSync } from './efps-sync.worker.js';
 
 const QUEUE_NAME = 'sync-scheduler';
 
@@ -18,9 +18,12 @@ const worker = new Worker(
   QUEUE_NAME,
   async (_job: Job) => {
     const pendingSyncs = await query(
-      `SELECT ssc.id, ssc.dealer_id, d.fps_id, d.district, d.taluka, ssc.source_url
+      `SELECT ssc.id, ssc.dealer_id, d.fps_id, d.district, d.taluka, ssc.source_url,
+              ssc.sync_mode, ssc.jitter_minutes, ssc.consecutive_failures,
+              dc.id IS NOT NULL as has_credentials
        FROM sync_scheduler_config ssc
        JOIN dealers d ON d.id = ssc.dealer_id
+       LEFT JOIN dealer_credentials dc ON dc.dealer_id = ssc.dealer_id
        WHERE ssc.sync_enabled = TRUE
          AND (ssc.next_sync_at IS NULL OR ssc.next_sync_at <= NOW())
          AND d.is_active = TRUE
@@ -28,24 +31,42 @@ const worker = new Worker(
        LIMIT 50`
     );
 
-    console.log(`[SyncScheduler] Found ${pendingSyncs.rows.length} dealers ready for sync`);
+    let processed = 0;
+    let skipped = 0;
 
     for (const row of pendingSyncs.rows) {
-      await enqueueGovtSync({
+      if (!row.has_credentials && !row.source_url) {
+        skipped++;
+        continue;
+      }
+
+      const syncMode = row.sync_mode ?? 'full';
+
+      await enqueueEfpsSync({
         dealerId: row.dealer_id,
         fpsId: row.fps_id,
-        district: row.district ?? '',
-        taluka: row.taluka ?? '',
-        sourceUrl: row.source_url ?? undefined,
+        triggeredBy: 'scheduled',
+        syncMode,
       });
 
+      const consecutiveFailures = row.consecutive_failures ?? 0;
+      const baseInterval = 24 * 60;
+      const backoffMultiplier = Math.min(1 + consecutiveFailures * 0.5, 3);
+      const jitterMinutes = Math.min(row.jitter_minutes ?? 30, 60);
+
       await query(
-        `UPDATE sync_scheduler_config SET sync_status = 'queued' WHERE id = $1`,
-        [row.id]
+        `UPDATE sync_scheduler_config
+         SET sync_status = 'queued',
+             last_sync_at = NOW(),
+             next_sync_at = NOW() + (($1 * $2) || ' minutes')::interval + (random() * $3 || ' minutes')::interval
+         WHERE id = $4`,
+        [baseInterval, backoffMultiplier, jitterMinutes, row.id]
       );
+
+      processed++;
     }
 
-    return { processed: pendingSyncs.rows.length };
+    return { processed, skipped };
   },
   { connection: getBullRedis() as any }
 );

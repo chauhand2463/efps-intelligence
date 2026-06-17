@@ -64,7 +64,7 @@ export class SyncService {
     }
   }
 
-  async triggerDealerSync(dealerId: string, _syncType?: string) {
+  async triggerDealerSync(dealerId: string, syncType?: string) {
     const dealer = await query(
       `SELECT id, fps_id, sync_enabled FROM dealers WHERE id = $1 AND is_active = TRUE`,
       [dealerId]
@@ -75,11 +75,12 @@ export class SyncService {
     }
 
     const d = dealer.rows[0] as { id: string; fps_id: string; sync_enabled: boolean };
+    const syncMode = syncType === 'priority' ? 'priority' : 'full';
 
     await query(
-      `INSERT INTO sync_jobs (dealer_id, status, triggered_by)
-       VALUES ($1, 'pending', 'manual')`,
-      [dealerId]
+      `INSERT INTO sync_jobs (dealer_id, status, sync_mode, triggered_by)
+       VALUES ($1, 'pending', $2, 'manual')`,
+      [dealerId, syncMode]
     );
 
     const hasCredentials = await query(
@@ -92,6 +93,7 @@ export class SyncService {
         dealerId: d.id,
         fpsId: d.fps_id,
         triggeredBy: 'manual',
+        syncMode,
       });
     } else {
       await enqueueGovtSync({
@@ -102,7 +104,7 @@ export class SyncService {
       });
     }
 
-    return { message: 'Sync triggered', dealer_id: dealerId, has_playwright_creds: hasCredentials.rows.length > 0 };
+    return { message: 'Sync triggered', dealer_id: dealerId, has_playwright_creds: hasCredentials.rows.length > 0, sync_mode: syncMode };
   }
 
   async getSyncStatus(dealerId: string) {
@@ -129,6 +131,48 @@ export class SyncService {
       `SELECT * FROM sync_logs ORDER BY created_at DESC LIMIT 50`
     );
     return result.rows;
+  }
+
+  async getSelfDashboard(dealerId: string) {
+    const lastSync = await query(
+      `SELECT id, dealer_id, status, processed_count, quarantined_count, error_message, error_detail, priority, sync_mode, worker_version, website_version, trace_id, created_at, started_at, completed_at
+       FROM sync_jobs WHERE dealer_id = $1
+       ORDER BY created_at DESC LIMIT 1`,
+      [dealerId]
+    );
+
+    const syncHistory = await query(
+      `SELECT id, dealer_id, status, processed_count, quarantined_count, error_message, error_detail, priority, sync_mode, worker_version, website_version, trace_id, created_at, started_at, completed_at
+       FROM sync_jobs WHERE dealer_id = $1
+       ORDER BY created_at DESC LIMIT 20`,
+      [dealerId]
+    );
+
+    const counts = await query(
+      `SELECT
+         (SELECT COUNT(*) FROM beneficiaries WHERE dealer_id = $1) as total_beneficiaries,
+         (SELECT COUNT(*) FROM transactions WHERE dealer_id = $1) as total_transactions,
+         (SELECT COUNT(*) FROM stock_allocations WHERE dealer_id = $1) as total_stock,
+         (SELECT COUNT(*) FROM sync_quarantine WHERE dealer_id = $1 AND reviewed_at IS NULL) as recent_quarantined`,
+      [dealerId]
+    );
+
+    const queueLength = await query(
+      `SELECT COUNT(*) as count FROM sync_jobs WHERE dealer_id = $1 AND status IN ('pending', 'running')`,
+      [dealerId]
+    );
+
+    const c = counts.rows[0] ?? { total_beneficiaries: 0, total_transactions: 0, total_stock: 0, recent_quarantined: 0 };
+
+    return {
+      lastSync: lastSync.rows[0] ?? null,
+      syncHistory: syncHistory.rows,
+      totalBeneficiaries: parseInt(c.total_beneficiaries, 10),
+      totalTransactions: parseInt(c.total_transactions, 10),
+      totalStockAllocations: parseInt(c.total_stock, 10),
+      recentQuarantined: parseInt(c.recent_quarantined, 10),
+      queueLength: parseInt(queueLength.rows[0]?.count ?? '0', 10),
+    };
   }
 
   async getBankInfo(dealerId: string) {

@@ -16,10 +16,10 @@ export async function getAuditLogHandler(request: FastifyRequest, reply: Fastify
 }
 
 export async function exportPdfHandler(request: FastifyRequest, reply: FastifyReply) {
-  const html = await reportService.exportPdf(request.user!.id);
-  reply.header('Content-Type', 'text/html');
-  reply.header('Content-Disposition', 'attachment; filename="monthly-report.html"');
-  return reply.send(html);
+  const pdf = await reportService.exportPdf(request.user!.id);
+  reply.header('Content-Type', 'application/pdf');
+  reply.header('Content-Disposition', 'attachment; filename="monthly-report.pdf"');
+  return reply.send(pdf);
 }
 
 export async function exportCsvHandler(request: FastifyRequest, reply: FastifyReply) {

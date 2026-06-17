@@ -1,6 +1,7 @@
 import type { FastifyError, FastifyReply, FastifyRequest } from 'fastify';
 import { AppError } from './AppError.js';
 import { ZodError } from 'zod';
+import { logger } from '../utils/logger.js';
 
 export function errorHandler(error: FastifyError | AppError | Error, _request: FastifyRequest, reply: FastifyReply) {
   if (error instanceof AppError) {
@@ -51,7 +52,7 @@ export function errorHandler(error: FastifyError | AppError | Error, _request: F
     });
   }
 
-  console.error('Unhandled error:', error);
+  logger.error({ err: error, url: _request.url, method: _request.method, ip: _request.ip }, 'UNHANDLED_ERROR');
 
   return reply.status(500).send({
     success: false,

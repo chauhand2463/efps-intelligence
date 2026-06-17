@@ -52,6 +52,7 @@ export default function MdmRecordPage() {
   const [loading, setLoading] = useState(true);
   const [dataUnavailable, setDataUnavailable] = useState(false);
   const [saveMessage, setSaveMessage] = useState('');
+  const [printMode, setPrintMode] = useState<'mdm' | 'icds' | 'combined'>('combined');
   const originalRowsRef = useRef<CommodityRow[]>(INITIAL_ROWS);
 
   const fetchMdmData = useCallback(async () => {
@@ -69,7 +70,7 @@ export default function MdmRecordPage() {
         return;
       }
     } catch {
-      // No saved records for this month/year
+      console.warn('No saved MDM records for this month/year');
     }
 
     try {
@@ -84,7 +85,7 @@ export default function MdmRecordPage() {
             mapped = [...mapped, ...icdsRows];
           }
         } catch {
-          // ICDS codes endpoint may not be available
+          console.warn('Failed to fetch ICDS codes');
         }
 
         setRows(mapped);
@@ -93,7 +94,7 @@ export default function MdmRecordPage() {
         return;
       }
     } catch {
-      // /mdm/schemes may be admin-only
+      console.warn('Failed to fetch MDM schemes');
     }
 
     try {
@@ -114,7 +115,7 @@ export default function MdmRecordPage() {
         return;
       }
     } catch {
-      // Stock endpoint also failed
+      console.warn('Failed to fetch stock allocations');
     }
 
     setDataUnavailable(true);
@@ -268,13 +269,13 @@ export default function MdmRecordPage() {
           </div>
 
           <div className={styles.printBtns}>
-            <button className={styles.mdmPrintBtn} onClick={() => window.print()}>
+            <button className={styles.mdmPrintBtn} onClick={() => { setPrintMode('mdm'); setTimeout(() => window.print(), 50); }}>
               <Printer size={16} /> MDM Print
             </button>
-            <button className={styles.icdsPrintBtn} onClick={() => window.print()}>
+            <button className={styles.icdsPrintBtn} onClick={() => { setPrintMode('icds'); setTimeout(() => window.print(), 50); }}>
               <Printer size={16} /> ICDS Print
             </button>
-            <button className={styles.combinedPrintBtn} onClick={() => window.print()}>
+            <button className={styles.combinedPrintBtn} onClick={() => { setPrintMode('combined'); setTimeout(() => window.print(), 50); }}>
               <Printer size={16} /> Combined Print
             </button>
           </div>
@@ -305,7 +306,9 @@ export default function MdmRecordPage() {
             </thead>
 
             <tbody>
-              {rows.map((row) => {
+              {(printMode === 'combined' ? rows : rows.filter(r =>
+                printMode === 'mdm' ? r.name.startsWith('MDM') : r.name.startsWith('ICDS')
+              )).map((row) => {
                 const total   = getTotal(row);
                 const closing = getClosing(row);
                 const amount  = getAmount(row);

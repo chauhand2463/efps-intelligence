@@ -82,7 +82,7 @@ export default function ItemWiseSalesPage() {
         const commodity = commodityMap[activeCommodity];
         const data = await api.get<Transaction[]>(`/transactions?page=1&limit=1000&month=${encodeURIComponent(activeMonth)}&commodity=${encodeURIComponent(commodity)}`);
 
-        const rows: SalesRow[] = data.map((t) => ({
+        const rows: SalesRow[] = (data ?? []).map((t) => ({
           date: new Date(t.transaction_date).toLocaleDateString('en-GB', { day: '2-digit', month: 'long', year: 'numeric' }),
           qty: t.quantity_kg,
           rate: t.price_per_kg ?? 0,
@@ -91,6 +91,7 @@ export default function ItemWiseSalesPage() {
 
         setSalesRows(rows);
       } catch {
+        toast.error('Failed to load sales data.');
         setFetchError('Failed to load sales data. Please try again.');
         setSalesRows([]);
       } finally {

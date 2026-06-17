@@ -192,6 +192,8 @@ export function useAds() {
 }
 
 // --- Sync ---
+import type { SyncJob, SyncDashboardData, QuarantineSummary } from './types';
+
 export function useSync() {
   const getBankInfo = () =>
     api.get<{ bank_name: string | null; branch_name: string | null; account_no: string | null; ifsc_code: string | null; account_holder: string | null }>('/sync/bank-info');
@@ -199,5 +201,7 @@ export function useSync() {
   const triggerSelfSync = (syncType = 'beneficiaries') =>
     api.post('/sync/self/trigger', { sync_type: syncType });
   const getSelfSyncStatus = () => api.get('/sync/self/status');
-  return { getBankInfo, updateBankInfo, triggerSelfSync, getSelfSyncStatus };
+  const getSelfDashboard = () => api.get<SyncDashboardData>('/sync/self/dashboard');
+  const triggerPrioritySync = () => api.post('/sync/self/trigger', { sync_type: 'priority' });
+  return { getBankInfo, updateBankInfo, triggerSelfSync, getSelfSyncStatus, getSelfDashboard, triggerPrioritySync };
 }

@@ -2,10 +2,12 @@
 
 import { Suspense, useState, useRef, type FormEvent, useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import Link from 'next/link';
 import toast from 'react-hot-toast';
-import { ArrowLeft, ShieldCheck, ArrowRight } from 'lucide-react';
+import { Shield } from 'lucide-react';
 import { api, ApiRequestError } from '@/lib/api';
+import { AuthCard } from '@/components/auth/AuthCard';
+import { OtpInput } from '@/components/auth/OtpInput';
+import { SubmitButton } from '@/components/auth/SubmitButton';
 import styles from '../register/Register.module.css';
 
 function VerifyOtpForm() {
@@ -15,31 +17,20 @@ function VerifyOtpForm() {
   const mobile = searchParams.get('mobile') ?? '';
 
   const [otp, setOtp] = useState(['', '', '', '', '', '']);
-  const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
   const [loading, setLoading] = useState(false);
   const [cooldown, setCooldown] = useState(0);
+  const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   useEffect(() => {
-    if (!fpsId) {
-      router.replace('/forgot-password');
-    }
+    if (!fpsId) router.replace('/forgot-password');
   }, [fpsId, router]);
 
   useEffect(() => {
-    if (cooldown <= 0) return;
-    const t = setInterval(() => setCooldown(c => c - 1), 1000);
-    return () => clearInterval(t);
-  }, [cooldown]);
-
-  const handleChange = (index: number, value: string) => {
-    if (value.length > 1) value = value[0];
-    const newOtp = [...otp];
-    newOtp[index] = value;
-    setOtp(newOtp);
-    if (value && index < 5) {
-      inputRefs.current[index + 1]?.focus();
+    if (cooldown > 0) {
+      intervalRef.current = setInterval(() => setCooldown(c => c - 1), 1000);
+      return () => { if (intervalRef.current) clearInterval(intervalRef.current); };
     }
-  };
+  }, [cooldown]);
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
@@ -81,57 +72,58 @@ function VerifyOtpForm() {
   if (!fpsId) return null;
 
   return (
-    <div className={styles.container}>
-      <div className="card" style={{ width: '100%', maxWidth: '480px' }}>
-        <Link href="/forgot-password" className={styles.backLink}>
-          <ArrowLeft size={18} style={{ marginRight: '4px' }} />
-          Back
-        </Link>
+    <AuthCard maxWidth={480}>
+      <div className={styles.headerCenter}>
+        <div className={styles.iconCircle} style={{ backgroundColor: 'rgba(37,99,235,0.1)', color: '#2563EB' }}>
+          <Shield size={28} />
+        </div>
+        <h1 className={styles.title}>OTP Verification</h1>
+        <p className={styles.subtitle}>Enter the 6-digit code sent to your registered mobile number</p>
+      </div>
 
-        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', marginBottom: '32px' }}>
-          <div style={{ width: '64px', height: '64px', backgroundColor: 'rgba(245, 158, 11, 0.1)', color: 'var(--accent-amber)', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '16px' }}>
-            <ShieldCheck size={32} />
-          </div>
-          <h2 className={styles.title}>OTP Verification</h2>
-          <p className={styles.subtitle} style={{ marginBottom: 0 }}>Enter the 6-digit code sent to your registered mobile number.</p>
+      <form onSubmit={handleSubmit}>
+        <OtpInput
+          value={otp}
+          onChange={(index, value) => {
+            const newOtp = [...otp];
+            newOtp[index] = value;
+            setOtp(newOtp);
+          }}
+          disabled={loading}
+        />
+
+        <div style={{ textAlign: 'center', marginBottom: 24, fontSize: 13, color: '#64748B' }}>
+          Didn&apos;t receive the code?{' '}
+          <button
+            type="button"
+            onClick={handleResend}
+            disabled={cooldown > 0}
+            style={{
+              background: 'none',
+              border: 'none',
+              color: cooldown > 0 ? '#94A3B8' : '#2563EB',
+              fontWeight: 600,
+              cursor: cooldown > 0 ? 'default' : 'pointer',
+              padding: 0,
+              fontFamily: 'inherit',
+              fontSize: 13,
+            }}
+          >
+            {cooldown > 0 ? `Resend (${cooldown}s)` : 'Resend'}
+          </button>
         </div>
 
-        <form onSubmit={handleSubmit}>
-          <div style={{ display: 'flex', gap: '8px', justifyContent: 'center', marginBottom: '24px' }}>
-            {otp.map((digit, index) => (
-              <input
-                key={index}
-                ref={el => { inputRefs.current[index] = el; }}
-                type="text"
-                maxLength={1}
-                value={digit}
-                onChange={e => handleChange(index, e.target.value)}
-                disabled={loading}
-                style={{ width: '48px', height: '56px', fontSize: '24px', textAlign: 'center', borderRadius: '8px', border: '1px solid var(--border-input)', fontWeight: 600, color: 'var(--text-dark)' }}
-              />
-            ))}
-          </div>
-
-          <div style={{ textAlign: 'center', marginBottom: '24px', fontSize: '14px', color: 'var(--text-muted)' }}>
-            Didn&apos;t receive the code?{' '}
-            <button type="button" onClick={handleResend} disabled={cooldown > 0} style={{ background: 'none', border: 'none', color: cooldown > 0 ? 'var(--text-muted)' : 'var(--accent-amber)', fontWeight: 600, cursor: cooldown > 0 ? 'default' : 'pointer', padding: 0 }}>
-              {cooldown > 0 ? `Resend (${cooldown}s)` : 'Resend'}
-            </button>
-          </div>
-
-          <button type="submit" className={styles.submitButton} disabled={loading}>
-            {loading ? 'Verifying...' : 'Verify OTP'}
-            <ArrowRight size={20} />
-          </button>
-        </form>
-      </div>
-    </div>
+        <SubmitButton loading={loading} loadingText="Verifying...">
+          Verify OTP
+        </SubmitButton>
+      </form>
+    </AuthCard>
   );
 }
 
 export default function VerifyOtpPage() {
   return (
-    <Suspense fallback={<div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>Loading...</div>}>
+    <Suspense fallback={null}>
       <VerifyOtpForm />
     </Suspense>
   );

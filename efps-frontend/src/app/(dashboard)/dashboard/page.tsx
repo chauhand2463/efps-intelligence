@@ -1,118 +1,125 @@
 'use client';
 
-import { useEffect, useState, useRef } from 'react';
 import { useRouter } from 'next/navigation';
-import { AlertCircle, ShieldCheck, Loader2 } from 'lucide-react';
+import { useQuery } from '@tanstack/react-query';
+import { AlertCircle, ShieldCheck, Plus, Printer } from 'lucide-react';
 import { useAuth } from '@/lib/auth-context';
-import { useDashboard } from '@/lib/api-hooks';
+import { api } from '@/lib/api';
 import type { DashboardSummary } from '@/lib/types';
+import { Card } from '@/components/ui/Card';
+import { Button } from '@/components/ui/Button';
+import { SkeletonCard } from '@/components/ui/Skeleton';
+import { ErrorState } from '@/components/ui/ErrorState';
 import styles from './Dashboard.module.css';
-import toast from 'react-hot-toast';
 
 export default function DashboardPage() {
   const router = useRouter();
   const { dealer } = useAuth();
-  const dashboard = useDashboard();
-  const getSummaryRef = useRef(dashboard.getSummary);
-  useEffect(() => { getSummaryRef.current = dashboard.getSummary; });
-  const [summary, setSummary] = useState<DashboardSummary | null>(null);
-  const [summaryError, setSummaryError] = useState(false);
 
-  useEffect(() => {
-    getSummaryRef.current()
-      .then(setSummary)
-      .catch(() => {
-        setSummaryError(true);
-        toast.error('Failed to load dashboard summary');
-      });
-  }, []);
+  const { data: summary, isLoading, isError, refetch } = useQuery<DashboardSummary>({
+    queryKey: ['dashboard-summary'],
+    queryFn: () => api.get<DashboardSummary>('/dashboard/summary'),
+    staleTime: 30_000,
+  });
 
-  const statCards = summary ? [
-    { label: "Today's Transactions", value: summary.today_transactions },
-    { label: "Today's Quantity", value: `${summary.today_quantity} kg` },
-    { label: 'Month Transactions', value: summary.month_transactions },
-    { label: 'Month Quantity', value: `${summary.month_quantity} kg` },
-    { label: 'Allocated', value: `${summary.allocated_kg} kg` },
-    { label: 'Lifted', value: `${summary.lifted_kg} kg` },
-    { label: 'Beneficiaries', value: summary.total_beneficiaries },
-    { label: 'Pending Deliveries', value: summary.pending_deliveries },
-  ] : [];
+  const statCards = [
+    { label: "Today's Transactions", value: summary?.today_transactions, key: 'today_tx' },
+    { label: "Today's Quantity", value: summary ? `${summary.today_quantity} kg` : null, key: 'today_qty' },
+    { label: 'Month Transactions', value: summary?.month_transactions, key: 'month_tx' },
+    { label: 'Month Quantity', value: summary ? `${summary.month_quantity} kg` : null, key: 'month_qty' },
+    { label: 'Allocated', value: summary ? `${summary.allocated_kg} kg` : null, key: 'alloc' },
+    { label: 'Lifted', value: summary ? `${summary.lifted_kg} kg` : null, key: 'lift' },
+    { label: 'Beneficiaries', value: summary?.total_beneficiaries, key: 'benef' },
+    { label: 'Pending Deliveries', value: summary?.pending_deliveries, key: 'pend' },
+  ];
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '32px', paddingBottom: '40px' }}>
-      <section>
-        <header className={styles.header}>
-          <div>
-            <h2 className={styles.title}>Compliance Dashboard</h2>
-            <p className="text-muted">Manage and audit your monthly FPS distributions and stock balances.</p>
-          </div>
-          <div className={styles.actions}>
-            <button className={styles.exportBtn} onClick={() => window.print()} disabled={!summary}>
-              Print Report
-            </button>
-            <button onClick={() => router.push('/manual-sale')}>+ NEW RECORD</button>
-          </div>
-        </header>
+    <div className={styles.container}>
+      <div className={styles.header}>
+        <div className={styles.headerLeft}>
+          <h1 className={styles.title}>Dashboard</h1>
+          <p className={styles.description}>Overview of your FPS distribution and stock status</p>
+        </div>
+        <div className={styles.actions}>
+          <Button variant="secondary" size="sm" onClick={() => window.print()} disabled={!summary}>
+            <Printer size={16} />
+            Print Report
+          </Button>
+          <Button size="sm" onClick={() => router.push('/manual-sale')}>
+            <Plus size={16} />
+            New Record
+          </Button>
+        </div>
+      </div>
 
-        <div className={styles.grid}>
-          <div className={styles.mainCol}>
-            <div className="card">
-              <div className={styles.cardHeader}>
-                <h3 className={styles.cardTitle}>Monthly Distribution Summary</h3>
-                <div className={styles.statusIndicator}>
-                  <div className={styles.dot}></div>
-                  <span className={styles.statusText}>LIVE SYSTEM</span>
-                </div>
+      <div className={styles.grid}>
+        <div className={styles.mainCol}>
+          <Card>
+            <div className={styles.sectionHeader}>
+              <h2 className={styles.sectionTitle}>Monthly Distribution Summary</h2>
+              <div className={styles.statusBadge}>
+                <div className={styles.statusDot} />
+                Live System
               </div>
+            </div>
 
+            {isError ? (
+              <ErrorState
+                message="Could not load dashboard data. Check your connection and try again."
+                onRetry={() => refetch()}
+              />
+            ) : isLoading ? (
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 'var(--space-4)' }}>
+                {Array.from({ length: 8 }).map((_, i) => (
+                  <SkeletonCard key={i} />
+                ))}
+              </div>
+            ) : (
               <div className={styles.statsGrid}>
-                {summaryError ? (
-                  <p className="text-muted" style={{ gridColumn: '1 / -1', textAlign: 'center', padding: '24px' }}>
-                    Could not load dashboard data. Check your connection and try again.
-                  </p>
-                ) : !summary ? (
-                  <div style={{ gridColumn: '1 / -1', textAlign: 'center', padding: '24px' }}>
-                    <Loader2 className="spin" size={24} style={{ margin: '0 auto' }} />
-                    <p className="text-muted" style={{ marginTop: '12px' }}>Loading summary...</p>
+                {statCards.map((stat) => (
+                  <div key={stat.key} className={styles.statCard}>
+                    <span className={styles.statLabel}>{stat.label}</span>
+                    <p className={styles.statValue}>{stat.value}</p>
                   </div>
-                ) : (
-                  statCards.map((stat) => (
-                    <div key={stat.label} className={styles.statCard}>
-                      <span className={styles.statLabel}>{stat.label}</span>
-                      <p className={styles.statValue}>{stat.value}</p>
-                    </div>
-                  ))
-                )}
+                ))}
+              </div>
+            )}
+          </Card>
+        </div>
+
+        <div className={styles.sideCol}>
+          <Card>
+            <div className={styles.alertCard}>
+              <div className={styles.alertIcon}>
+                <AlertCircle size={22} />
+              </div>
+              <div className={styles.alertContent}>
+                <h3 className={styles.alertTitle}>System Alert</h3>
+                <p className={styles.alertText}>
+                  {isError
+                    ? 'Unable to check alerts'
+                    : summary
+                      ? `${summary.low_stock_alerts} low stock alert(s) active`
+                      : 'Loading alerts...'}
+                </p>
               </div>
             </div>
-          </div>
+          </Card>
 
-          <div className={styles.sideCol}>
-            <div className={`card ${styles.alertCard}`}>
-              <div className={styles.alertIconBox}>
-                <AlertCircle size={32} />
-              </div>
-              <h4 className={styles.alertTitle}>System Alert</h4>
-              <p className="text-muted" style={{ fontSize: '13px' }}>
-                {summaryError
-                  ? 'Unable to check alerts'
-                  : summary
-                    ? `${summary.low_stock_alerts} low stock alert(s) active`
-                    : 'Loading alerts...'}
-              </p>
-            </div>
-
-            <div className={styles.dealerCard}>
-              <span className={styles.dealerLabel}>Active Dealer</span>
-              <p className={styles.dealerName}>{dealer?.fps_id ? `${dealer.fps_id} - ${summary ? 'Connected' : 'Loading...'}` : 'Not connected'}</p>
-              <div className={styles.verifiedRow}>
-                <ShieldCheck color="var(--accent-amber)" size={20} />
-                <span className={styles.verifiedText}>Authorized by Govt of Gujarat</span>
-              </div>
+          <div className={styles.dealerCard}>
+            <span className={styles.dealerLabel}>Active Dealer</span>
+            <p className={styles.dealerName}>
+              {dealer?.fps_id
+                ? `${dealer.fps_id}`
+                : 'Not connected'}
+            </p>
+            <div className={styles.verifiedRow}>
+              <ShieldCheck size={18} color="rgba(255,255,255,0.6)" />
+              <span className={styles.verifiedText}>Authorized by Govt of Gujarat</span>
             </div>
           </div>
         </div>
-      </section>
+      </div>
     </div>
   );
 }

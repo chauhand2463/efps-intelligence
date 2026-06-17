@@ -16,7 +16,11 @@ import { domainEventsWorker } from './jobs/domain-events.queue.js';
 async function main() {
   const app = await buildApp();
 
-  await runMigrations();
+  try {
+    await runMigrations();
+  } catch (err) {
+    console.error('Migration runner failed — starting server anyway:', err);
+  }
 
   await getRedis().connect();
 

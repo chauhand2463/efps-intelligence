@@ -1,3 +1,4 @@
+import axios, { AxiosError, type AxiosInstance, type InternalAxiosRequestConfig } from 'axios';
 import type { ApiResponse, ApiError } from './types';
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:3000/api/v1';
@@ -14,16 +15,122 @@ export class ApiRequestError extends Error {
   }
 }
 
-let refreshPromise: Promise<Response> | null = null;
+let accessToken: string | null = null;
+let refreshPromise: Promise<string | null> | null = null;
+let pendingRequests: Array<{
+  resolve: (token: string | null) => void;
+  reject: (err: unknown) => void;
+}> = [];
 
-async function doRefresh(): Promise<Response> {
-  return fetch(`${BASE_URL}/auth/refresh`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    credentials: 'include',
-    signal: AbortSignal.timeout(5000),
-  });
+export function setAccessToken(token: string | null) {
+  accessToken = token;
 }
+
+export function getAccessToken(): string | null {
+  return accessToken;
+}
+
+function generateRequestId(): string {
+  return Math.random().toString(36).substring(2, 10);
+}
+
+const apiClient: AxiosInstance = axios.create({
+  baseURL: BASE_URL,
+  withCredentials: true,
+  headers: { 'Content-Type': 'application/json' },
+  timeout: 15000,
+});
+
+const refreshClient = axios.create({
+  baseURL: BASE_URL,
+  withCredentials: true,
+  headers: { 'Content-Type': 'application/json' },
+  timeout: 10000,
+});
+
+apiClient.interceptors.request.use((config: InternalAxiosRequestConfig) => {
+  config.headers.set('X-Request-Id', generateRequestId());
+  if (accessToken) {
+    config.headers.set('Authorization', `Bearer ${accessToken}`);
+  }
+  return config;
+});
+
+async function doRefresh(): Promise<string | null> {
+  try {
+    const res = await refreshClient.post('/auth/refresh', {});
+    const body = res.data as ApiResponse<{ access_token: string }>;
+    if (body.success && body.data.access_token) {
+      accessToken = body.data.access_token;
+      return accessToken;
+    }
+    return null;
+  } catch {
+    accessToken = null;
+    return null;
+  }
+}
+
+apiClient.interceptors.response.use(
+  (response) => response,
+  async (error: AxiosError<ApiError>) => {
+    const originalRequest = error.config as InternalAxiosRequestConfig & { _retry?: boolean };
+
+    if (!originalRequest || originalRequest._retry) {
+      return Promise.reject(error);
+    }
+
+    const status = error.response?.status;
+    const isAuthEndpoint = originalRequest.url?.includes('/auth/');
+
+    if (status !== 401 || isAuthEndpoint) {
+      return Promise.reject(error);
+    }
+
+    originalRequest._retry = true;
+
+    if (!refreshPromise) {
+      refreshPromise = doRefresh().finally(() => {
+        refreshPromise = null;
+      });
+    }
+
+    if (pendingRequests.length === 0) {
+      refreshPromise.then((newToken) => {
+        const q = pendingRequests;
+        pendingRequests = [];
+        if (newToken) {
+          q.forEach((p) => p.resolve(newToken));
+        } else {
+          q.forEach((p) => p.reject(error));
+        }
+      });
+    }
+
+    return new Promise<string | null>((resolve, reject) => {
+      pendingRequests.push({ resolve, reject });
+
+      if (pendingRequests.length === 1) {
+        refreshPromise!.then((newToken) => {
+          const q = pendingRequests;
+          pendingRequests = [];
+          if (newToken) {
+            originalRequest.headers.set('Authorization', `Bearer ${newToken}`);
+            resolve(apiClient(originalRequest));
+            q.slice(1).forEach((p) => p.resolve(newToken));
+          } else {
+            const err = new ApiRequestError(401, 'TOKEN_EXPIRED', 'Session expired. Please login again.');
+            q.forEach((p) => p.reject(err));
+          }
+        }).catch((err) => {
+          const q = pendingRequests;
+          pendingRequests = [];
+          q.forEach((p) => p.reject(err));
+        });
+      }
+    });
+  }
+);
 
 async function request<T>(
   method: string,
@@ -31,53 +138,51 @@ async function request<T>(
   body?: unknown,
   opts?: { skipAuth?: boolean; rawResponse?: boolean }
 ): Promise<T> {
-  const headers: Record<string, string> = { 'Content-Type': 'application/json' };
-
-  const execute = async (): Promise<Response> => {
-    return fetch(`${BASE_URL}${path}`, {
-      method,
-      headers,
-      credentials: 'include',
-      body: body ? JSON.stringify(body) : undefined,
-    });
+  const config: Record<string, unknown> = {
+    method,
+    url: path,
+    data: body,
   };
 
-  let res = await execute();
+  try {
+    const response = await apiClient(config);
 
-  if (res.status === 401 && path !== '/auth/refresh' && !opts?.skipAuth) {
-    if (!refreshPromise) {
-      refreshPromise = doRefresh().finally(() => { refreshPromise = null; });
+    if (opts?.rawResponse) {
+      return response.data as T;
     }
-    const refreshRes = await refreshPromise;
-    if (refreshRes.ok) {
-      res = await execute();
+
+    const json = response.data as ApiResponse<T>;
+    if (!json.success) {
+      const err = json as unknown as ApiError;
+      throw new ApiRequestError(
+        err.error.statusCode ?? response.status,
+        err.error.code ?? 'UNKNOWN_ERROR',
+        err.error.message ?? 'An unknown error occurred',
+        err.error.field
+      );
     }
-  }
 
-  if (opts?.rawResponse) {
-    if (!res.ok) {
-      throw new ApiRequestError(res.status, 'REQUEST_FAILED', `Request failed with status ${res.status}`);
+    return json.data;
+  } catch (err) {
+    if (err instanceof ApiRequestError) throw err;
+    if (err instanceof AxiosError && err.response?.data) {
+      const apiErr = err.response.data as ApiError;
+      throw new ApiRequestError(
+        apiErr.error.statusCode ?? err.response.status,
+        apiErr.error.code ?? 'UNKNOWN_ERROR',
+        apiErr.error.message ?? 'Request failed',
+        apiErr.error.field
+      );
     }
-    return res.text() as unknown as T;
+    if (err instanceof AxiosError) {
+      throw new ApiRequestError(
+        err.response?.status ?? 0,
+        'NETWORK_ERROR',
+        err.message ?? 'Network request failed'
+      );
+    }
+    throw err;
   }
-
-  if (res.status === 204) {
-    return undefined as unknown as T;
-  }
-
-  const json = await res.json() as ApiResponse<T> | ApiError;
-
-  if (!json.success) {
-    const err = json as ApiError;
-    throw new ApiRequestError(
-      err.error.statusCode ?? res.status,
-      err.error.code ?? 'UNKNOWN_ERROR',
-      err.error.message ?? 'An unknown error occurred',
-      err.error.field
-    );
-  }
-
-  return (json as ApiResponse<T>).data;
 }
 
 export const api = {

@@ -15,6 +15,7 @@ export const registerDealerSchema = z.object({
   area_id: z.string().optional(),
   efps_username: z.string().min(1, 'eFPS username is required for govt sync').optional(),
   efps_password: z.string().min(1, 'eFPS password is required for govt sync').optional(),
+  source_url: z.string().url('Must be a valid URL').optional(),
 });
 
 export const updateDealerSchema = z.object({

@@ -4,8 +4,10 @@ import { useState, type FormEvent } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import toast from 'react-hot-toast';
-import { ArrowLeft, User, ArrowRight } from 'lucide-react';
+import { ArrowLeft, User, Phone, ArrowRight } from 'lucide-react';
 import { api, ApiRequestError } from '@/lib/api';
+import { AuthCard } from '@/components/auth/AuthCard';
+import { SubmitButton } from '@/components/auth/SubmitButton';
 import styles from '../register/Register.module.css';
 
 export default function ForgotPasswordPage() {
@@ -34,39 +36,45 @@ export default function ForgotPasswordPage() {
   }
 
   return (
-    <div className={styles.container}>
-      <div className="card" style={{ width: '100%', maxWidth: '480px' }}>
-        <Link href="/login" className={styles.backLink}>
-          <ArrowLeft size={18} style={{ marginRight: '4px' }} />
-          Back to Login
-        </Link>
+    <AuthCard maxWidth={480}>
+      <Link href="/login" className={styles.backLink}>
+        <ArrowLeft size={16} />
+        Back to Login
+      </Link>
 
-        <h2 className={styles.title}>Forgot Password</h2>
-        <p className={styles.subtitle}>Enter your FPSU ID and registered mobile number to receive an OTP.</p>
-
-        <form onSubmit={handleSubmit} style={{ marginTop: '24px' }}>
-          <div className={styles.formGroup}>
-            <label className={styles.inputLabel}>FPSU ID</label>
-            <div className={styles.inputWrapper}>
-              <User size={20} className={styles.inputIcon} />
-              <input type="text" placeholder="Enter FPSU ID" className={styles.input} value={fpsId} onChange={e => setFpsId(e.target.value)} disabled={loading} />
-            </div>
-          </div>
-
-          <div className={styles.formGroup} style={{ marginTop: '16px' }}>
-            <label className={styles.inputLabel}>Registered Mobile Number</label>
-            <div className={styles.inputWrapper}>
-              <User size={20} className={styles.inputIcon} />
-              <input type="tel" placeholder="Enter 10-digit mobile" className={styles.input} value={mobile} onChange={e => setMobile(e.target.value)} disabled={loading} />
-            </div>
-          </div>
-
-          <button type="submit" className={styles.submitButton} disabled={loading}>
-            {loading ? 'Sending...' : 'Send OTP'}
-            <ArrowRight size={20} />
-          </button>
-        </form>
+      <div className={styles.headerCenter}>
+        <div className={styles.iconCircle} style={{ backgroundColor: 'rgba(37,99,235,0.1)', color: '#2563EB' }}>
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+            <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+          </svg>
+        </div>
+        <h1 className={styles.title}>Forgot password</h1>
+        <p className={styles.subtitle}>Enter your FPSU ID and registered mobile number to receive an OTP</p>
       </div>
-    </div>
+
+      <form onSubmit={handleSubmit}>
+        <div className={styles.formGroup}>
+          <label className={styles.inputLabel}>FPSU ID</label>
+          <div className={styles.inputWrapper}>
+            <User size={18} className={styles.inputIcon} />
+            <input type="text" placeholder="Enter FPSU ID" className={styles.input} value={fpsId} onChange={e => setFpsId(e.target.value)} disabled={loading} />
+          </div>
+        </div>
+
+        <div className={styles.formGroup}>
+          <label className={styles.inputLabel}>Registered Mobile Number</label>
+          <div className={styles.inputWrapper}>
+            <Phone size={18} className={styles.inputIcon} />
+            <input type="tel" placeholder="Enter 10-digit mobile" className={styles.input} value={mobile} onChange={e => setMobile(e.target.value)} disabled={loading} />
+          </div>
+        </div>
+
+        <SubmitButton loading={loading} loadingText="Sending...">
+          Send OTP
+          <ArrowRight size={18} />
+        </SubmitButton>
+      </form>
+    </AuthCard>
   );
 }

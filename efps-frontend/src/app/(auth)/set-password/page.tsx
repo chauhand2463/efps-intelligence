@@ -2,10 +2,12 @@
 
 import { Suspense, useState, type FormEvent, useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import Link from 'next/link';
 import toast from 'react-hot-toast';
-import { ArrowLeft, Lock, LockKeyhole, ArrowRight } from 'lucide-react';
+import { Lock, KeyRound, ArrowRight } from 'lucide-react';
 import { api, ApiRequestError } from '@/lib/api';
+import { AuthCard } from '@/components/auth/AuthCard';
+import { PasswordField } from '@/components/auth/PasswordField';
+import { SubmitButton } from '@/components/auth/SubmitButton';
 import styles from '../register/Register.module.css';
 
 function SetPasswordForm() {
@@ -19,9 +21,7 @@ function SetPasswordForm() {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    if (!fpsId || !token) {
-      router.replace('/forgot-password');
-    }
+    if (!fpsId || !token) router.replace('/forgot-password');
   }, [fpsId, token, router]);
 
   useEffect(() => {
@@ -55,46 +55,52 @@ function SetPasswordForm() {
   if (!fpsId || !token) return null;
 
   return (
-    <div className={styles.container}>
-      <div className="card" style={{ width: '100%', maxWidth: '480px' }}>
-        <Link href="/login" className={styles.backLink}>
-          <ArrowLeft size={18} style={{ marginRight: '4px' }} />
-          Back to Login
-        </Link>
-
-        <h2 className={styles.title}>Set New Password</h2>
-        <p className={styles.subtitle}>Create a strong password to secure your account.</p>
-
-        <form onSubmit={handleSubmit} style={{ marginTop: '24px' }}>
-          <div className={styles.formGroup}>
-            <label className={styles.inputLabel}>New Password</label>
-            <div className={styles.inputWrapper}>
-              <Lock size={20} className={styles.inputIcon} />
-              <input type="password" placeholder="Enter new password" className={styles.input} value={newPassword} onChange={e => setNewPassword(e.target.value)} disabled={loading} />
-            </div>
-          </div>
-
-          <div className={styles.formGroup} style={{ marginTop: '24px' }}>
-            <label className={styles.inputLabel}>Confirm Password</label>
-            <div className={styles.inputWrapper}>
-              <LockKeyhole size={20} className={styles.inputIcon} />
-              <input type="password" placeholder="Confirm new password" className={styles.input} value={confirmPassword} onChange={e => setConfirmPassword(e.target.value)} disabled={loading} />
-            </div>
-          </div>
-
-          <button type="submit" className={styles.submitButton} disabled={loading}>
-            {loading ? 'Updating...' : 'Update Password'}
-            <ArrowRight size={20} />
-          </button>
-        </form>
+    <AuthCard maxWidth={480}>
+      <div className={styles.headerCenter}>
+        <div className={styles.iconCircle} style={{ backgroundColor: 'rgba(37,99,235,0.1)', color: '#2563EB' }}>
+          <KeyRound size={28} />
+        </div>
+        <h1 className={styles.title}>Set new password</h1>
+        <p className={styles.subtitle}>Create a strong password to secure your account</p>
       </div>
-    </div>
+
+      <form onSubmit={handleSubmit}>
+        <div className={styles.formGroup}>
+          <PasswordField
+            label="New Password"
+            value={newPassword}
+            onChange={setNewPassword}
+            placeholder="Min 8 chars, upper + lower + number"
+            disabled={loading}
+            showStrength
+            autoComplete="new-password"
+          />
+        </div>
+
+        <div className={styles.formGroup}>
+          <PasswordField
+            label="Confirm Password"
+            value={confirmPassword}
+            onChange={setConfirmPassword}
+            placeholder="Confirm new password"
+            disabled={loading}
+            error={confirmPassword && newPassword !== confirmPassword ? 'Passwords do not match' : undefined}
+            autoComplete="new-password"
+          />
+        </div>
+
+        <SubmitButton loading={loading} loadingText="Updating...">
+          Update Password
+          <ArrowRight size={18} />
+        </SubmitButton>
+      </form>
+    </AuthCard>
   );
 }
 
 export default function SetPasswordPage() {
   return (
-    <Suspense fallback={<div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>Loading...</div>}>
+    <Suspense fallback={null}>
       <SetPasswordForm />
     </Suspense>
   );

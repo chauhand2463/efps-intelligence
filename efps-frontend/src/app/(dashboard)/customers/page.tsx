@@ -103,7 +103,23 @@ export default function CustomerRegisterPage() {
   };
 
   const handleSaveAllMobiles = () => {
-    toast.error('No API endpoint available for bulk mobile sync. Contact admin.');
+    const missingMobile = filteredCustomers.filter(c => !c.mobile);
+    if (missingMobile.length === 0) {
+      toast.success('All customers have mobile numbers');
+      return;
+    }
+    const csv = [
+      'SrNo,Card Holder Name,Ration Card No,Category',
+      ...missingMobile.map((c, i) => `${i + 1},${c.head_of_family},${c.ration_card_no},${c.category ?? ''}`),
+    ].join('\n');
+    const blob = new Blob([csv], { type: 'text/csv' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `missing-mobiles-${new Date().toISOString().split('T')[0]}.csv`;
+    a.click();
+    URL.revokeObjectURL(url);
+    toast.success(`Exported ${missingMobile.length} customers missing mobile numbers`);
   };
 
   const handleExportExcel = () => {

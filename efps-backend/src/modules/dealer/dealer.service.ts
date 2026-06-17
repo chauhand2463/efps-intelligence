@@ -50,21 +50,23 @@ export class DealerService {
       });
 
       await query(
-        `INSERT INTO dealer_credentials (dealer_id, efps_username, efps_password, iv, auth_tag)
-         VALUES ($1, $2, $3, $4, $5)`,
+        `INSERT INTO dealer_credentials (dealer_id, efps_username, efps_password, iv, auth_tag, iv_efps_password, auth_tag_efps_password)
+         VALUES ($1, $2, $3, $4, $5, $6, $7)`,
         [
           dealer.id,
           encrypted.efps_username!.ciphertext,
           encrypted.efps_password!.ciphertext,
           encrypted.efps_username!.iv,
           encrypted.efps_username!.authTag,
+          encrypted.efps_password!.iv,
+          encrypted.efps_password!.authTag,
         ]
       );
 
       await query(
-        `INSERT INTO sync_scheduler_config (dealer_id, sync_enabled, next_sync_at)
-         VALUES ($1, TRUE, NOW() + INTERVAL '1 hour')`,
-        [dealer.id]
+        `INSERT INTO sync_scheduler_config (dealer_id, sync_enabled, next_sync_at, source_url)
+         VALUES ($1, TRUE, NOW() + INTERVAL '1 hour', $2)`,
+        [dealer.id, input.source_url ?? null]
       );
 
       enqueueEfpsSync({

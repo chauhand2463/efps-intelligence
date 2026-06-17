@@ -31,7 +31,7 @@ export class FinanceService {
     let idx = 2;
     let where = 'dealer_id = $1';
 
-    if (params.month) { where += ` AND DATE_TRUNC('month', entry_date) = $${idx}::date`; values.push(params.month); idx++; }
+    if (params.month) { where += ` AND DATE_TRUNC('month', entry_date) = DATE_TRUNC('month', $${idx}::date)`; values.push(params.month); idx++; }
     if (params.start_date) { where += ` AND entry_date >= $${idx}`; values.push(params.start_date); idx++; }
     if (params.end_date) { where += ` AND entry_date <= $${idx}`; values.push(params.end_date); idx++; }
 
@@ -51,7 +51,7 @@ export class FinanceService {
     let idx = 2;
     let where = 'dealer_id = $1';
 
-    if (params.month) { where += ` AND DATE_TRUNC('month', entry_date) = $${idx}::date`; values.push(params.month); idx++; }
+    if (params.month) { where += ` AND DATE_TRUNC('month', entry_date) = DATE_TRUNC('month', $${idx}::date)`; values.push(params.month); idx++; }
     if (params.start_date) { where += ` AND entry_date >= $${idx}`; values.push(params.start_date); idx++; }
     if (params.end_date) { where += ` AND entry_date <= $${idx}`; values.push(params.end_date); idx++; }
 
@@ -94,9 +94,9 @@ export class FinanceService {
   async getProfitLoss(dealerId: string, month?: string) {
     const m = month ?? (() => { const d = new Date(); d.setDate(1); return d.toISOString().split('T')[0]; })();
 
-    const income = await query(
+        const income = await query(
       `SELECT COALESCE(SUM(amount), 0) as total FROM income_entries
-       WHERE dealer_id = $1 AND DATE_TRUNC('month', entry_date) = $2::date`,
+       WHERE dealer_id = $1 AND DATE_TRUNC('month', entry_date) = DATE_TRUNC('month', $2::date)`,
       [dealerId, m]
     );
 
@@ -108,7 +108,7 @@ export class FinanceService {
 
     const expenses = await query(
       `SELECT COALESCE(SUM(amount), 0) as total FROM expense_entries
-       WHERE dealer_id = $1 AND DATE_TRUNC('month', entry_date) = $2::date`,
+       WHERE dealer_id = $1 AND DATE_TRUNC('month', entry_date) = DATE_TRUNC('month', $2::date)`,
       [dealerId, m]
     );
 
@@ -116,7 +116,7 @@ export class FinanceService {
     const totalExpense = Number(expenses.rows[0]?.total ?? 0);
     const netProfit = totalIncome - totalExpense;
 
-    return { month: m, total_income: totalIncome, commission: Number(commission.rows[0]?.total ?? 0), total_expenses: totalExpense, net_profit: netProfit };
+    return { month: m, total_income: totalIncome, commission: Number(commission.rows[0]?.total ?? 0), total_expense: totalExpense, net_profit: netProfit };
   }
 }
 

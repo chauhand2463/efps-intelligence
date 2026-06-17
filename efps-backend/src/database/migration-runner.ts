@@ -13,9 +13,13 @@ async function ensureTrackingTable() {
     CREATE TABLE IF NOT EXISTS ${TRACKING_TABLE} (
       id          SERIAL PRIMARY KEY,
       filename    VARCHAR(255) UNIQUE NOT NULL,
-      hash        VARCHAR(64) NOT NULL,
+      hash        VARCHAR(64) NOT NULL DEFAULT '',
       applied_at  TIMESTAMPTZ DEFAULT NOW()
     )
+  `);
+  await query(`
+    ALTER TABLE ${TRACKING_TABLE}
+      ADD COLUMN IF NOT EXISTS hash VARCHAR(64) NOT NULL DEFAULT ''
   `);
 }
 

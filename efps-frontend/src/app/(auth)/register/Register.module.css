@@ -3,49 +3,62 @@
   flex-direction: column;
   align-items: center;
   width: 100%;
+  animation: fadeIn 0.35s ease-out;
 }
 
 .backLink {
   display: inline-flex;
   align-items: center;
-  color: var(--accent-amber);
+  gap: 6px;
+  font-size: 13px;
   font-weight: 500;
-  font-size: 14px;
-  margin-bottom: 24px;
-  transition: color 0.2s;
+  color: #64748B;
   text-decoration: none;
+  margin-bottom: 28px;
+  transition: color 0.15s ease;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  font-family: inherit;
 }
 
 .backLink:hover {
-  color: var(--accent-amber-hover);
+  color: #0F172A;
 }
 
 .title {
-  color: var(--text-dark);
-  font-size: 26px;
+  font-size: 24px;
   font-weight: 700;
-  margin: 0 0 8px 0;
+  color: #0F172A;
+  margin: 0 0 6px 0;
+  letter-spacing: -0.025em;
+  line-height: 1.3;
 }
 
 .subtitle {
-  color: var(--text-muted);
   font-size: 14px;
-  margin-bottom: 32px;
+  color: #64748B;
+  margin: 0 0 28px 0;
+  line-height: 1.5;
 }
 
-.sectionHeader {
+.headerCenter {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  margin-bottom: 28px;
+}
+
+.iconCircle {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
   display: flex;
   align-items: center;
-  margin: 32px 0 16px 0;
-  color: var(--primary-navy);
-}
-
-.sectionHeaderText {
-  font-size: 12px;
-  font-weight: 600;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  margin-left: 8px;
+  justify-content: center;
+  margin-bottom: 16px;
 }
 
 .formGroup {
@@ -55,10 +68,10 @@
 .inputLabel {
   display: flex;
   align-items: center;
-  font-size: 14px;
-  font-weight: 500;
-  color: var(--text-dark);
-  margin-bottom: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #0F172A;
+  margin-bottom: 6px;
 }
 
 .inputWrapper {
@@ -69,104 +82,73 @@
 
 .inputIcon {
   position: absolute;
-  left: 16px;
-  color: var(--text-muted);
+  left: 14px;
+  color: #94A3B8;
+  pointer-events: none;
 }
 
 .input {
   width: 100%;
+  padding: 12px 16px;
   padding-left: 44px;
-  padding-right: 16px;
-}
-
-.inputVerified {
-  border-color: var(--online-green);
-  padding-right: 44px;
-}
-
-.inputVerified:focus {
-  border-color: var(--online-green);
-  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.15);
-}
-
-.verifyIcon {
-  position: absolute;
-  right: 16px;
-  color: var(--online-green);
-}
-
-.mobilePrefix {
-  position: absolute;
-  left: 16px;
-  color: var(--text-muted);
-  font-weight: 500;
+  height: 48px;
   font-size: 14px;
+  color: #0F172A;
+  background-color: #FFFFFF;
+  border: 1px solid #D0D5DD;
+  border-radius: 14px;
+  outline: none;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  font-family: inherit;
 }
 
-.strengthBar {
-  display: flex;
-  gap: 4px;
-  margin-top: 8px;
-  align-items: center;
+.input:focus {
+  border-color: #2563EB;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
 }
 
-.strengthSegment {
-  height: 4px;
-  flex: 1;
-  border-radius: 2px;
-}
-
-.segmentGreen { background-color: var(--online-green); }
-.segmentAmber { background-color: var(--accent-amber); }
-.segmentGray { background-color: var(--border-light); }
-
-.strengthLabel {
-  font-size: 12px;
-  color: var(--text-muted);
-  margin-left: 8px;
-}
-
-.checkboxContainer {
-  display: flex;
-  align-items: flex-start;
-  margin-top: 24px;
-  cursor: pointer;
-}
-
-.customCheckbox {
-  width: 20px;
-  height: 20px;
-  border: 2px solid var(--accent-amber);
-  background-color: var(--accent-amber);
-  border-radius: 4px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-right: 12px;
-  flex-shrink: 0;
-  margin-top: 2px;
-}
-
-.checkboxLabel {
-  font-size: 14px;
-  color: var(--text-dark);
-  line-height: 1.4;
+.input:disabled {
+  background-color: #F8F9FA;
+  color: #94A3B8;
+  cursor: not-allowed;
 }
 
 .submitButton {
   width: 100%;
   margin-top: 24px;
+  height: 48px;
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 8px;
-  height: 52px;
   font-size: 15px;
+  font-weight: 600;
+  font-family: inherit;
+  border: none;
+  border-radius: 14px;
+  background-color: #0F172A;
+  color: white;
+  cursor: pointer;
+  transition: background-color 0.15s ease, transform 0.1s ease;
+}
+
+.submitButton:hover:not(:disabled) {
+  background-color: #1E293B;
+}
+
+.submitButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }
 
 .footerText {
   text-align: center;
   margin-top: 24px;
-  font-size: 14px;
-  color: var(--text-muted);
+  font-size: 13px;
+  color: #64748B;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
 }

@@ -9,6 +9,7 @@ export async function registerRateLimit(app: FastifyInstance) {
     global: true,
     max: 500,
     timeWindow: '1 minute',
+    skipOnError: true,
     allowList: ['127.0.0.1', '::1', '::ffff:127.0.0.1'],
     keyGenerator: (request) => {
       if (request.url === '/health' || request.url === '/ready') return 'skip';

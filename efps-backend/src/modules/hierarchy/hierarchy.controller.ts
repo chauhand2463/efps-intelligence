@@ -1,9 +1,15 @@
 import type { FastifyRequest, FastifyReply } from 'fastify';
+import { z } from 'zod';
 import { hierarchyService } from './hierarchy.service.js';
 import {
   paginationSchema, regionParamsSchema, monthParamSchema, importCsvSchema,
 } from './hierarchy.schema.js';
 import { sendSuccess, sendCreated } from '../../shared/utils/response.js';
+
+const searchQuerySchema = z.object({
+  q: z.string().max(200).optional().default(''),
+  level: z.string().max(50).optional(),
+});
 
 export async function getStateHandler(request: FastifyRequest, reply: FastifyReply) {
   const { month } = monthParamSchema.parse(request.params);
@@ -49,8 +55,8 @@ export async function importCsvHandler(request: FastifyRequest, reply: FastifyRe
 }
 
 export async function searchRegionsHandler(request: FastifyRequest, reply: FastifyReply) {
-  const { q, level } = request.query as { q?: string; level?: string };
-  const result = await hierarchyService.searchRegions(q ?? '', level);
+  const { q, level } = searchQuerySchema.parse(request.query);
+  const result = await hierarchyService.searchRegions(q, level);
   return sendSuccess(reply, result);
 }
 

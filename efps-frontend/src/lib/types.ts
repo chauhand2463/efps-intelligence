@@ -308,12 +308,37 @@ export interface BankInfo {
   account_holder: string | null;
 }
 
-export interface SyncStatus {
+export interface SyncJob {
   id: string;
   dealer_id: string;
-  status: string;
+  status: 'pending' | 'running' | 'success' | 'failed';
   records_synced: number;
+  processed_count: number;
+  quarantined_count: number;
   error_message: string | null;
+  error_detail: string[] | null;
+  priority: number;
+  sync_mode: 'full' | 'incremental' | 'priority';
+  worker_version: string | null;
+  website_version: string | null;
+  trace_id: string | null;
   created_at: string;
+  started_at: string | null;
   completed_at: string | null;
+}
+
+export interface SyncDashboardData {
+  lastSync: SyncJob | null;
+  syncHistory: SyncJob[];
+  totalBeneficiaries: number;
+  totalTransactions: number;
+  totalStockAllocations: number;
+  recentQuarantined: number;
+  queueLength: number;
+}
+
+export interface QuarantineSummary {
+  total: number;
+  byType: Record<string, number>;
+  byReason: Record<string, number>;
 }

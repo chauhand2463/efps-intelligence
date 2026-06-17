@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { Calculator, Printer, AlertTriangle, Save, Info, Loader2 } from 'lucide-react';
 import { api } from '@/lib/api';
+import { monthToApi } from '@/lib/utils';
 import type { CommissionRate, Commission } from '@/lib/types';
 import styles from './Calculator.module.css';
 import toast from 'react-hot-toast';
@@ -49,7 +50,7 @@ export default function CommissionCalculatorPage() {
         const data = await api.get<CommissionRate[]>('/commission/rates');
         const ratesMap: Record<string, number> = {};
         for (const rate of data) {
-          ratesMap[rate.commodity.toLowerCase()] = rate.rate_per_kg;
+          ratesMap[rate.commodity.toLowerCase()] = Number(rate.rate_per_kg);
         }
         setRates(ratesMap);
       } catch {
@@ -67,14 +68,15 @@ export default function CommissionCalculatorPage() {
     setIsLoadingCalc(true);
     setCalcError('');
     try {
-      const data = await api.get<Commission[]>(`/commission/calculate?month=${encodeURIComponent(selectedMonth)}`);
-      const itemList: ItemCommission[] = data.map((c) => ({
+      const data = await api.get<Commission[]>(`/commission/calculate?month=${encodeURIComponent(monthToApi(selectedMonth, selectedYear))}`);
+      const itemList: ItemCommission[] = (data ?? []).map((c) => ({
         id: c.commodity.toLowerCase(),
         name: displayNameMap[c.commodity.toLowerCase()] || c.commodity,
         sales: c.quantity_sold_kg,
       }));
       setItems(itemList);
     } catch {
+      toast.error('Failed to load commission data.');
       setCalcError('Failed to load commission data.');
     } finally {
       setIsLoadingCalc(false);

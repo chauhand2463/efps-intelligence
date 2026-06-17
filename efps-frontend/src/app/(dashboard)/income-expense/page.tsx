@@ -6,6 +6,7 @@ import {
 } from 'lucide-react';
 import styles from './IncomeExpense.module.css';
 import { useFinance } from '@/lib/api-hooks';
+import { monthToApi } from '@/lib/utils';
 import type { IncomeEntry, ExpenseEntry } from '@/lib/types';
 import toast from 'react-hot-toast';
 
@@ -41,19 +42,17 @@ export default function IncomeExpensePage() {
     const financeRef = useRef(finance);
     useEffect(() => { financeRef.current = finance; });
 
-    const monthParam = () => `${selectedYear}-${MONTH_MAP[selectedMonth]}`;
-
     const loadData = async () => {
         setLoading(true);
         try {
-            const month = monthParam();
+            const month = monthToApi(selectedMonth, selectedYear);
             const f = financeRef.current;
             const [incomeRes, expenseRes] = await Promise.all([
                 f.listIncome(1, 100, month),
                 f.listExpenses(1, 100, month),
             ]);
             
-            const incomeTxs: Transaction[] = incomeRes.data.map((inc: IncomeEntry) => ({
+            const incomeTxs: Transaction[] = (incomeRes?.data ?? []).map((inc: IncomeEntry) => ({
                 id: `income-${inc.id}`,
                 date: inc.entry_date,
                 type: 'Income' as const,
@@ -61,7 +60,7 @@ export default function IncomeExpensePage() {
                 amount: inc.amount,
             }));
             
-            const expenseTxs: Transaction[] = expenseRes.data.map((exp: ExpenseEntry) => ({
+            const expenseTxs: Transaction[] = (expenseRes?.data ?? []).map((exp: ExpenseEntry) => ({
                 id: `expense-${exp.id}`,
                 date: exp.entry_date,
                 type: 'Expense' as const,
@@ -83,7 +82,7 @@ export default function IncomeExpensePage() {
 
     const loadProfitLoss = async () => {
         try {
-            const pl = await financeRef.current.getProfitLoss(monthParam());
+            const pl = await financeRef.current.getProfitLoss(monthToApi(selectedMonth, selectedYear));
             setProfitLoss(pl);
         } catch {
             toast.error('Failed to load profit/loss summary');

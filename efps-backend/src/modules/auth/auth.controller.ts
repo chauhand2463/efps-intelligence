@@ -3,64 +3,70 @@ import { authService } from './auth.service.js';
 import { AuthError } from '../../shared/errors/AuthError.js';
 import { sendSuccess } from '../../shared/utils/response.js';
 import { config } from '../../config/index.js';
+import { logger } from '../../shared/utils/logger.js';
 import {
-  loginSchema, refreshTokenSchema, forgotPasswordRequestSchema,
+  loginSchema, forgotPasswordRequestSchema,
   forgotPasswordVerifySchema, forgotPasswordResetSchema, changePasswordSchema,
 } from './auth.schema.js';
 
-function setCookies(reply: FastifyReply, tokens: { access_token: string; refresh_token: string }) {
-  reply.setCookie('access_token', tokens.access_token, {
-    httpOnly: true,
-    secure: config.NODE_ENV === 'production',
-    sameSite: 'strict',
-    path: '/',
-    maxAge: 900,
-  });
-  reply.setCookie('refresh_token', tokens.refresh_token, {
-    httpOnly: true,
-    secure: config.NODE_ENV === 'production',
-    sameSite: 'strict',
-    path: '/',
-    maxAge: 2592000,
-  });
+const REFRESH_COOKIE_OPTS = {
+  httpOnly: true,
+  secure: config.NODE_ENV === 'production',
+  sameSite: 'lax' as const,
+  path: '/api/v1/auth/refresh',
+  maxAge: 30 * 24 * 60 * 60,
+};
+
+function setRefreshCookie(reply: FastifyReply, token: string) {
+  reply.setCookie('refresh_token', token, REFRESH_COOKIE_OPTS);
 }
 
-function clearCookies(reply: FastifyReply) {
-  reply.clearCookie('access_token', { path: '/' });
-  reply.clearCookie('refresh_token', { path: '/' });
+function clearRefreshCookie(reply: FastifyReply) {
+  reply.clearCookie('refresh_token', { path: '/api/v1/auth/refresh' });
 }
 
 export async function loginHandler(request: FastifyRequest, reply: FastifyReply) {
   const body = loginSchema.parse(request.body);
   const result = await authService.login(body, request.headers['user-agent'], request.ip);
-  setCookies(reply, result.tokens);
-  return sendSuccess(reply, { dealer: result.dealer });
+  setRefreshCookie(reply, result.refresh_token);
+  return sendSuccess(reply, { dealer: result.dealer, access_token: result.access_token });
 }
 
 export async function logoutHandler(request: FastifyRequest, reply: FastifyReply) {
-  const token = request.cookies.access_token ?? request.headers.authorization?.split(' ')[1] ?? '';
+  const authHeader = request.headers.authorization;
+  const accessToken = authHeader?.startsWith('Bearer ') ? authHeader.split(' ')[1] : undefined;
   const refreshToken = request.cookies.refresh_token;
-  if (token && request.user) {
-    await authService.logout(token, request.user.id, refreshToken);
-  }
-  clearCookies(reply);
+  const dealerId = request.user?.id;
+
+  await authService.logout(accessToken, dealerId, refreshToken);
+  clearRefreshCookie(reply);
   return sendSuccess(reply, { message: 'Logged out successfully' });
 }
 
 export async function refreshHandler(request: FastifyRequest, reply: FastifyReply) {
-  const refreshToken = request.cookies.refresh_token;
-  if (!refreshToken) {
-    const body = refreshTokenSchema.safeParse(request.body);
-    if (!body.success) {
-      throw new AuthError('TOKEN_INVALID', 'No refresh token provided');
+  try {
+    const cookies = request.cookies ?? {};
+    const refreshToken = cookies.refresh_token;
+    const requestId = request.id;
+    const ip = request.ip;
+
+    logger.info({
+      hasRefreshCookie: !!refreshToken,
+      requestId,
+      ip,
+    }, 'REFRESH_ATTEMPT');
+
+    const result = await authService.refresh(refreshToken, ip, requestId as string | undefined);
+
+    setRefreshCookie(reply, result.refresh_token);
+    return sendSuccess(reply, { access_token: result.access_token, dealer: result.dealer });
+  } catch (err) {
+    if (err instanceof AuthError || (err instanceof Error && (err as any).statusCode === 401)) {
+      throw err;
     }
-    const result = await authService.refresh({ refresh_token: body.data.refresh_token });
-    setCookies(reply, result.tokens);
-    return sendSuccess(reply, { message: 'Token refreshed' });
+    logger.error({ err, ip: request.ip, requestId: request.id }, 'REFRESH_HANDLER_UNEXPECTED_ERROR');
+    throw new AuthError('TOKEN_INVALID', 'Refresh failed');
   }
-  const result = await authService.refresh({ refresh_token: refreshToken });
-  setCookies(reply, result.tokens);
-  return sendSuccess(reply, { message: 'Token refreshed' });
 }
 
 export async function forgotPasswordRequestHandler(request: FastifyRequest, reply: FastifyReply) {

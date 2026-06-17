@@ -5,7 +5,7 @@ import {
     Store, Badge, Home, User, LayoutGrid, PlusSquare, FileText, 
     CalendarDays, BarChart2, Calculator, MonitorSmartphone, Users, 
     ListTodo, RefreshCcw, Megaphone, GraduationCap, UserSquare, 
-    Landmark, ClipboardCheck, Wallet, List, LogOut 
+    Landmark, ClipboardCheck, Wallet, List, LogOut, Database
 } from 'lucide-react';
 import { useAuth } from '@/lib/auth-context';
 import styles from './Sidebar.module.css';
@@ -28,6 +28,7 @@ const navItems = [
     { id: '15', name: 'Social Audit Import', icon: ClipboardCheck, href: '/social-audit' },
     { id: '16', name: 'Income & Expense', icon: Wallet, href: '/income-expense' },
     { id: '17', name: 'Gujarat FPS Dealer List', icon: List, href: '/dealers' },
+    { id: '18', name: 'EFPS Sync', icon: Database, href: '/sync' },
 ];
 
 export default function Sidebar() {
@@ -39,20 +40,15 @@ export default function Sidebar() {
             {/* SECTION 1 — LOGO BLOCK */}
             <div className={styles.logoBlock}>
                 <div className={styles.logoRow}>
-                    <div className={styles.logoIconContainer}>
-                        <Store color="white" size={24} />
-                        <div className={styles.logoBars}>
-                            <div className={`${styles.logoBar} ${styles.h2}`}></div>
-                            <div className={`${styles.logoBar} ${styles.h3}`}></div>
-                            <div className={`${styles.logoBar} ${styles.h4}`}></div>
-                        </div>
+                    <div className={styles.logoIcon}>
+                        <Store color="white" size={20} />
                     </div>
-                    <div className={styles.logoTextContainer}>
+                    <div className={styles.logoText}>
                         <h1>
                             <span className={styles.amberAccent}>e</span>
                             <span className={styles.whiteText}>FPS Master</span>
                         </h1>
-                        <span className={styles.subtitle}>FPS MANAGEMENT SYSTEM</span>
+                        <span className={styles.subtitle}>FPS Management System</span>
                     </div>
                 </div>
                 <div className={styles.divider}></div>
@@ -82,7 +78,7 @@ export default function Sidebar() {
                 {navItems.map((item) => {
                     const isActive = pathname === item.href || (pathname === '/' && item.href === '/dashboard');
                     return (
-                        <Link key={item.id} href={item.href} className={`${styles.navItem} ${isActive ? styles.navItemActive : styles.navItemHover}`}>
+                        <Link key={item.id} href={item.href} className={`${styles.navItem} ${isActive ? styles.navItemActive : styles.navItemInactive}`}>
                             <div className={styles.navNumber}>
                                 <span>{item.id}</span>
                             </div>

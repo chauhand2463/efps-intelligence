@@ -5,6 +5,8 @@ import {
     CheckCircle, ExternalLink, Loader2
 } from 'lucide-react';
 import { api, ApiRequestError } from '@/lib/api';
+import { useAuth } from '@/lib/auth-context';
+import { monthToApi } from '@/lib/utils';
 import type { Beneficiary } from '@/lib/types';
 import styles from './SocialAudit.module.css';
 
@@ -77,6 +79,7 @@ function parseAuditBuffer(content: string): Array<{ identifier: string; commodit
 }
 
 export default function SocialAuditPage() {
+    const { dealer } = useAuth();
     const [month, setMonth] = useState('June');
     const [year, setYear] = useState('2026');
     const [buffer, setBuffer] = useState('');
@@ -127,7 +130,7 @@ export default function SocialAuditPage() {
 
                 await api.post('/transactions', {
                     beneficiary_id: beneficiaryId,
-                    month,
+                    month: monthToApi(month, year),
                     commodity: row.commodity,
                     quantity_kg: row.quantity,
                     mode: 'pos',
@@ -176,8 +179,8 @@ export default function SocialAuditPage() {
                 <div className={styles.headerActions}>
                     <div className={styles.adminProfile}>
                         <div className={styles.adminInfo}>
-                            <span className={styles.adminName}>A.D. Chauhan</span>
-                            <span className={styles.adminId}>ID: 3617</span>
+                            <span className={styles.adminName}>{dealer?.full_name ?? 'Dealer'}</span>
+                            <span className={styles.adminId}>ID: {dealer?.fps_id ?? '—'}</span>
                         </div>
                         <div className={styles.avatarImg} style={{ backgroundColor: '#cbd5e1', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold' }}>AC</div>
                     </div>

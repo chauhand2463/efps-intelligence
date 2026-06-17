@@ -84,3 +84,8 @@ export async function getSelfSyncStatusHandler(request: FastifyRequest, reply: F
   const result = await syncService.getSyncStatus(request.user!.id);
   return sendSuccess(reply, result);
 }
+
+export async function getSelfDashboardHandler(request: FastifyRequest, reply: FastifyReply) {
+  const result = await syncService.getSelfDashboard(request.user!.id);
+  return sendSuccess(reply, result);
+}

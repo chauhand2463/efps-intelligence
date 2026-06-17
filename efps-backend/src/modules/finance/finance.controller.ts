@@ -28,7 +28,7 @@ export async function listExpensesHandler(request: FastifyRequest, reply: Fastif
 }
 
 export async function getProfitLossHandler(request: FastifyRequest, reply: FastifyReply) {
-  const query = request.query as { month?: string };
+  const query = financeQuerySchema.parse(request.query);
   const result = await financeService.getProfitLoss(request.user!.id, query.month);
   return sendSuccess(reply, result);
 }

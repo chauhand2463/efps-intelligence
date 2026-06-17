@@ -1,7 +1,12 @@
 import type { FastifyRequest, FastifyReply } from 'fastify';
+import { z } from 'zod';
 import { commissionService } from './commission.service.js';
 import { setCommissionRateSchema, listCommissionSchema, settlementSchema } from './commission.schema.js';
 import { sendSuccess, sendCreated } from '../../shared/utils/response.js';
+
+const calculateQuerySchema = z.object({
+  month: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional(),
+});
 
 export async function setCommissionRateHandler(request: FastifyRequest, reply: FastifyReply) {
   const body = setCommissionRateSchema.parse(request.body);
@@ -15,7 +20,7 @@ export async function getCommissionRatesHandler(request: FastifyRequest, reply: 
 }
 
 export async function calculateCommissionHandler(request: FastifyRequest, reply: FastifyReply) {
-  const query = request.query as { month?: string };
+  const query = calculateQuerySchema.parse(request.query);
   const today = new Date(); today.setDate(1);
   const month = query.month || today.toISOString().split('T')[0]!;
   const result = await commissionService.calculate(request.user!.id, month);

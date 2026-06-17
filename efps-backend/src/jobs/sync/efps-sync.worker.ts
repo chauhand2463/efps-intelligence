@@ -5,13 +5,17 @@ import { query } from '../../config/database.js';
 import { decrypt } from '../../shared/utils/encrypt.js';
 import { logger } from '../../shared/utils/logger.js';
 import { eventBus, EventTypes } from '../../shared/events/index.js';
+import crypto from 'crypto';
 
 const QUEUE_NAME = 'efps-sync';
+const INTERNAL_SYNC_URL = process.env.INTERNAL_SYNC_URL || 'http://localhost:3000/api/internal/sync';
+const SERVICE_TOKEN = process.env.INTERNAL_SYNC_SECRET || process.env.INTERNAL_SERVICE_TOKEN || '';
 
 export interface EfpsSyncPayload {
   dealerId: string;
   fpsId: string;
   triggeredBy: 'registration' | 'scheduled' | 'manual';
+  syncMode?: 'full' | 'incremental' | 'priority';
 }
 
 interface DealerCredentialRow {
@@ -19,6 +23,8 @@ interface DealerCredentialRow {
   efps_password: string;
   iv: string;
   auth_tag: string;
+  iv_efps_password: string;
+  auth_tag_efps_password: string;
 }
 
 interface BeneficiaryRow {
@@ -64,7 +70,7 @@ export async function enqueueEfpsSync(data: EfpsSyncPayload) {
 
 async function getCredentials(dealerId: string): Promise<{ username: string; password: string }> {
   const result = await query(
-    `SELECT efps_username, efps_password, iv, auth_tag
+    `SELECT efps_username, efps_password, iv, auth_tag, iv_efps_password, auth_tag_efps_password
      FROM dealer_credentials WHERE dealer_id = $1`,
     [dealerId]
   );
@@ -74,8 +80,12 @@ async function getCredentials(dealerId: string): Promise<{ username: string; pas
   }
 
   const cred = result.rows[0] as DealerCredentialRow;
+
+  const passwordIv = cred.iv_efps_password || cred.iv;
+  const passwordAuthTag = cred.auth_tag_efps_password || cred.auth_tag;
+
   const username = decrypt(cred.efps_username, cred.iv, cred.auth_tag);
-  const password = decrypt(cred.efps_password, cred.iv, cred.auth_tag);
+  const password = decrypt(cred.efps_password, passwordIv, passwordAuthTag);
 
   return { username, password };
 }
@@ -184,73 +194,74 @@ async function scrapeStockAllocations(page: Page): Promise<StockRow[]> {
   }
 }
 
-async function upsertSyncData(
-  dealerId: string,
-  beneficiaries: BeneficiaryRow[],
-  transactions: TransactionRow[],
-  stock: StockRow[],
-): Promise<number> {
-  let totalRecords = 0;
-
-  for (const b of beneficiaries) {
-    await query(
-      `INSERT INTO beneficiaries
-         (dealer_id, ration_card_no, head_of_family, member_count, category, mobile, synced_from_gov)
-       VALUES ($1, $2, $3, $4, $5, $6, TRUE)
-       ON CONFLICT (ration_card_no) DO UPDATE SET
-         head_of_family = EXCLUDED.head_of_family,
-         member_count = EXCLUDED.member_count,
-         category = EXCLUDED.category,
-         mobile = EXCLUDED.mobile,
-         updated_at = NOW()`,
-      [dealerId, b.rationCardNo, b.headOfFamily, b.memberCount, b.category, b.mobile]
-    );
-    totalRecords++;
-  }
-
-  for (const t of transactions) {
-    await query(
-      `INSERT INTO transactions
-         (dealer_id, beneficiary_id, transaction_date, month, commodity, quantity_kg, price_per_kg, total_amount, mode, synced_from_gov)
-       VALUES ($1,
-         (SELECT id FROM beneficiaries WHERE ration_card_no = $2 LIMIT 1),
-         $3, date_trunc('month', $3::date)::date, $4, $5, $6, $7, $8, TRUE)
-       ON CONFLICT DO NOTHING`,
-      [
-        dealerId,
-        t.beneficiaryRationCard,
-        t.transactionDate,
-        t.commodity,
-        t.quantityKg,
-        t.pricePerKg,
-        t.totalAmount,
-        t.mode,
-      ]
-    );
-    totalRecords++;
-  }
-
-  for (const s of stock) {
-    const monthDate = s.month
-      ? new Date(s.month).toISOString().split('T')[0]
-      : new Date().toISOString().split('T')[0];
-
-    await query(
-      `INSERT INTO stock_allocations (dealer_id, month, commodity, allocated_kg, lifted_kg)
-       VALUES ($1, $2, $3, $4, $5)
-       ON CONFLICT (dealer_id, month, commodity) DO UPDATE SET
-         allocated_kg = EXCLUDED.allocated_kg,
-         lifted_kg = EXCLUDED.lifted_kg,
-         updated_at = NOW()`,
-      [dealerId, monthDate, s.commodity, s.allocatedKg, s.liftedKg]
-    );
-    totalRecords++;
-  }
-
-  return totalRecords;
+function mapBeneficiaries(rows: BeneficiaryRow[]): Record<string, unknown>[] {
+  return rows.map((r) => ({
+    ration_card_no: r.rationCardNo,
+    beneficiary_name: r.headOfFamily,
+    category: r.category,
+    mobile_no: r.mobile,
+    status: 'active',
+    version: 1,
+  }));
 }
 
-async function markJobStatus(dealerId: string, status: string, _errorMessage?: string) {
+function mapTransactions(rows: TransactionRow[]): Record<string, unknown>[] {
+  return rows.map((r) => ({
+    ration_card_no: r.beneficiaryRationCard,
+    transaction_date: r.transactionDate,
+    commodity: r.commodity,
+    allocated_quantity: r.quantityKg,
+    lifted_quantity: r.quantityKg,
+    amount_paid: r.totalAmount,
+    version: 1,
+  }));
+}
+
+function mapStockAllocations(rows: StockRow[]): Record<string, unknown>[] {
+  return rows.map((r) => ({
+    commodity: r.commodity,
+    allocated_quantity: r.allocatedKg,
+    lifted_quantity: r.liftedKg,
+    month: r.month,
+    version: 1,
+  }));
+}
+
+async function postToInternalApi(
+  dealerId: string,
+  syncJobId: string | undefined,
+  syncMode: string,
+  workers: { type: string; records: Record<string, unknown>[] }[],
+  traceId: string
+): Promise<{ processed: number; quarantined: number; errors?: string[] }> {
+  const payload = {
+    dealer_id: dealerId,
+    sync_job_id: syncJobId,
+    sync_mode: syncMode,
+    workers,
+    trace_id: traceId,
+    worker_version: '2.0.0',
+  };
+
+  const response = await fetch(INTERNAL_SYNC_URL, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'X-Service-Token': SERVICE_TOKEN,
+    },
+    body: JSON.stringify(payload),
+  });
+
+  if (!response.ok) {
+    const body = await response.text();
+    throw new Error(`Internal sync API returned ${response.status}: ${body}`);
+  }
+
+  const result = await response.json() as { data?: { processed: number; quarantined: number; errors?: string[] } };
+  return result.data ?? { processed: 0, quarantined: 0 };
+}
+
+async function markJobStatus(dealerId: string, status: string, errorMessage?: string) {
   if (status === 'running') {
     await query(
       `UPDATE sync_jobs SET status = 'running', started_at = NOW()
@@ -259,13 +270,30 @@ async function markJobStatus(dealerId: string, status: string, _errorMessage?: s
       [dealerId]
     );
   }
+  if (status === 'success') {
+    await query(
+      `UPDATE sync_jobs SET status = 'success', completed_at = NOW()
+       WHERE dealer_id = $1 AND status = 'running'
+       ORDER BY created_at DESC LIMIT 1`,
+      [dealerId]
+    );
+  }
+  if (status === 'failed' && errorMessage) {
+    await query(
+      `UPDATE sync_jobs SET status = 'failed', completed_at = NOW(), error_message = $2
+       WHERE dealer_id = $1 AND status = 'running'
+       ORDER BY created_at DESC LIMIT 1`,
+      [dealerId, errorMessage]
+    );
+  }
 }
 
 export const efpsSyncWorker = new Worker<EfpsSyncPayload>(
   QUEUE_NAME,
   async (job: Job<EfpsSyncPayload>) => {
-    const { dealerId, fpsId } = job.data;
+    const { dealerId, fpsId, triggeredBy, syncMode } = job.data;
     let browser: Browser | null = null;
+    const traceId = crypto.randomUUID().slice(0, 8);
 
     await markJobStatus(dealerId, 'running');
 
@@ -291,33 +319,54 @@ export const efpsSyncWorker = new Worker<EfpsSyncPayload>(
 
       await loginToEfps(page, username, password);
 
-      const [beneficiaries, transactions, stockData] = await Promise.all([
+      const [beneficiaryRows, transactionRows, stockRows] = await Promise.all([
         scrapeBeneficiaries(page),
         scrapeTransactions(page),
         scrapeStockAllocations(page),
       ]);
 
-      const recordCount = await upsertSyncData(dealerId, beneficiaries, transactions, stockData);
+      const workers: { type: string; records: Record<string, unknown>[] }[] = [];
+      if (beneficiaryRows.length > 0) {
+        workers.push({ type: 'beneficiary', records: mapBeneficiaries(beneficiaryRows) });
+      }
+      if (transactionRows.length > 0) {
+        workers.push({ type: 'transaction', records: mapTransactions(transactionRows) });
+      }
+      if (stockRows.length > 0) {
+        workers.push({ type: 'stock_allocation', records: mapStockAllocations(stockRows) });
+      }
 
-      await query(
-        `UPDATE sync_jobs
-         SET status = 'success', completed_at = NOW(), records_synced = $2
-         WHERE dealer_id = $1 AND status = 'running'`,
-        [dealerId, recordCount]
+      if (workers.length === 0) {
+        logger.warn({ dealerId, fpsId, traceId }, 'No data scraped from eFPS portal');
+        await Promise.all([
+          markJobStatus(dealerId, 'success'),
+          query(`UPDATE dealers SET last_sync_at = NOW() WHERE id = $1`, [dealerId]),
+          query(
+            `UPDATE sync_scheduler_config SET last_sync_at = NOW(), next_sync_at = NOW() + (sync_interval_mins || ' minutes')::interval, sync_status = 'success', consecutive_failures = 0 WHERE dealer_id = $1`,
+            [dealerId]
+          ),
+        ]);
+        return { success: true, fpsId, recordCount: 0, beneficiaries: 0, transactions: 0, stock: 0 };
+      }
+
+      const apiResult = await postToInternalApi(
+        dealerId,
+        undefined,
+        syncMode ?? 'full',
+        workers,
+        traceId
       );
 
-      await query(
-        `UPDATE dealers SET last_sync_at = NOW() WHERE id = $1`,
-        [dealerId]
-      );
+      const recordCount = apiResult.processed + apiResult.quarantined;
 
-      await query(
-        `UPDATE sync_scheduler_config
-         SET last_sync_at = NOW(), next_sync_at = NOW() + (sync_interval_mins || ' minutes')::interval,
-             sync_status = 'success', consecutive_failures = 0
-         WHERE dealer_id = $1`,
-        [dealerId]
-      );
+      await Promise.all([
+        markJobStatus(dealerId, 'success'),
+        query(`UPDATE dealers SET last_sync_at = NOW() WHERE id = $1`, [dealerId]),
+        query(
+          `UPDATE sync_scheduler_config SET last_sync_at = NOW(), next_sync_at = NOW() + (sync_interval_mins || ' minutes')::interval, sync_status = 'success', consecutive_failures = 0 WHERE dealer_id = $1`,
+          [dealerId]
+        ),
+      ]);
 
       await eventBus.emit(EventTypes.SYNC_COMPLETED, {
         syncType: 'efps-govt',
@@ -325,23 +374,25 @@ export const efpsSyncWorker = new Worker<EfpsSyncPayload>(
         fpsId,
       } as Record<string, unknown>);
 
-      logger.info({ dealerId, fpsId, recordCount }, 'eFPS Playwright sync completed');
+      logger.info({ dealerId, fpsId, recordCount, traceId, processed: apiResult.processed, quarantined: apiResult.quarantined }, 'eFPS Playwright sync completed via Internal API');
 
-      return { success: true, fpsId, recordCount, beneficiaries: beneficiaries.length, transactions: transactions.length, stock: stockData.length };
+      return {
+        success: true,
+        fpsId,
+        recordCount,
+        processed: apiResult.processed,
+        quarantined: apiResult.quarantined,
+        beneficiaries: beneficiaryRows.length,
+        transactions: transactionRows.length,
+        stock: stockRows.length,
+      };
     } catch (error: any) {
-      logger.error({ dealerId, fpsId, error: error.message }, 'eFPS Playwright sync failed');
+      logger.error({ dealerId, fpsId, error: error.message, traceId }, 'eFPS Playwright sync failed');
+
+      await markJobStatus(dealerId, 'failed', error.message);
 
       await query(
-        `UPDATE sync_jobs
-         SET status = 'failed', completed_at = NOW(), error_message = $2
-         WHERE dealer_id = $1 AND status = 'running'`,
-        [dealerId, error.message]
-      );
-
-      await query(
-        `UPDATE sync_scheduler_config
-         SET sync_status = 'failed', consecutive_failures = consecutive_failures + 1
-         WHERE dealer_id = $1`,
+        `UPDATE sync_scheduler_config SET sync_status = 'failed', consecutive_failures = consecutive_failures + 1 WHERE dealer_id = $1`,
         [dealerId]
       );
 

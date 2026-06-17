@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { CalendarDays, Eye, Printer, Copy, AlertCircle } from 'lucide-react';
 import { api } from '@/lib/api';
+import { monthToApi } from '@/lib/utils';
 import toast from 'react-hot-toast';
 import type { StockAllocation, Transaction, ApiResponse } from '@/lib/types';
 import styles from './StockRecord.module.css';
@@ -36,13 +37,13 @@ export default function StockRecordPage() {
     setLoading(true);
     try {
       const stockAllocations = await api.get<StockAllocation[]>('/stock');
-      const allocation = stockAllocations.find(
+      const allocation = (stockAllocations ?? []).find(
         (s) => s.commodity === selectedItem
       );
       const openingBalance = allocation?.allocated_kg ?? 0;
 
-      const txResult = await api.get<ApiResponse<Transaction[]>>(`/transactions?month=${selectedMonth}&commodity=${selectedItem}`);
-      const transactions = txResult.data;
+      const txResult = await api.get<ApiResponse<Transaction[]>>(`/transactions?month=${monthToApi(selectedMonth, selectedYear)}&commodity=${selectedItem}`);
+      const transactions = txResult?.data ?? [];
 
       const grouped: Record<string, Transaction[]> = {};
       for (const tx of transactions) {
@@ -88,8 +89,8 @@ export default function StockRecordPage() {
   const currentRecords = records;
   
   // Calculate totals
-  const totalIn = currentRecords.reduce((sum, r) => sum + (r.isPlaceholder ? 0 : r.inStock), 0);
-  const totalOut = currentRecords.reduce((sum, r) => sum + (r.isPlaceholder ? 0 : r.outStock), 0);
+  const totalIn = currentRecords.reduce((sum, r) => sum + (r.inStock ?? 0), 0);
+  const totalOut = currentRecords.reduce((sum, r) => sum + (r.outStock ?? 0), 0);
   const netClosing = currentRecords.length > 0 ? currentRecords[currentRecords.length - 1].closing : 0;
 
   return (
@@ -155,7 +156,47 @@ export default function StockRecordPage() {
           </div>
         </div>
 
-        <button className={styles.accentBtn} onClick={() => window.print()}>
+        <button className={styles.accentBtn} onClick={async () => {
+          toast.loading('Loading all items for print...', { id: 'print-all' });
+          const items = ['Wheat', 'Rice', 'Sugar'];
+          const allRecords: StockRow[] = [];
+          try {
+            for (const item of items) {
+              const stockAllocations = await api.get<StockAllocation[]>('/stock');
+              const allocation = (stockAllocations ?? []).find(s => s.commodity === item);
+              const opening = allocation?.allocated_kg ?? 0;
+              const txResult = await api.get<ApiResponse<Transaction[]>>(`/transactions?month=${monthToApi(selectedMonth, selectedYear)}&commodity=${item}`);
+              const transactions = txResult?.data ?? [];
+              const grouped: Record<string, Transaction[]> = {};
+              for (const tx of transactions) {
+                const date = tx.transaction_date.split('T')[0];
+                if (!grouped[date]) grouped[date] = [];
+                grouped[date].push(tx);
+              }
+              let running = opening;
+              const sortedDates = Object.keys(grouped).sort();
+              allRecords.push({ date: `--- ${item} ---`, opening: 0, inStock: 0, outStock: 0, closing: 0, remarks: '', isPlaceholder: true });
+              for (const dateStr of sortedDates) {
+                const dayTxs = grouped[dateStr];
+                const outStock = dayTxs.reduce((sum, tx) => sum + tx.quantity_kg, 0);
+                allRecords.push({
+                  date: new Date(dateStr + 'T00:00:00').toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }),
+                  opening: Math.round(running * 100) / 100,
+                  inStock: 0,
+                  outStock: Math.round(outStock * 100) / 100,
+                  closing: Math.round((running - outStock) * 100) / 100,
+                  remarks: dayTxs[0]?.remarks || '—',
+                });
+                running -= outStock;
+              }
+            }
+            setRecords(allRecords);
+            toast.success('All items loaded', { id: 'print-all' });
+            setTimeout(() => window.print(), 100);
+          } catch {
+            toast.error('Failed to load some items', { id: 'print-all' });
+          }
+        }}>
           <Copy size={18} />
           <span>Print All at Once</span>
         </button>

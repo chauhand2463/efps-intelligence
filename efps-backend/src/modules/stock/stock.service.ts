@@ -78,10 +78,10 @@ export class StockService {
 
     const result = await query(
       `UPDATE stock_allocations
-       SET allocated_kg = $1, updated_at = NOW()
+       SET allocated_kg = $1, lifted_kg = COALESCE($3, lifted_kg), updated_at = NOW()
        WHERE id = $2
        RETURNING *`,
-      [input.allocated_kg, allocationId]
+      [input.allocated_kg, allocationId, input.lifted_kg ?? null]
     );
 
     const updated = result.rows[0] as StockAllocation;

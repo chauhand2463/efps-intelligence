@@ -81,7 +81,14 @@ const worker = new Worker(
           const rate = Number(rateResult.rows[0]?.rate_per_kg ?? 0);
           const qty = Number(tx.total_kg);
           const gross = qty * rate;
-          const tdsPercent = 10;
+
+          const tdsResult = await query(
+            `SELECT tds_percent FROM tds_rates
+             WHERE commodity = $1 AND effective_from <= $2::date
+             ORDER BY effective_from DESC LIMIT 1`,
+            [tx.commodity, month]
+          );
+          const tdsPercent = Number(tdsResult.rows[0]?.tds_percent ?? 10);
           const tds = gross * tdsPercent / 100;
           const net = gross - tds;
 
@@ -90,7 +97,8 @@ const worker = new Worker(
              VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
              ON CONFLICT (dealer_id, month, commodity)
              DO UPDATE SET quantity_sold_kg = $4, commission_rate = $5, gross_commission = $6,
-                           tds_percent = $7, tds_deducted = $8, net_commission = $9, updated_at = NOW()`,
+                           tds_percent = $7, tds_deducted = $8, net_commission = $9, updated_at = NOW()
+             WHERE commissions.status = 'pending'`,
             [dealerId, month, tx.commodity, qty, rate, gross, tdsPercent, tds, net]
           );
         }

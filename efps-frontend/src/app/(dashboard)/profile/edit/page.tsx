@@ -49,7 +49,7 @@ export default function FpsProfileDashboardPage() {
             const stats = await api.get<{ aay_cards: number; phh_cards: number }>(`/dealers/${user.id}/stats`);
             setAayCards(stats.aay_cards ?? 0);
             setPhhCards(stats.phh_cards ?? 0);
-          } catch { /* stats optional */ }
+          } catch { console.warn('Stats endpoint unavailable'); }
         }
       } catch (err) {
         if (err instanceof ApiRequestError) toast.error(err.message);
