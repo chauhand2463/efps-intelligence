@@ -1,7 +1,8 @@
 'use client';
 
 import { useState } from 'react';
-import { CalendarDays, Eye, Printer, Copy, AlertCircle } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import { CalendarDays, Eye, Printer, Copy, AlertCircle, Plus } from 'lucide-react';
 import { api } from '@/lib/api';
 import { monthToApi } from '@/lib/utils';
 import toast from 'react-hot-toast';
@@ -19,6 +20,7 @@ interface StockRow {
 }
 
 export default function StockRecordPage() {
+  const router = useRouter();
   const [selectedItem, setSelectedItem] = useState('Wheat');
   const [selectedMonth, setSelectedMonth] = useState('June');
   const [selectedYear, setSelectedYear] = useState('2026');
@@ -112,9 +114,9 @@ export default function StockRecordPage() {
               value={selectedItem}
               onChange={(e) => setSelectedItem(e.target.value)}
             >
-              <option value="Wheat">Wheat</option>
-              <option value="Rice">Rice</option>
-              <option value="Sugar">Sugar</option>
+              {['Wheat', 'Rice', 'Sugar', 'Kerosene', 'Oil', 'Pulses'].map(c => (
+                <option key={c} value={c}>{c}</option>
+              ))}
             </select>
           </div>
 
@@ -155,9 +157,13 @@ export default function StockRecordPage() {
           </div>
         </div>
 
+        <button className={styles.entryBtn} onClick={() => router.push('/incoming-stock')}>
+          <Plus size={18} />
+          <span>New Stock Entry</span>
+        </button>
         <button className={styles.accentBtn} onClick={async () => {
           toast.loading('Loading all items for print...', { id: 'print-all' });
-          const items = ['Wheat', 'Rice', 'Sugar'];
+          const items = ['Wheat', 'Rice', 'Sugar', 'Kerosene', 'Oil', 'Pulses'];
           const allRecords: StockRow[] = [];
           try {
             for (const item of items) {

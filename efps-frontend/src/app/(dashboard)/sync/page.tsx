@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState, useCallback } from 'react';
-import { RefreshCw, Database, Clock, AlertTriangle, CheckCircle, XCircle, Loader2, BarChart3, Users, Package, Upload, FileText, Trash2, FileSpreadsheet } from 'lucide-react';
+import { RefreshCw, Database, Clock, AlertTriangle, CheckCircle, XCircle, Loader2, BarChart3, Users, Package, Upload, FileText, Trash2, FileSpreadsheet, Key, Eye, EyeOff } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { useSync } from '@/lib/api-hooks';
 import type { SyncJob, SyncDashboardData, ImportResult } from '@/lib/types';
@@ -20,17 +20,46 @@ interface ImportBeneficiaryRow {
   village: string;
 }
 
+const KNOWN_KEYS: Record<string, Record<string, string>> = {
+  rationCardNo: { rationcardno: '1', rationcard: '1', rationcardnumber: '1', rcmembers: '1', rcno: '1', rcnofps: '1' },
+  hofAsPerNFSA: { hofaspernfsa: '1', headoffamily: '1', name: '1', headofamily: '1', familyhead: '1', holdername: '1', head: '1', beneficiaryname: '1' },
+  cardCategory: { cardcategory: '1', category: '1', cardtype: '1', rationcardtype: '1', nfsacategory: '1', typeofcard: '1' },
+  familyMember: { familymember: '1', members: '1', membercount: '1', familysize: '1', totalmembers: '1', nooffamilymembers: '1' },
+  cardHolderName: { cardholdername: '1', holdername: '1', cardname: '1', nameoncard: '1' },
+  lpgStatus: { lpgstatus: '1', lpg: '1', lpgconnection: '1' },
+  pngStatus: { pngstatus: '1', png: '1', pngconnection: '1' },
+  address: { address: '1', fulladdress: '1', residentialaddress: '1' },
+  village: { village: '1', town: '1', city: '1', locality: '1', area: '1' },
+};
+
+function normalizeKey(k: string): string {
+  return k.toLowerCase().replace(/[\s_\-()]+/g, '').replace(/[^a-z0-9]/g, '');
+}
+
+function findFirst(data: Record<string, string>, field: string): string {
+  const aliases = KNOWN_KEYS[field];
+  if (!aliases) return data[field] ?? '';
+  const normData: Record<string, string> = {};
+  for (const [k, v] of Object.entries(data)) {
+    normData[normalizeKey(k)] = v;
+  }
+  for (const alias of Object.keys(aliases)) {
+    if (normData[alias] !== undefined && normData[alias] !== '') return normData[alias];
+  }
+  return '';
+}
+
 function mapRow(data: Record<string, string>): ImportBeneficiaryRow {
   return {
-    hofAsPerNFSA: data.hofaspernfsa || data.hof_as_per_nfsa || data.head_of_family || data.hofaspernfsa_name || '',
-    rationCardNo: data.rationcardno || data.ration_card_no || data.rcno || data.rationcard || '',
-    cardCategory: data.cardcategory || data.card_category || data.category || data.cardtype || 'NFSA-AAY',
-    familyMember: parseInt(data.familymember || data.family_member || data.members || data.membercount || '1', 10) || 1,
-    cardHolderName: data.cardholdername || data.card_holder_name || data.holdername || '',
-    lpgStatus: data.lpgstatus || data.lpg_status || '',
-    pngStatus: data.pngstatus || data.png_status || '',
-    address: data.address || '',
-    village: data.village || '',
+    hofAsPerNFSA: findFirst(data, 'hofAsPerNFSA'),
+    rationCardNo: findFirst(data, 'rationCardNo'),
+    cardCategory: findFirst(data, 'cardCategory') || 'NFSA-AAY',
+    familyMember: parseInt(findFirst(data, 'familyMember') || '1', 10) || 1,
+    cardHolderName: findFirst(data, 'cardHolderName'),
+    lpgStatus: findFirst(data, 'lpgStatus'),
+    pngStatus: findFirst(data, 'pngStatus'),
+    address: findFirst(data, 'address'),
+    village: findFirst(data, 'village'),
   };
 }
 
@@ -80,6 +109,20 @@ export default function SyncPage() {
   const [importResult, setImportResult] = useState<ImportResult & { fileName: string } | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
+  const [hasCredentials, setHasCredentials] = useState<boolean | null>(null);
+  const [showCredForm, setShowCredForm] = useState(false);
+  const [credUsername, setCredUsername] = useState('');
+  const [credPassword, setCredPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
+  const [savingCreds, setSavingCreds] = useState(false);
+
+  const loadCredentials = async () => {
+    try {
+      const status = await syncRef.current.getCredentialsStatus();
+      setHasCredentials(status.hasCredentials);
+    } catch { setHasCredentials(false); }
+  };
+
   const loadDashboard = async () => {
     try {
       setLoading(true);
@@ -92,7 +135,7 @@ export default function SyncPage() {
     }
   };
 
-  useEffect(() => { loadDashboard(); }, []);
+  useEffect(() => { loadDashboard(); loadCredentials(); }, []);
 
   const handleSyncNow = async () => {
     setSyncing(true);
@@ -235,6 +278,91 @@ export default function SyncPage() {
           <p className={styles.metricValue}>{dashboard?.totalTransactions ?? 0}</p>
         </div>
       </div>
+
+      {/* Credentials Status */}
+      <div className={styles.credBar}>
+        <div className={styles.credInfo}>
+          <Key size={16} />
+          <span>eFPS Portal Credentials: </span>
+          {hasCredentials === null ? (
+            <Loader2 size={14} className="spin" />
+          ) : hasCredentials ? (
+            <span className={styles.credConfigured}><CheckCircle size={14} /> Configured</span>
+          ) : (
+            <span className={styles.credMissing}><AlertTriangle size={14} /> Not configured</span>
+          )}
+        </div>
+        {!showCredForm ? (
+          <button className={styles.credBtn} onClick={() => setShowCredForm(true)}>
+            <Key size={14} /> {hasCredentials ? 'Update Credentials' : 'Set Credentials'}
+          </button>
+        ) : (
+          <button className={styles.credBtnCancel} onClick={() => setShowCredForm(false)}>Cancel</button>
+        )}
+      </div>
+
+      {showCredForm && (
+        <div className={styles.credForm}>
+          <h4 style={{ margin: '0 0 12px', fontSize: 14, fontWeight: 600, color: 'var(--text-dark)' }}>
+            {hasCredentials ? 'Update' : 'Set'} eFPS Portal Credentials
+          </h4>
+          <p style={{ margin: '0 0 16px', fontSize: 12, color: 'var(--text-muted)', lineHeight: 1.5 }}>
+            Your credentials are encrypted with AES-256-GCM before storage.
+            They are used only by the sync worker for Playwright-based data synchronization and are never exposed in API responses.
+          </p>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 12, marginBottom: 16 }}>
+            <input
+              type="text" placeholder="eFPS Portal Username"
+              value={credUsername}
+              onChange={e => setCredUsername(e.target.value)}
+              className={styles.credInput}
+            />
+            <div style={{ position: 'relative' }}>
+              <input
+                type={showPassword ? 'text' : 'password'}
+                placeholder="eFPS Portal Password"
+                value={credPassword}
+                onChange={e => setCredPassword(e.target.value)}
+                className={styles.credInput}
+                style={{ width: '100%', paddingRight: 40 }}
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                style={{
+                  position: 'absolute', right: 8, top: '50%', transform: 'translateY(-50%)',
+                  background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-muted)',
+                }}
+              >
+                {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+              </button>
+            </div>
+          </div>
+          <div style={{ display: 'flex', gap: 8, justifyContent: 'flex-end' }}>
+            <button className={styles.credBtnCancel} onClick={() => setShowCredForm(false)}>Cancel</button>
+            <button
+              className={styles.credBtn}
+              disabled={savingCreds || !credUsername || !credPassword}
+              onClick={async () => {
+                setSavingCreds(true);
+                try {
+                  await syncRef.current.saveCredentials({ efps_username: credUsername, efps_password: credPassword });
+                  toast.success('Credentials saved securely');
+                  setShowCredForm(false);
+                  setCredUsername('');
+                  setCredPassword('');
+                  loadCredentials();
+                } catch (err: any) {
+                  toast.error(err?.message || 'Failed to save credentials');
+                } finally { setSavingCreds(false); }
+              }}
+            >
+              {savingCreds ? <Loader2 size={14} className="spin" /> : <Key size={14} />}
+              {savingCreds ? 'Saving...' : 'Save Credentials'}
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* Tabs */}
       <div className={styles.tabs}>

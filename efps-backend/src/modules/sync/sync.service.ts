@@ -2,7 +2,8 @@ import { query } from '../../config/database.js';
 import { eventBus, EventTypes } from '../../shared/events/index.js';
 import { enqueueEfpsSync } from '../../jobs/sync/efps-sync.worker.js';
 import { enqueueGovtSync } from '../../jobs/sync/govt-data-sync.job.js';
-import type { TriggerSyncInput, UpdateBankInfoInput } from './sync.schema.js';
+import { encrypt } from '../../shared/utils/encrypt.js';
+import type { TriggerSyncInput, UpdateBankInfoInput, SaveCredentialsInput } from './sync.schema.js';
 
 export class SyncService {
   async triggerSync(input: TriggerSyncInput) {
@@ -225,6 +226,44 @@ export class SyncService {
       [dealerId, input.bank_name, input.branch_name, input.account_no, input.ifsc_code, input.account_holder]
     );
     return result.rows[0];
+  }
+
+  async saveCredentials(dealerId: string, input: SaveCredentialsInput) {
+    const usernameEnc = encrypt(input.efps_username);
+    const passwordEnc = encrypt(input.efps_password);
+
+    await query(
+      `INSERT INTO dealer_credentials (dealer_id, efps_username, efps_password, iv, auth_tag, iv_efps_password, auth_tag_efps_password)
+       VALUES ($1, $2, $3, $4, $5, $6, $7)
+       ON CONFLICT (dealer_id)
+       DO UPDATE SET
+         efps_username = EXCLUDED.efps_username,
+         efps_password = EXCLUDED.efps_password,
+         iv = EXCLUDED.iv,
+         auth_tag = EXCLUDED.auth_tag,
+         iv_efps_password = EXCLUDED.iv_efps_password,
+         auth_tag_efps_password = EXCLUDED.auth_tag_efps_password,
+         updated_at = NOW()`,
+      [dealerId, usernameEnc.ciphertext, passwordEnc.ciphertext, usernameEnc.iv, usernameEnc.authTag, passwordEnc.iv, passwordEnc.authTag]
+    );
+
+    await query(
+      `INSERT INTO sync_scheduler_config (dealer_id, sync_status, sync_enabled)
+       VALUES ($1, 'idle', TRUE)
+       ON CONFLICT (dealer_id)
+       DO UPDATE SET sync_status = 'idle', sync_enabled = TRUE, updated_at = NOW()`,
+      [dealerId]
+    );
+
+    return { message: 'Credentials saved successfully' };
+  }
+
+  async getCredentialsStatus(dealerId: string) {
+    const result = await query(
+      `SELECT id FROM dealer_credentials WHERE dealer_id = $1`,
+      [dealerId]
+    );
+    return { hasCredentials: result.rows.length > 0 };
   }
 }
 

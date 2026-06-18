@@ -1,12 +1,12 @@
 import { z } from 'zod';
 
 export const triggerSyncSchema = z.object({
-  sync_type: z.enum(['beneficiaries', 'allocations', 'policies', 'sales', 'stock', 'reports']),
+  sync_type: z.enum(['beneficiaries', 'allocations', 'policies', 'sales', 'stock', 'reports', 'priority']),
   dealer_id: z.string().uuid().optional(),
 });
 
 export const triggerSelfSyncSchema = z.object({
-  sync_type: z.enum(['beneficiaries', 'allocations', 'sales', 'stock']).optional().default('beneficiaries'),
+  sync_type: z.enum(['beneficiaries', 'allocations', 'sales', 'stock', 'priority']).optional().default('beneficiaries'),
 });
 
 export const updateBankInfoSchema = z.object({
@@ -39,7 +39,13 @@ export const syncDistrictSchema = z.object({
   district: z.string().min(1, 'District is required'),
 });
 
+export const saveCredentialsSchema = z.object({
+  efps_username: z.string().min(1, 'Username is required'),
+  efps_password: z.string().min(1, 'Password is required'),
+});
+
 export type TriggerSyncInput = z.infer<typeof triggerSyncSchema>;
 export type UpdateBankInfoInput = z.infer<typeof updateBankInfoSchema>;
 export type ImportRowInput = z.infer<typeof importRowSchema>;
 export type ImportCsvInput = z.infer<typeof importCsvSchema>;
+export type SaveCredentialsInput = z.infer<typeof saveCredentialsSchema>;

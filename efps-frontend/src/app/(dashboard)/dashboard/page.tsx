@@ -98,8 +98,8 @@ export default function DashboardPage() {
           </div>
         </div>
         <div className={styles.headerRight}>
-          <button className={styles.iconBtn} onClick={() => {}}><Bell size={16} /></button>
-          <button className={styles.iconBtn} onClick={() => {}}><Settings size={16} /></button>
+          <button className={styles.iconBtn} onClick={() => router.push('/updates')}><Bell size={16} /></button>
+          <button className={styles.iconBtn} onClick={() => router.push('/profile/edit')}><Settings size={16} /></button>
           <div className={styles.dealerBadge}>
             <span>{dealer?.fps_id}</span>
           </div>
@@ -109,10 +109,10 @@ export default function DashboardPage() {
       {/* ===== QUICK ACTIONS ===== */}
       <section className={styles.quickActions}>
         <button className={styles.qAction} onClick={() => router.push('/manual-sale')}><Plus size={14} /> New Sale</button>
-        <button className={styles.qAction} onClick={() => router.push('/beneficiaries')}><Users size={14} /> Beneficiaries</button>
-        <button className={styles.qAction} onClick={() => router.push('/stock')}><Package size={14} /> Stock</button>
+        <button className={styles.qAction} onClick={() => router.push('/customers')}><Users size={14} /> Beneficiaries</button>
+        <button className={styles.qAction} onClick={() => router.push('/stock-record')}><Package size={14} /> Stock</button>
         <button className={styles.qAction} onClick={() => window.print()}><Printer size={14} /> Print</button>
-        <button className={styles.qAction} onClick={() => router.push('/reports')}><FileText size={14} /> Reports</button>
+        <button className={styles.qAction} onClick={() => router.push('/monthly-sales-report')}><FileText size={14} /> Reports</button>
         <button className={styles.qAction} onClick={() => router.push('/sync')}><RefreshCw size={14} /> Sync</button>
       </section>
 

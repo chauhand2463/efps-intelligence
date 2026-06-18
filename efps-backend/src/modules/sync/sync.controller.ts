@@ -5,7 +5,7 @@ import { enqueueFullStateSync, enqueueDistrictSync } from '../../jobs/sync/govt-
 import {
   triggerSyncSchema, updateBankInfoSchema, importCsvSchema,
   importRowSchema, syncAllSchema, syncDistrictSchema,
-  triggerSelfSyncSchema,
+  triggerSelfSyncSchema, saveCredentialsSchema,
 } from './sync.schema.js';
 import { sendSuccess, sendCreated } from '../../shared/utils/response.js';
 
@@ -87,5 +87,16 @@ export async function getSelfSyncStatusHandler(request: FastifyRequest, reply: F
 
 export async function getSelfDashboardHandler(request: FastifyRequest, reply: FastifyReply) {
   const result = await syncService.getSelfDashboard(request.user!.id);
+  return sendSuccess(reply, result);
+}
+
+export async function saveCredentialsHandler(request: FastifyRequest, reply: FastifyReply) {
+  const body = saveCredentialsSchema.parse(request.body);
+  const result = await syncService.saveCredentials(request.user!.id, body);
+  return sendSuccess(reply, result);
+}
+
+export async function getCredentialsStatusHandler(request: FastifyRequest, reply: FastifyReply) {
+  const result = await syncService.getCredentialsStatus(request.user!.id);
   return sendSuccess(reply, result);
 }

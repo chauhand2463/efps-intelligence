@@ -619,6 +619,106 @@
   background-color: var(--primary-dark);
 }
 
+.credBar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 14px 20px;
+  background-color: var(--surface-gray);
+  border: 1px solid var(--border-light);
+  border-radius: 10px;
+}
+
+.credInfo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: var(--text-dark);
+  font-weight: 500;
+}
+
+.credConfigured {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  color: var(--online-green);
+  font-weight: 600;
+}
+
+.credMissing {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  color: var(--warning-orange);
+  font-weight: 600;
+}
+
+.credBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  background-color: var(--primary-navy);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.credBtn:hover:not(:disabled) {
+  filter: brightness(1.1);
+}
+
+.credBtn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.credBtnCancel {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  background-color: white;
+  color: var(--text-dark);
+  border: 1px solid var(--border-light);
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.credBtnCancel:hover {
+  background-color: var(--surface-gray);
+}
+
+.credForm {
+  background-color: var(--surface-gray);
+  border: 1px solid var(--border-light);
+  border-radius: 12px;
+  padding: 20px;
+}
+
+.credInput {
+  height: 42px;
+  padding: 0 12px;
+  font-size: 14px;
+  border: 1px solid var(--border-input);
+  border-radius: 8px;
+  font-family: inherit;
+  color: var(--text-dark);
+  background-color: white;
+  outline: none;
+}
+
+.credInput:focus {
+  border-color: var(--accent-amber);
+  box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.15);
+}
+
 .center {
   display: flex;
   flex-direction: column;

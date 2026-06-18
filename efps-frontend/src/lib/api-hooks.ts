@@ -215,5 +215,8 @@ export function useSync() {
     village?: string;
   }[]) =>
     api.post<ImportResult>('/sync/import/csv', { rows });
-  return { getBankInfo, updateBankInfo, triggerSelfSync, getSelfSyncStatus, getSelfDashboard, triggerPrioritySync, importCsv };
+  const getCredentialsStatus = () => api.get<{ hasCredentials: boolean }>('/sync/credentials');
+  const saveCredentials = (input: { efps_username: string; efps_password: string }) =>
+    api.post('/sync/credentials', input);
+  return { getBankInfo, updateBankInfo, triggerSelfSync, getSelfSyncStatus, getSelfDashboard, triggerPrioritySync, importCsv, getCredentialsStatus, saveCredentials };
 }

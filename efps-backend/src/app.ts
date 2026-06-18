@@ -18,6 +18,7 @@ import { dealerRoutes } from './modules/dealer/dealer.routes.js';
 import { beneficiaryRoutes } from './modules/beneficiary/beneficiary.routes.js';
 import { transactionRoutes } from './modules/transaction/transaction.routes.js';
 import { stockRoutes } from './modules/stock/stock.routes.js';
+import { stockEntryRoutes } from './modules/stock-entry/stock-entry.routes.js';
 import { notificationRoutes } from './modules/notification/notification.routes.js';
 import { reportRoutes } from './modules/report/report.routes.js';
 import { adminRoutes } from './modules/admin/admin.routes.js';
@@ -31,6 +32,7 @@ import { auditRoutes } from './modules/audit/audit.routes.js';
 import { directoryRoutes } from './modules/directory/directory.routes.js';
 import { dashboardRoutes } from './modules/dashboard/dashboard.routes.js';
 import { hierarchyRoutes } from './modules/hierarchy/hierarchy.routes.js';
+import { enterpriseSyncRoutes } from './modules/enterprise-sync/enterprise-sync.routes.js';
 import { registerEventHandlers } from './shared/events/index.js';
 import { internalSyncRouter } from './modules/internal-sync/internal-sync.router.js';
 
@@ -136,6 +138,7 @@ export async function buildApp() {
     api.register(beneficiaryRoutes);
     api.register(transactionRoutes);
     api.register(stockRoutes);
+    api.register(stockEntryRoutes);
     api.register(notificationRoutes);
     api.register(reportRoutes);
     api.register(adminRoutes);
@@ -149,6 +152,7 @@ export async function buildApp() {
     api.register(directoryRoutes);
     api.register(dashboardRoutes);
     api.register(hierarchyRoutes);
+    api.register(enterpriseSyncRoutes);
   }, { prefix: '/api/v1' });
 
   return app;
