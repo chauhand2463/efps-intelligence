@@ -12,7 +12,7 @@ import {
 const ACCESS_COOKIE_OPTS = {
   httpOnly: true,
   secure: config.NODE_ENV === 'production',
-  sameSite: 'strict' as const,
+  sameSite: 'lax' as const,
   path: '/api/v1',
   maxAge: 15 * 60,
 };
@@ -20,7 +20,7 @@ const ACCESS_COOKIE_OPTS = {
 const REFRESH_COOKIE_OPTS = {
   httpOnly: true,
   secure: config.NODE_ENV === 'production',
-  sameSite: 'strict' as const,
+  sameSite: 'lax' as const,
   path: '/api/v1/auth/refresh',
   maxAge: 30 * 24 * 60 * 60,
 };

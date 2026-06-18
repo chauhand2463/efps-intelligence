@@ -34,15 +34,14 @@ export default function BankCommissionPage() {
   const [saving, setSaving] = useState(false);
 
   const getMonthParam = useCallback(() => {
-    return `${financialYear}-${MONTH_MAP[reportingMonth]}`;
+    return `${financialYear}-${MONTH_MAP[reportingMonth]}-01`;
   }, [financialYear, reportingMonth]);
 
   const loadData = useCallback(async () => {
     setLoading(true);
     try {
       const month = getMonthParam();
-      const res = await api.get<{ data: Commission[] }>(`/commission?month=${month}`);
-      const commissionList: Commission[] = res.data ?? [];
+      const commissionList: Commission[] = await api.get<Commission[]>(`/commission?month=${month}`);
 
       const mapped: Transaction[] = commissionList.map((c, idx) => ({
         commissionId: c.id,

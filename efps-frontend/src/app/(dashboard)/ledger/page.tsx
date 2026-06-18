@@ -1,61 +1,66 @@
 'use client';
 
 import { useState, useRef, useEffect, useCallback } from 'react';
+import {
+  BookOpen, TrendingUp, Upload, Download, RefreshCw, Search,
+  AlertCircle, ChevronLeft, ChevronRight, Loader2, FileSpreadsheet,
+  Package, DollarSign, Filter, ArrowUpDown, CheckCircle, XCircle,
+} from 'lucide-react';
 import { api } from '@/lib/api';
 import { useAuth } from '@/lib/auth-context';
 import toast from 'react-hot-toast';
+import { Card } from '@/components/ui/Card';
+import { Button } from '@/components/ui/Button';
+import { SkeletonTable, SkeletonCard } from '@/components/ui/Skeleton';
+import { EmptyState } from '@/components/ui/EmptyState';
 import styles from './StockLedger.module.css';
 import * as XLSX from 'xlsx';
 
-// ── Types ────────────────────────────────────────────────
 interface StockLedgerRow {
-  id: string; dealer_id: string; fps_id: string; shop_name: string;
-  commodity: string; department: string; fiscal_month: string;
+  id: string; commodity: string; department: string; fiscal_month: string;
   opening_kg: number; inbound_kg: number; outbound_kg: number;
-  closing_kg: number; unit: string; updated_at: string; avg_monthly_offtake: number;
+  closing_kg: number; unit: string; avg_monthly_offtake: number;
 }
 
 interface FinLedgerRow {
-  id: string; dealer_id: string; entry_type: string;
-  reference_type: string; reference_id: string | null;
-  amount_rs: number; direction: string; description: string;
-  fiscal_month: string; recorded_at: string; linked_ration_card: string | null;
+  id: string; entry_type: string; direction: string; amount_rs: number;
+  description: string; fiscal_month: string; recorded_at: string;
+  linked_ration_card: string | null;
 }
 
 interface FinSummary {
-  dealer_id: string; fiscal_month: string;
-  total_credits_rs: string; total_debits_rs: string; net_balance_rs: string;
+  fiscal_month: string; net_balance_rs: string;
   sale_count: number; udhari_given_count: number; udhari_received_count: number;
 }
 
 type Tab = 'stock' | 'financial' | 'upload';
 
-// ── Helpers ──────────────────────────────────────────────
-const DEPT_COLORS: Record<string, string> = {
-  REGULAR_FPS: styles.badgeFps,
-  MDM: styles.badgeMdm,
-  ICDS: styles.badgeIcds,
-};
-
 const COMMODITIES = ['All', 'Rice', 'Wheat', 'Sugar', 'Kerosene', 'Oil', 'Pulses'];
 const ENTRY_TYPES = ['All', 'sale', 'expense', 'income', 'udhari_given', 'udhari_received', 'shop_rent', 'commission', 'settlement'];
 
-function formatKg(v: number): string {
+function fmtKg(v: number): string {
   return Number(v).toLocaleString(undefined, { minimumFractionDigits: 1, maximumFractionDigits: 3 });
 }
-
-function formatRs(v: number): string {
-  return '₹' + Number(v).toLocaleString(undefined, { minimumFractionDigits: 2 });
+function fmtRs(v: number): string {
+  return '\u20B9' + Number(v).toLocaleString(undefined, { minimumFractionDigits: 2 });
 }
-
-function getMonth(offset = 0): string {
-  const d = new Date();
-  d.setDate(1);
-  d.setMonth(d.getMonth() + offset);
+function currMonth(offset = 0): string {
+  const d = new Date(); d.setDate(1); d.setMonth(d.getMonth() + offset);
   return d.toISOString().split('T')[0];
 }
+function monthLabel(m: string): string {
+  if (!m) return '';
+  const d = new Date(m + 'T00:00:00');
+  return d.toLocaleString('en-IN', { month: 'short', year: 'numeric' });
+}
 
-// ── Main Component ──────────────────────────────────────
+function deptClass(dept: string): string {
+  if (dept === 'REGULAR_FPS') return styles.deptFps;
+  if (dept === 'MDM') return styles.deptMdm;
+  if (dept === 'ICDS') return styles.deptIcds;
+  return '';
+}
+
 export default function LedgerPage() {
   const { user } = useAuth();
   const [tab, setTab] = useState<Tab>('stock');
@@ -63,13 +68,23 @@ export default function LedgerPage() {
   return (
     <div className={styles.container}>
       <div className={styles.header}>
-        <h1 className={styles.title}>Stock & Financial Ledger</h1>
+        <div className={styles.headerIcon}><BookOpen size={22} /></div>
+        <div className={styles.headerContent}>
+          <h1 className={styles.title}>Stock & Financial Ledger</h1>
+          <p style={{ fontSize: 13, color: 'var(--text-muted)', margin: 0 }}>
+            Track physical stock movements, financial transactions, and import government data
+          </p>
+        </div>
       </div>
 
       <div className={styles.tabs}>
-        {(['stock', 'financial', 'upload'] as const).map(t => (
-          <button key={t} className={`${styles.tab} ${tab === t ? styles.active : ''}`} onClick={() => setTab(t)}>
-            {t === 'stock' ? 'Stock Ledger' : t === 'financial' ? 'Financial Ledger' : 'Upload Data'}
+        {[
+          { id: 'stock' as Tab, label: 'Stock Ledger', icon: Package },
+          { id: 'financial' as Tab, label: 'Financial Ledger', icon: DollarSign },
+          { id: 'upload' as Tab, label: 'Upload Data', icon: Upload },
+        ].map(t => (
+          <button key={t.id} className={`${styles.tab} ${tab === t.id ? styles.tabActive : ''}`} onClick={() => setTab(t.id)}>
+            <t.icon size={14} /> {t.label}
           </button>
         ))}
       </div>
@@ -81,41 +96,34 @@ export default function LedgerPage() {
   );
 }
 
-// ── Stock Ledger Panel ───────────────────────────────────
 function StockLedgerPanel() {
-  const { user } = useAuth();
   const [data, setData] = useState<StockLedgerRow[]>([]);
   const [total, setTotal] = useState(0);
   const [page, setPage] = useState(1);
   const limit = 20;
   const [commodity, setCommodity] = useState('');
   const [department, setDepartment] = useState('');
-  const [fiscalMonth, setFiscalMonth] = useState(getMonth());
+  const [fiscalMonth, setFiscalMonth] = useState(currMonth());
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const fetchId = useRef(0);
-
-  function buildUrl(base: string, p: number): string {
-    const params = new URLSearchParams({ page: String(p), limit: String(limit) });
-    if (commodity) params.set('commodity', commodity);
-    if (department) params.set('department', department);
-    if (fiscalMonth) params.set('fiscal_month', fiscalMonth);
-    return `${base}?${params.toString()}`;
-  }
 
   const fetchData = useCallback(async (p: number) => {
     const id = ++fetchId.current;
     setLoading(true); setError(null);
     try {
-      const url = buildUrl('/ledger/stock', p);
-      const data: any = await api.get(url);
+      const params = new URLSearchParams({ page: String(p), limit: String(limit) });
+      if (commodity) params.set('commodity', commodity);
+      if (department) params.set('department', department);
+      if (fiscalMonth) params.set('fiscal_month', fiscalMonth);
+      const res: any = await api.get(`/ledger/stock?${params}`);
       if (id === fetchId.current) {
-        setData(data?.data ?? []);
-        setTotal(data?.total ?? 0);
+        setData(res?.data ?? []);
+        setTotal(res?.total ?? 0);
         setPage(p);
       }
     } catch (err: any) {
-      if (id === fetchId.current) setError(err?.response?.data?.message || err.message || 'Failed to load');
+      if (id === fetchId.current) setError(err?.message || 'Failed to load');
     } finally {
       if (id === fetchId.current) setLoading(false);
     }
@@ -127,6 +135,13 @@ function StockLedgerPanel() {
 
   return (
     <div>
+      <div className={styles.sectionH}>
+        <h3>Stock Movement Ledger</h3>
+        <Button variant="ghost" size="sm" onClick={() => fetchData(page)} disabled={loading}>
+          <RefreshCw size={14} /> Refresh
+        </Button>
+      </div>
+
       <div className={styles.filters}>
         <select className={styles.select} value={commodity} onChange={e => setCommodity(e.target.value)}>
           {COMMODITIES.map(c => <option key={c} value={c === 'All' ? '' : c}>{c}</option>)}
@@ -138,96 +153,104 @@ function StockLedgerPanel() {
           <option value="ICDS">ICDS</option>
         </select>
         <input type="month" className={styles.select} value={fiscalMonth.slice(0, 7)} onChange={e => setFiscalMonth(e.target.value + '-01')} />
-        <button className={styles.searchBtn} onClick={() => fetchData(1)} disabled={loading}>Search</button>
+        <Button variant="primary" size="sm" onClick={() => fetchData(1)} disabled={loading}>
+          <Search size={14} /> Search
+        </Button>
       </div>
 
-      {error && <div className={styles.error}><span>⚠</span> {error}</div>}
+      {error && <div className={styles.error}><AlertCircle size={16} /> {error}</div>}
 
       {loading ? (
-        <div className={styles.loader}>Loading stock ledger...</div>
+        <Card><SkeletonTable rows={4} /></Card>
       ) : data.length === 0 ? (
-        <div className={styles.empty}>No stock ledger entries found</div>
+        <Card>
+          <EmptyState
+            icon={<Package size={40} />}
+            title="No Stock Ledger Data"
+            description="No stock movements found for the selected filters. Try adjusting your search criteria."
+          />
+        </Card>
       ) : (
-        <>
-          <table className={styles.table}>
-            <thead>
-              <tr>
-                <th>Commodity</th>
-                <th>Department</th>
-                <th>Month</th>
-                <th>Opening</th>
-                <th>Inbound</th>
-                <th>Outbound</th>
-                <th>Closing</th>
-                <th>Avg Offtake</th>
-              </tr>
-            </thead>
-            <tbody>
-              {data.map(row => (
-                <tr key={row.id}>
-                  <td><strong>{row.commodity}</strong></td>
-                  <td><span className={`${styles.deptBadge} ${DEPT_COLORS[row.department] || ''}`}>{row.department}</span></td>
-                  <td>{row.fiscal_month?.slice(0, 7)}</td>
-                  <td className={styles.positive}>{formatKg(row.opening_kg)}</td>
-                  <td className={styles.positive}>{formatKg(row.inbound_kg)}</td>
-                  <td className={styles.negative}>{formatKg(row.outbound_kg)}</td>
-                  <td><strong>{formatKg(row.closing_kg)}</strong></td>
-                  <td>{formatKg(row.avg_monthly_offtake)}</td>
+        <Card style={{ padding: 0, overflow: 'hidden' }}>
+          <div className={styles.tableWrap}>
+            <table className={styles.table}>
+              <thead>
+                <tr>
+                  <th>Commodity</th>
+                  <th>Department</th>
+                  <th>Month</th>
+                  <th style={{ textAlign: 'right' }}>Opening (kg)</th>
+                  <th style={{ textAlign: 'right' }}>Inbound (kg)</th>
+                  <th style={{ textAlign: 'right' }}>Outbound (kg)</th>
+                  <th style={{ textAlign: 'right' }}>Closing (kg)</th>
+                  <th style={{ textAlign: 'right' }}>Avg Offtake</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {data.map(row => (
+                  <tr key={row.id}>
+                    <td><strong>{row.commodity}</strong></td>
+                    <td><span className={`${styles.departmentBadge} ${deptClass(row.department)}`}>{row.department}</span></td>
+                    <td>{monthLabel(row.fiscal_month)}</td>
+                    <td style={{ textAlign: 'right' }} className={styles.positive}>{fmtKg(row.opening_kg)}</td>
+                    <td style={{ textAlign: 'right' }} className={styles.positive}>{fmtKg(row.inbound_kg)}</td>
+                    <td style={{ textAlign: 'right' }} className={styles.negative}>{fmtKg(row.outbound_kg)}</td>
+                    <td style={{ textAlign: 'right' }}><strong>{fmtKg(row.closing_kg)}</strong></td>
+                    <td style={{ textAlign: 'right' }}>{fmtKg(row.avg_monthly_offtake)}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
 
           <div className={styles.pagination}>
-            <span>Showing {(page - 1) * limit + 1}–{Math.min(page * limit, total)} of {total}</span>
+            <span>{(page - 1) * limit + 1}–{Math.min(page * limit, total)} of {total}</span>
             <div style={{ display: 'flex', gap: 8 }}>
-              <button className={styles.pageBtn} disabled={page <= 1} onClick={() => fetchData(page - 1)}>← Prev</button>
-              <button className={styles.pageBtn} disabled={page >= totalPages} onClick={() => fetchData(page + 1)}>Next →</button>
+              <button className={styles.pageNav} disabled={page <= 1} onClick={() => fetchData(page - 1)}>
+                <ChevronLeft size={14} /> Prev
+              </button>
+              <button className={styles.pageNav} disabled={page >= totalPages} onClick={() => fetchData(page + 1)}>
+                Next <ChevronRight size={14} />
+              </button>
             </div>
           </div>
-        </>
+        </Card>
       )}
     </div>
   );
 }
 
-// ── Financial Ledger Panel ───────────────────────────────
 function FinancialLedgerPanel() {
-  const { user } = useAuth();
   const [data, setData] = useState<FinLedgerRow[]>([]);
   const [summary, setSummary] = useState<FinSummary[]>([]);
   const [total, setTotal] = useState(0);
   const [page, setPage] = useState(1);
   const limit = 20;
   const [entryType, setEntryType] = useState('');
-  const [fiscalMonth, setFiscalMonth] = useState(getMonth());
+  const [fiscalMonth, setFiscalMonth] = useState(currMonth());
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const fetchId = useRef(0);
-
-  function buildFinUrl(base: string, p: number): string {
-    const params = new URLSearchParams({ page: String(p), limit: String(limit) });
-    if (entryType) params.set('entry_type', entryType);
-    if (fiscalMonth) params.set('fiscal_month', fiscalMonth);
-    return `${base}?${params.toString()}`;
-  }
 
   const fetchData = useCallback(async (p: number) => {
     const id = ++fetchId.current;
     setLoading(true); setError(null);
     try {
-      const [ledgerData, summaryData]: [any, any] = await Promise.all([
-        api.get(buildFinUrl('/ledger/financial', p)),
+      const params = new URLSearchParams({ page: String(p), limit: String(limit) });
+      if (entryType) params.set('entry_type', entryType);
+      if (fiscalMonth) params.set('fiscal_month', fiscalMonth);
+      const [ledgerRes, summaryRes]: [any, any] = await Promise.all([
+        api.get(`/ledger/financial?${params}`),
         api.get('/ledger/financial/summary'),
       ]);
       if (id === fetchId.current) {
-        setData(ledgerData?.data ?? []);
-        setTotal(ledgerData?.total ?? 0);
-        setSummary(Array.isArray(summaryData) ? summaryData : []);
+        setData(ledgerRes?.data ?? []);
+        setTotal(ledgerRes?.total ?? 0);
+        setSummary(Array.isArray(summaryRes) ? summaryRes : []);
         setPage(p);
       }
     } catch (err: any) {
-      if (id === fetchId.current) setError(err?.response?.data?.message || err.message || 'Failed to load');
+      if (id === fetchId.current) setError(err?.message || 'Failed to load');
     } finally {
       if (id === fetchId.current) setLoading(false);
     }
@@ -239,15 +262,24 @@ function FinancialLedgerPanel() {
 
   return (
     <div>
+      <div className={styles.sectionH}>
+        <h3>Financial Ledger</h3>
+        <Button variant="ghost" size="sm" onClick={() => fetchData(page)} disabled={loading}>
+          <RefreshCw size={14} /> Refresh
+        </Button>
+      </div>
+
       {summary.length > 0 && (
         <div className={styles.summaryGrid}>
           {summary.slice(0, 3).map(s => (
             <div key={s.fiscal_month} className={styles.summaryCard}>
-              <div className={styles.summaryLabel}>{s.fiscal_month?.slice(0, 7)}</div>
-              <div className={styles.summaryValue}>{formatRs(parseFloat(s.net_balance_rs))}</div>
-              <div style={{ fontSize: 12, color: '#6b7280', marginTop: 4 }}>
-                {s.sale_count} sales · {s.udhari_given_count} udhari given · {s.udhari_received_count} received
-              </div>
+              <span className={styles.summaryLabel}>{monthLabel(s.fiscal_month)} Net</span>
+              <span className={styles.summaryValue} style={{ color: parseFloat(s.net_balance_rs) >= 0 ? 'var(--online-green)' : 'var(--offline-red)' }}>
+                {fmtRs(parseFloat(s.net_balance_rs))}
+              </span>
+              <span style={{ fontSize: 11, color: 'var(--text-muted)' }}>
+                {s.sale_count} sales · {s.udhari_given_count} given · {s.udhari_received_count} received
+              </span>
             </div>
           ))}
         </div>
@@ -258,63 +290,77 @@ function FinancialLedgerPanel() {
           {ENTRY_TYPES.map(t => <option key={t} value={t === 'All' ? '' : t}>{t}</option>)}
         </select>
         <input type="month" className={styles.select} value={fiscalMonth.slice(0, 7)} onChange={e => setFiscalMonth(e.target.value + '-01')} />
-        <button className={styles.searchBtn} onClick={() => fetchData(1)} disabled={loading}>Search</button>
+        <Button variant="primary" size="sm" onClick={() => fetchData(1)} disabled={loading}>
+          <Search size={14} /> Search
+        </Button>
       </div>
 
-      {error && <div className={styles.error}><span>⚠</span> {error}</div>}
+      {error && <div className={styles.error}><AlertCircle size={16} /> {error}</div>}
 
       {loading ? (
-        <div className={styles.loader}>Loading financial ledger...</div>
+        <Card><SkeletonTable rows={4} /></Card>
       ) : data.length === 0 ? (
-        <div className={styles.empty}>No financial ledger entries found</div>
+        <Card>
+          <EmptyState
+            icon={<DollarSign size={40} />}
+            title="No Financial Entries"
+            description="No financial ledger entries found. Entries are created automatically when transactions are recorded."
+          />
+        </Card>
       ) : (
-        <>
-          <table className={styles.table}>
-            <thead>
-              <tr>
-                <th>Date</th>
-                <th>Type</th>
-                <th>Direction</th>
-                <th>Amount</th>
-                <th>Description</th>
-                <th>Ration Card</th>
-                <th>Month</th>
-              </tr>
-            </thead>
-            <tbody>
-              {data.map(row => (
-                <tr key={row.id}>
-                  <td>{new Date(row.recorded_at).toLocaleDateString()}</td>
-                  <td><span className={styles.badge}>{row.entry_type}</span></td>
-                  <td>
-                    <span className={`${styles.badge} ${row.direction === 'credit' ? styles.badgeCredit : styles.badgeDebit}`}>
-                      {row.direction}
-                    </span>
-                  </td>
-                  <td><strong>{formatRs(row.amount_rs)}</strong></td>
-                  <td style={{ maxWidth: 250, overflow: 'hidden', textOverflow: 'ellipsis' }}>{row.description}</td>
-                  <td>{row.linked_ration_card || '—'}</td>
-                  <td>{row.fiscal_month?.slice(0, 7)}</td>
+        <Card style={{ padding: 0, overflow: 'hidden' }}>
+          <div className={styles.tableWrap}>
+            <table className={styles.table}>
+              <thead>
+                <tr>
+                  <th>Date</th>
+                  <th>Type</th>
+                  <th>Direction</th>
+                  <th style={{ textAlign: 'right' }}>Amount</th>
+                  <th>Description</th>
+                  <th>Ration Card</th>
+                  <th>Month</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {data.map(row => (
+                  <tr key={row.id}>
+                    <td>{new Date(row.recorded_at).toLocaleDateString('en-IN')}</td>
+                    <td><span className={`${styles.entryBadge}`}>{row.entry_type}</span></td>
+                    <td>
+                      <span className={`${styles.entryBadge} ${row.direction === 'credit' ? styles.entryCredit : styles.entryDebit}`}>
+                        {row.direction === 'credit' ? <TrendingUp size={12} /> : <ArrowUpDown size={12} />}
+                        {row.direction}
+                      </span>
+                    </td>
+                    <td style={{ textAlign: 'right' }}><strong>{fmtRs(row.amount_rs)}</strong></td>
+                    <td style={{ maxWidth: 240, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{row.description}</td>
+                    <td>{row.linked_ration_card || '\u2014'}</td>
+                    <td>{monthLabel(row.fiscal_month)}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
 
           <div className={styles.pagination}>
-            <span>Showing {(page - 1) * limit + 1}–{Math.min(page * limit, total)} of {total}</span>
+            <span>{(page - 1) * limit + 1}–{Math.min(page * limit, total)} of {total}</span>
             <div style={{ display: 'flex', gap: 8 }}>
-              <button className={styles.pageBtn} disabled={page <= 1} onClick={() => fetchData(page - 1)}>← Prev</button>
-              <button className={styles.pageBtn} disabled={page >= totalPages} onClick={() => fetchData(page + 1)}>Next →</button>
+              <button className={styles.pageNav} disabled={page <= 1} onClick={() => fetchData(page - 1)}>
+                <ChevronLeft size={14} /> Prev
+              </button>
+              <button className={styles.pageNav} disabled={page >= totalPages} onClick={() => fetchData(page + 1)}>
+                Next <ChevronRight size={14} />
+              </button>
             </div>
           </div>
-        </>
+        </Card>
       )}
     </div>
   );
 }
 
-// ── Upload Panel ─────────────────────────────────────────
-function UploadPanel({ dealerId }: { dealerId: string }) {
+function UploadPanel({ dealerId: _dealerId }: { dealerId: string }) {
   const [file, setFile] = useState<File | null>(null);
   const [preview, setPreview] = useState<Record<string, string>[]>([]);
   const [loading, setLoading] = useState(false);
@@ -324,8 +370,7 @@ function UploadPanel({ dealerId }: { dealerId: string }) {
   const inputRef = useRef<HTMLInputElement>(null);
 
   const handleFile = useCallback(async (f: File) => {
-    setFile(f);
-    setResult(null); setError(null);
+    setFile(f); setResult(null); setError(null);
     try {
       const buf = await f.arrayBuffer();
       const wb = XLSX.read(buf, { type: 'array' });
@@ -355,124 +400,122 @@ function UploadPanel({ dealerId }: { dealerId: string }) {
       setResult(res);
       toast.success(`Imported: ${res.inserted} new, ${res.updated} updated`);
     } catch (err: any) {
-      const msg = err?.response?.data?.message || err.message || 'Upload failed';
-      setError(msg);
-      toast.error(msg);
-    } finally {
-      setLoading(false);
-    }
+      const msg = err?.message || 'Upload failed';
+      setError(msg); toast.error(msg);
+    } finally { setLoading(false); }
   }, [preview]);
 
   const detectedHeaders = preview.length > 0 ? Object.keys(preview[0]) : [];
 
   return (
     <div>
-      <h2 style={{ fontSize: 18, fontWeight: 600, marginBottom: 16 }}>Import Transactions from File</h2>
-      <p style={{ fontSize: 14, color: '#6b7280', marginBottom: 20 }}>
-        Upload the government portal Excel/CSV export. Column headers are automatically mapped
-        (e.g., <code>RATION CARD NO</code>, <code>Head of Family</code>, <code>Quantity (Kg)</code>).
-        Existing transactions are matched by ration card + month + commodity — duplicates are skipped or overridden.
-      </p>
-
-      <input
-        ref={inputRef}
-        type="file"
-        accept=".xlsx,.xls,.csv"
-        style={{ display: 'none' }}
-        onChange={e => { if (e.target.files?.[0]) handleFile(e.target.files[0]); }}
-      />
-
-      <div
-        className={`${styles.uploadArea} ${dragging ? styles.dragging : ''}`}
-        onDragOver={e => { e.preventDefault(); setDragging(true); }}
-        onDragLeave={() => setDragging(false)}
-        onDrop={handleDrop}
-        onClick={() => inputRef.current?.click()}
-      >
-        <svg className={styles.uploadIcon} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5}
-            d="M12 16V4m0 0L8 8m4-4l4 4M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2" />
-        </svg>
-        <div className={styles.uploadText}>Drop Excel/CSV file here or click to browse</div>
-        <div className={styles.uploadHint}>Supports .xlsx, .xls, .csv from Gujarat eFPS portal</div>
+      <div className={styles.sectionH}>
+        <h3>Import Transactions from File</h3>
       </div>
+      <Card>
+        <p style={{ fontSize: 13, color: 'var(--text-muted)', marginBottom: 20, lineHeight: 1.6 }}>
+          Upload the government portal Excel/CSV export. Column headers are automatically mapped
+          (e.g. <strong>RATION CARD NO</strong>, <strong>Head of Family</strong>, <strong>Quantity (Kg)</strong>).
+          Existing transactions are matched by ration card + month + commodity to avoid duplicates.
+        </p>
 
-      {file && (
-        <div className={styles.fileInfo}>
-          <span className={styles.fileName}>{file.name}</span>
-          <span className={styles.fileSize}>{(file.size / 1024).toFixed(1)} KB</span>
-          <button className={styles.removeBtn} onClick={() => { setFile(null); setPreview([]); setResult(null); setError(null); }}>Remove</button>
-        </div>
-      )}
+        <input ref={inputRef} type="file" accept=".xlsx,.xls,.csv" style={{ display: 'none' }}
+          onChange={e => { if (e.target.files?.[0]) handleFile(e.target.files[0]); }} />
 
-      {detectedHeaders.length > 0 && (
-        <div className={styles.fieldMapping}>
-          <div className={styles.fieldMappingTitle}>Detected Column Mapping</div>
-          <div className={styles.mappingGrid}>
-            {detectedHeaders.map(h => (
-              <div key={h} className={styles.mappingLabel}>{h}</div>
-            ))}
+        {!file && (
+          <div
+            className={`${styles.uploadArea} ${dragging ? styles.uploadAreaDragging : ''}`}
+            onDragOver={e => { e.preventDefault(); setDragging(true); }}
+            onDragLeave={() => setDragging(false)}
+            onDrop={handleDrop}
+            onClick={() => inputRef.current?.click()}
+          >
+            <FileSpreadsheet size={48} className={styles.uploadIcon} />
+            <div className={styles.uploadText}>Drop Excel/CSV file here or click to browse</div>
+            <div className={styles.uploadHint}>Supports .xlsx, .xls, .csv from Gujarat eFPS portal</div>
           </div>
-          <div style={{ fontSize: 12, color: '#6b7280', marginTop: 8 }}>
-            Headers are normalized automatically — no renaming needed
+        )}
+
+        {file && (
+          <div className={styles.fileInfo}>
+            <FileSpreadsheet size={20} style={{ color: 'var(--online-green)' }} />
+            <span className={styles.fileName}>{file.name}</span>
+            <span className={styles.fileSize}>{(file.size / 1024).toFixed(1)} KB</span>
+            <button className={styles.removeBtn} onClick={() => { setFile(null); setPreview([]); setResult(null); setError(null); }}>Remove</button>
           </div>
-        </div>
-      )}
+        )}
 
-      {preview.length > 0 && !result && (
-        <div className={styles.previewSection}>
-          <div className={styles.fieldMappingTitle}>Preview ({preview.length} rows)</div>
-          <div style={{ maxHeight: 300, overflow: 'auto' }}>
-            <table className={styles.previewTable}>
-              <thead>
-                <tr>
-                  {detectedHeaders.map(h => <th key={h}>{h}</th>)}
-                </tr>
-              </thead>
-              <tbody>
-                {preview.map((row, i) => (
-                  <tr key={i}>
-                    {detectedHeaders.map(h => <td key={h}>{row[h]}</td>)}
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+        {detectedHeaders.length > 0 && (
+          <div className={styles.fieldMapping}>
+            <div className={styles.fieldMappingTitle}>Detected Column Headers</div>
+            <div className={styles.mappingGrid}>
+              {detectedHeaders.map(h => <span key={h} className={styles.mappingChip}>{h}</span>)}
+            </div>
+            <p style={{ fontSize: 12, color: 'var(--text-muted)', marginTop: 8 }}>
+              Headers are normalized automatically — no renaming needed
+            </p>
           </div>
-        </div>
-      )}
+        )}
 
-      {error && (
-        <div className={`${styles.resultBanner} ${styles.resultError}`}>
-          <svg className={styles.resultIcon} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-          </svg>
-          <div>{error}</div>
-        </div>
-      )}
-
-      {result && (
-        <div className={`${styles.resultBanner} ${styles.resultSuccess}`}>
-          <svg className={styles.resultIcon} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-          </svg>
-          <div>
-            <strong>Import Complete</strong>
-            <div className={styles.resultStats}>
-              <span className={`${styles.statBadge} ${styles.statInserted}`}>+{result.inserted} new</span>
-              <span className={`${styles.statBadge} ${styles.statUpdated}`}>~{result.updated} updated</span>
-              <span className={`${styles.statBadge} ${styles.statSkipped}`}>= {result.skipped} unchanged</span>
-              {result.errors > 0 && <span className={`${styles.statBadge} ${styles.statErrors}`}>! {result.errors} errors</span>}
+        {preview.length > 0 && !result && (
+          <div style={{ marginBottom: 24 }}>
+            <div className={styles.fieldMappingTitle}>Preview ({preview.length} rows)</div>
+            <div style={{ maxHeight: 300, overflow: 'auto', border: '1px solid var(--border-light)', borderRadius: 'var(--radius-md)' }}>
+              <table className={styles.previewTable}>
+                <thead>
+                  <tr>{detectedHeaders.map(h => <th key={h}>{h}</th>)}</tr>
+                </thead>
+                <tbody>
+                  {preview.map((row, i) => (
+                    <tr key={i}>
+                      {detectedHeaders.map(h => <td key={h}>{row[h]}</td>)}
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
             </div>
           </div>
-        </div>
-      )}
+        )}
 
-      <div className={styles.actions}>
-        <button className={styles.btnPrimary} onClick={handleUpload} disabled={preview.length === 0 || loading}>
-          {loading ? 'Importing...' : `Import ${preview.length} Transactions`}
-        </button>
-        {result && <button className={styles.btnSecondary} onClick={() => { setFile(null); setPreview([]); setResult(null); setError(null); }}>Upload Another File</button>}
-      </div>
+        {error && (
+          <div className={`${styles.resultBanner} ${styles.resultError}`}>
+            <XCircle size={24} className={styles.resultIcon} />
+            <div>{error}</div>
+          </div>
+        )}
+
+        {result && (
+          <div className={`${styles.resultBanner} ${styles.resultSuccess}`}>
+            <CheckCircle size={24} className={styles.resultIcon} />
+            <div>
+              <strong>Import Complete</strong>
+              <div className={styles.resultStats}>
+                <span className={`${styles.statBadge} ${styles.statInserted}`}>+{result.inserted} new</span>
+                <span className={`${styles.statBadge} ${styles.statUpdated}`}>~{result.updated} updated</span>
+                <span className={`${styles.statBadge} ${styles.statSkipped}`}>= {result.skipped} unchanged</span>
+                {result.errors > 0 && <span className={`${styles.statBadge} ${styles.statErrors}`}>! {result.errors} errors</span>}
+              </div>
+            </div>
+          </div>
+        )}
+
+        <div className={styles.actions}>
+          <Button variant="primary" size="md" onClick={handleUpload} disabled={preview.length === 0 || loading}>
+            {loading ? <Loader2 size={16} /> : <Upload size={16} />}
+            {loading ? 'Importing...' : `Import ${preview.length} Transactions`}
+          </Button>
+          {result && (
+            <Button variant="secondary" size="md" onClick={() => { setFile(null); setPreview([]); setResult(null); setError(null); }}>
+              <Upload size={16} /> Upload Another File
+            </Button>
+          )}
+          {file && !result && (
+            <Button variant="secondary" size="md" onClick={() => { setFile(null); setPreview([]); setError(null); }}>
+              <XCircle size={16} /> Cancel
+            </Button>
+          )}
+        </div>
+      </Card>
     </div>
   );
 }

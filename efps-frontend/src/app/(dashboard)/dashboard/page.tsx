@@ -62,15 +62,26 @@ export default function DashboardPage() {
   const router = useRouter();
   const { dealer, logout } = useAuth();
 
-  const { data: dash, isLoading, isError, refetch } = useQuery<MasterDashboard>({
+  const { data: dash, isLoading, isError, failureCount, refetch } = useQuery<MasterDashboard>({
     queryKey: ['dashboard-master'],
-    queryFn: () => api.get<MasterDashboard>('/dashboard/master'),
+    queryFn: async () => {
+      try {
+        return await api.get<MasterDashboard>('/dashboard/master');
+      } catch (err: any) {
+        if (err?.code === 'TOKEN_EXPIRED' || err?.statusCode === 401) {
+          await logout();
+          router.push('/login?expired=1');
+          throw err;
+        }
+        throw err;
+      }
+    },
     staleTime: 30_000,
     refetchInterval: 60_000,
   });
 
   if (isLoading) return <LoadingState />;
-  if (isError || !dash) return <ErrorState message="Could not load dashboard data" onRetry={() => refetch()} />;
+  if (isError || !dash) return <ErrorState message={failureCount > 2 ? 'Session expired. Please re-login.' : 'Could not load dashboard data'} onRetry={() => refetch()} />;
 
   const { kpis, distributionProgress, stockByCommodity, beneficiarySummary, distributionHistory, financialSummary, systemHealth } = dash;
 

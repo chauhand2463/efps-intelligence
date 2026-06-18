@@ -21,7 +21,8 @@ function generateRequestId(): string {
 
 let refreshPromise: Promise<boolean> | null = null;
 let pendingRequests: Array<{
-  resolve: () => void;
+  config: InternalAxiosRequestConfig;
+  resolve: (value: unknown) => void;
   reject: (err: unknown) => void;
 }> = [];
 
@@ -61,16 +62,22 @@ apiClient.interceptors.response.use(
       });
     }
 
-    return new Promise<void>((resolve, reject) => {
-      pendingRequests.push({ resolve, reject });
+    return new Promise<unknown>((resolve, reject) => {
+      pendingRequests.push({ config: originalRequest, resolve, reject });
 
       if (pendingRequests.length === 1) {
-        refreshPromise!.then((ok) => {
+        refreshPromise!.then(async (ok) => {
           const q = pendingRequests;
           pendingRequests = [];
           if (ok) {
-            resolve(apiClient(originalRequest) as any);
-            q.slice(1).forEach((p) => p.resolve());
+            for (const p of q) {
+              try {
+                const res = await apiClient(p.config);
+                p.resolve(res);
+              } catch (e) {
+                p.reject(e);
+              }
+            }
           } else {
             const err = new ApiRequestError(401, 'TOKEN_EXPIRED', 'Session expired. Please login again.');
             q.forEach((p) => p.reject(err));

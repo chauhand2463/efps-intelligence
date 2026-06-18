@@ -12,6 +12,7 @@ import styles from './Sidebar.module.css';
 
 const navItems = [
     { id: '01', name: 'Dashboard', icon: LayoutGrid, href: '/dashboard' },
+    { id: '01b', name: 'Ledger', icon: BarChart2, href: '/ledger' },
     { id: '02', name: 'Stock Entry', icon: PlusSquare, href: '/stock-entry' },
     { id: '03', name: 'Monthly Record', icon: FileText, href: '/monthly-record' },
     { id: '04', name: 'Stock Record (Date-wise)', icon: CalendarDays, href: '/stock-record' },
