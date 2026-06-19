@@ -356,8 +356,3 @@ Before considering any task finished:
 14. Detect duplicate logic.
 15. Replace everything with production-quality implementations.
 
-Do not ask for permission to fix obvious deficiencies.
-
-Continue until the application is production-ready, internally consistent, and fully functional.
-
-Your output should always represent code that a senior engineering team would confidently deploy to production.
