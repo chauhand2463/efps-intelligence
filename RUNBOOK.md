@@ -18,13 +18,8 @@ docker compose up -d postgres redis
 
 # 2. Backend — update .env to match Docker ports, then run
 npm install
-npx playwright install chromium           # for gov portal sync worker
-cp .env.example .env                       # edit secrets if not defaults
-
-# ⚠️ Docker maps PG → localhost:5434, Redis → localhost:6380
-#    Edit .env to use:
-#      DATABASE_URL=postgresql://postgres:postgres@localhost:5434/efps_dev
-#      REDIS_URL=redis://localhost:6379     # or 6380 for Docker
+npx playwright install chromium           
+cp .env.example .env                       
 
 npm run migrate                            # applies 29 SQL migrations
 npm run seed                               # seeds test accounts
