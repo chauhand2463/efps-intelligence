@@ -53,9 +53,6 @@ cd efps-backend
 npm install
 npx playwright install chromium
 cp .env.example .env
-# If your PG/Redis ports differ from Docker defaults, update .env:
-#   DATABASE_URL=postgresql://postgres:postgres@localhost:5432/efps_dev
-#   REDIS_URL=redis://localhost:6379
 npm run migrate
 npm run seed
 npm run dev

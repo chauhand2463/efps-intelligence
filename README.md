@@ -20,7 +20,6 @@ Dealer Browser → Next.js Frontend → Fastify API (18 modules)
                    (gov portal scrape)               Reports
 ```
 
-**Data flow:** Playwright worker logs into gov portal per consenting dealer → scrapes beneficiaries, transactions, stock → upserts to PostgreSQL → frontend reads from local DB only.
 
 ---
 
@@ -68,8 +67,6 @@ npm run migrate
 npm run seed
 npm run dev          # http://localhost:3000, docs at /docs
 ```
-
-Windows: `.\dev.ps1`
 
 **Test accounts:** `12345` / `Password123` (Admin), `12346` / `Password123` (Dealer)
 
