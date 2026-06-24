@@ -1,0 +1,115 @@
+{
+  "batch": 17,
+  "total": 23,
+  "description": "Root-level configs, .agents directory skills (1-12), and remaining docs",
+  "nodes": [
+    {
+      "id": "file-E:.efps..agents.skills.audit.SKILL.md",
+      "type": "document",
+      "kind": "skill",
+      "filePath": ".agents/skills/audit/SKILL.md",
+      "name": "audit",
+      "description": "Technical UI audit skill — a11y, performance, responsive. Sub-skill of ui-craft.",
+      "summary": "Runs a technical UI audit with mandatory visual capture (Playwright/screenshots). Checks accessibility (focus-visible, keyboard nav, touch targets ≥44px, color signals, form labels, reduced-motion), performance (transform/opacity only, no transition:all, CLS prevention), and responsive design (mobile-first, safe-area, no horizontal scroll at 320px). Outputs prioritized findings table."
+    },
+    {
+      "id": "file-E:.efps..agents.skills.brandkit.SKILL.md",
+      "type": "document",
+      "kind": "skill",
+      "filePath": ".agents/skills/brandkit/SKILL.md",
+      "name": "brandkit",
+      "description": "Premium brand-kit image generation skill for identity boards, logo systems, and visual-world presentations.",
+      "summary": "Elite brand identity skill that generates premium brand-guidelines boards. Enforces brand strategy first (category, audience, metaphor), professional logo generation (5 methods: monogram+meaning, product action, metaphor fusion, negative space, construction geometry), 3×3 panel board composition, visual modes (dark developer, dark product, dark nature, dark security, light editorial, luxury, voice, cultural). Rules for palette discipline, typography restraint, anti-generic patterns. 798 lines."
+    },
+    {
+      "id": "file-E:.efps..agents.skills.brief.SKILL.md",
+      "type": "document",
+      "kind": "skill",
+      "filePath": ".agents/skills/brief/SKILL.md",
+      "name": "brief",
+      "description": "Design brief creation/update skill for .ui-craft/brief.md. Sub-skill of ui-craft.",
+      "summary": "Writes or updates the project design brief. Detects existing .ui-craft/brief.md, drafts new briefs via 5-section walkthrough (product purpose, primary user, principles, success metric, out of scope), handles principles workshop from principles-catalog.md, parses long input, requires confirmation before writing. All 5 sections mandatory."
+    },
+    {
+      "id": "file-E:.efps..agents.skills.colorize.SKILL.md",
+      "type": "document",
+      "kind": "skill",
+      "filePath": ".agents/skills/colorize/SKILL.md",
+      "name": "colorize",
+      "description": "Color strategy pass skill — introduces single accent at 3-5 placements or reduces over-colored UI. Sub-skill of ui-craft.",
+      "summary": "Applies color strategy: 90%+ neutral, one accent, 3-5 placements per viewport. Asks about brand color first (offers OKLCH warm/cool options, never defaults to blue). Color earns place at: CTAs, key metric tints, active nav, status dots (6-8px), focus rings. Color does NOT go: heading gradients, colored borders on cards, uniform chips, emoji-as-icons. Over-colored mode reduces to 1-3 accents. Outputs in OKLCH."
+    },
+    {
+      "id": "file-E:.efps..agents.skills.design-taste-frontend.SKILL.md",
+      "type": "document",
+      "kind": "skill",
+      "filePath": ".agents/skills/design-taste-frontend/SKILL.md",
+      "name": "design-taste-frontend (v2)",
+      "description": "Anti-slop frontend skill for landing pages, portfolios, and redesigns. v2 experimental rewrite.",
+      "summary": "Comprehensive anti-slop frontend skill. Requires brief inference (design read, vibe words, audience, quiet constraints) before coding. Uses 3 dials (DESIGN_VARIANCE, MOTION_INTENSITY, VISUAL_DENSITY). Maps briefs to design systems (Fluent, Material, Carbon, Polaris, Primer, GOV.UK, shadcn, etc.). Enforces strict layout discipline: hero rules (2-line cap, 20-word subtext, max 4 text elements, pt-24 cap), bento cell count rule, zigzag alternation cap, eyebrow restraint (max 1 per 3 sections), spec sheet alternatives, copy self-audit. Includes GSAP sticky-stack and horizontal-pan canonical skeletons. Dark mode protocol, performance guardrails (LCP < 2.5s, INP < 200ms, CLS < 0.1). Forbidden patterns and AI tells section. 6000+ lines (truncated at 611)."
+    },
+    {
+      "id": "file-E:.efps..agents.skills.design-taste-frontend-v1.SKILL.md",
+      "type": "document",
+      "kind": "skill",
+      "filePath": ".agents/skills/design-taste-frontend-v1/SKILL.md",
+      "name": "design-taste-frontend-v1",
+      "description": "Original v1 taste-skill, preserved for backward compatibility.",
+      "summary": "Legacy v1 anti-slop skill. Baseline 3 dials (8/6/4). Design engineering directives: deterministic typography (no Inter, serif banned on dashboards), color calibration (max 1 accent, LILA BAN: no purple/blue AI aesthetic), anti-center bias, anti-card-overuse, interactive UI states. Creative proactivity: liquid glass, magnetic micro-physics, perpetual micro-interactions, staggered orchestration. Performance guardrails. Bento paradigm with 5 card archetypes and perpetual micro-interactions. Pre-flight checklist. 226 lines."
+    },
+    {
+      "id": "file-E:.efps..agents.skills.finalize.SKILL.md",
+      "type": "document",
+      "kind": "skill",
+      "filePath": ".agents/skills/finalize/SKILL.md",
+      "name": "finalize",
+      "description": "Pre-ship gate skill — runs detector, verifies brief and tokens, applies 10-pass finish bar. Sub-skill of ui-craft.",
+      "summary": "Pre-ship quality gate. Step 1: check brief exists (gate). Step 2: run ui-craft-detect detector. Step 3: token audit (3 layers, 7 categories, light+dark). Step 4: 10-pass finish bar (knob-gated by CRAFT_LEVEL). Step 5: feedback hierarchy filter (value > ease > delight). Step 6: output verdict (READY/NOT READY/BLOCKED). No code edits — findings only."
+    },
+    {
+      "id": "file-E:.efps..agents.skills.full-output-enforcement.SKILL.md",
+      "type": "document",
+      "kind": "skill",
+      "filePath": ".agents/skills/full-output-enforcement/SKILL.md",
+      "name": "full-output-enforcement",
+      "description": "Overrides default LLM truncation behavior with complete code generation rules.",
+      "summary": "Enforces complete, unabridged code generation. Bans placeholder patterns (// ..., // TODO, etc.), structural shortcuts, and prose hedging. Requires scope counting before generation and cross-check afterward. Handles token-limit splits with [PAUSED — X of Y complete] markers for clean continuation. Pre-flight quick check to verify no banned patterns, all items present, code is runnable."
+    },
+    {
+      "id": "file-E:.efps..agents.skills.gpt-taste.SKILL.md",
+      "type": "document",
+      "kind": "skill",
+      "filePath": ".agents/skills/gpt-taste/SKILL.md",
+      "name": "gpt-taste",
+      "description": "Awwwards-level UI/UX skill with GSAP motion, Python randomization, and strict AIDA structure.",
+      "summary": "Awwwards-level design engineering skill. Features Python-driven true randomization (deterministic seed) for hero architecture, typography stack, component arsenal, and GSAP paradigms. Enforces AIDA page structure with huge vertical padding. 2-line hero iron rule (max width containers, clamp font). Gapless bento grids with grid-flow-dense. Advanced GSAP motion: scroll pinning, image scale/fade scroll, scrubbing text reveals, card stacking. Pre-flight design_plan block required before code."
+    },
+    {
+      "id": "file-E:.efps..agents.skills.heuristic.SKILL.md",
+      "type": "document",
+      "kind": "skill",
+      "filePath": ".agents/skills/heuristic/SKILL.md",
+      "name": "heuristic",
+      "description": "Scored heuristic critique using Nielsen's 10 + 6 design laws with optional persona walkthroughs. Sub-skill of ui-craft.",
+      "summary": "Produces scored heuristic critique. Walks Nielsen's 10 heuristics (scored 1-5), audits 6 design laws (Fitts, Hick, Doherty, Cleveland-McGill, Miller, Tesler) as PASS/FAIL. Optional persona walkthroughs (priya, jordan, adaeze, kwame, margo, all). Ranks findings by impact (blocks-conversion > adds-friction > reduces-trust > minor-polish). Machine-parseable markdown scorecard output."
+    },
+    {
+      "id": "file-E:.efps..agents.skills.high-end-visual-design.SKILL.md",
+      "type": "document",
+      "kind": "skill",
+      "filePath": ".agents/skills/high-end-visual-design/SKILL.md",
+      "name": "high-end-visual-design",
+      "description": "Agency-level visual design skill with premium fonts, double-bezel architecture, and fluid motion.",
+      "summary": "Awwwards-tier visual design skill. Absolute Zero directive bans Inter/Roboto/Arial/Open Sans/Helvetica, thick Lucide icons, gray borders, sticky navbars, linear transitions. Creative variance engine picks vibe/texture archetype (ethereal glass, editorial luxury, soft structuralism) + layout archetype (asymmetrical bento, Z-axis cascade, editorial split). Double-bezel nested card architecture. Button-in-button trailing icon pattern. Fluid island nav with staggered mask reveal. Magnetic button hover physics. Pre-output checklist."
+    },
+    {
+      "id": "file-E:.efps..agents.skills.image-to-code.SKILL.md",
+      "type": "document",
+      "kind": "skill",
+      "filePath": ".agents/skills/image-to-code/SKILL.md",
+      "name": "image-to-code",
+      "description": "Elite image-to-code skill — generates design images first, deeply analyzes, then implements.",
+      "summary": "Image-first website design skill for Codex. Mandates: generate design images first, deeply analyze them, then implement. Generate enough images (one per section preferred in Codex). No cropping old images — generate fresh standalone images. 8 dials (DESIGN_VARIANCE, VISUAL_DENSITY, ART_DIRECTION, IMPLEMENTATION_CLARITY, etc.). Combinatorial variation engine for theme, background, typography, hero, section system, signature components. Anti-nested-box, anti-micro-UI-clutter, hero minimalism rules. Deep extraction for text, typography, spacing, buttons, colors. Anti-drift implementation rule. 1228 lines."
+    }
+  ]
+}

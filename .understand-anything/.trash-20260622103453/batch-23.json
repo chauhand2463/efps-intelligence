@@ -1,0 +1,488 @@
+{
+  "batch": 23,
+  "batchName": "backend-errors-tests-ui-components",
+  "description": "Final batch: backend error system, package.json, test files, scripts, scratch files, and frontend UI/auth components.",
+  "nodes": [
+    {
+      "id": "file-efps-backend-package-json",
+      "type": "file",
+      "label": "package.json (backend)",
+      "path": "efps-backend/package.json",
+      "description": "Backend project manifest — Fastify 5, BullMQ, ioredis, pg, playwright, tesseract.js, zod. Defines dev/test/build scripts.",
+      "relations": [
+        { "target": "module-efps-backend", "type": "partOf" }
+      ]
+    },
+    {
+      "id": "file-efps-backend-shared-errors-AppError",
+      "type": "file",
+      "label": "AppError.ts",
+      "path": "efps-backend/src/shared/errors/AppError.ts",
+      "description": "Base error class extending Error with statusCode, code, and optional field. All app errors inherit from this.",
+      "relations": [
+        { "target": "module-efps-backend-shared-errors", "type": "partOf" },
+        { "target": "file-efps-backend-shared-errors-AuthError", "type": "dependencyOf" },
+        { "target": "file-efps-backend-shared-errors-ValidationError", "type": "dependencyOf" }
+      ]
+    },
+    {
+      "id": "file-efps-backend-shared-errors-AuthError",
+      "type": "file",
+      "label": "AuthError.ts",
+      "path": "efps-backend/src/shared/errors/AuthError.ts",
+      "description": "AuthError (401), ForbiddenError (403), SessionNotFoundError (401) — authentication/authorization error classes.",
+      "relations": [
+        { "target": "module-efps-backend-shared-errors", "type": "partOf" },
+        { "target": "file-efps-backend-shared-errors-AppError", "type": "extends" }
+      ]
+    },
+    {
+      "id": "file-efps-backend-shared-errors-ValidationError",
+      "type": "file",
+      "label": "ValidationError.ts",
+      "path": "efps-backend/src/shared/errors/ValidationError.ts",
+      "description": "ValidationError (400) — used throughout modules for input validation failures.",
+      "relations": [
+        { "target": "module-efps-backend-shared-errors", "type": "partOf" },
+        { "target": "file-efps-backend-shared-errors-AppError", "type": "extends" }
+      ]
+    },
+    {
+      "id": "file-efps-backend-shared-errors-error-handler",
+      "type": "file",
+      "label": "error-handler.ts",
+      "path": "efps-backend/src/shared/errors/error-handler.ts",
+      "description": "Fastify error handler middleware. Handles AppError, Fastify validation errors, rate-limit (429), ZodError, and unhandled (500) with structured JSON responses.",
+      "relations": [
+        { "target": "module-efps-backend-shared-errors", "type": "partOf" },
+        { "target": "file-efps-backend-shared-errors-AppError", "type": "dependencyOf" }
+      ]
+    },
+    {
+      "id": "module-efps-backend-shared-errors",
+      "type": "directory",
+      "label": "errors/",
+      "path": "efps-backend/src/shared/errors/",
+      "description": "Error hierarchy: AppError base → AuthError, ForbiddenError, SessionNotFoundError, ValidationError + error-handler middleware.",
+      "relations": [
+        { "target": "module-efps-backend", "type": "partOf" }
+      ]
+    },
+    {
+      "id": "module-efps-backend-scripts",
+      "type": "directory",
+      "label": "scripts/",
+      "path": "efps-backend/scripts/",
+      "description": "CLI utility scripts: migrate.ts, seed.ts, generate-openapi.ts, import-gujarat-csv.ts, complete-seed.mjs, list_tables.mjs, upgrade-redis.ps1.",
+      "relations": [
+        { "target": "module-efps-backend", "type": "partOf" }
+      ]
+    },
+    {
+      "id": "file-efps-backend-scripts-migrate",
+      "type": "file",
+      "label": "migrate.ts",
+      "path": "efps-backend/scripts/migrate.ts",
+      "description": "Database migration runner script.",
+      "relations": [
+        { "target": "module-efps-backend-scripts", "type": "partOf" }
+      ]
+    },
+    {
+      "id": "file-efps-backend-scripts-seed",
+      "type": "file",
+      "label": "seed.ts",
+      "path": "efps-backend/scripts/seed.ts",
+      "description": "Database seeding script.",
+      "relations": [
+        { "target": "module-efps-backend-scripts", "type": "partOf" }
+      ]
+    },
+    {
+      "id": "file-efps-backend-scripts-generate-openapi",
+      "type": "file",
+      "label": "generate-openapi.ts",
+      "path": "efps-backend/scripts/generate-openapi.ts",
+      "description": "OpenAPI spec generation script.",
+      "relations": [
+        { "target": "module-efps-backend-scripts", "type": "partOf" }
+      ]
+    },
+    {
+      "id": "file-efps-backend-scripts-import-gujarat-csv",
+      "type": "file",
+      "label": "import-gujarat-csv.ts",
+      "path": "efps-backend/scripts/import-gujarat-csv.ts",
+      "description": "Imports Gujarat FPS CSV data into the system.",
+      "relations": [
+        { "target": "module-efps-backend-scripts", "type": "partOf" }
+      ]
+    },
+    {
+      "id": "module-efps-backend-scratch",
+      "type": "directory",
+      "label": "scratch/",
+      "path": "efps-backend/scratch/",
+      "description": "Ad-hoc inspection scripts for external portal scraping: inspect-captcha.js, inspect-ipds.js, inspect-portal.js, inspect-post-login.js.",
+      "relations": [
+        { "target": "module-efps-backend", "type": "partOf" }
+      ]
+    },
+    {
+      "id": "module-efps-backend-tests",
+      "type": "directory",
+      "label": "tests/",
+      "path": "efps-backend/tests/",
+      "description": "Test suites: unit (7 files), integration (7 files), fixtures (2 files).",
+      "relations": [
+        { "target": "module-efps-backend", "type": "partOf" }
+      ]
+    },
+    {
+      "id": "file-efps-backend-tests-unit-circuit-breaker",
+      "type": "file",
+      "label": "circuit-breaker.test.ts",
+      "path": "efps-backend/tests/unit/circuit-breaker.test.ts",
+      "description": "Unit tests for circuit breaker pattern.",
+      "relations": [
+        { "target": "module-efps-backend-tests", "type": "partOf" }
+      ]
+    },
+    {
+      "id": "file-efps-backend-tests-unit-efps-sync-captcha",
+      "type": "file",
+      "label": "efps-sync-captcha.test.ts",
+      "path": "efps-backend/tests/unit/efps-sync-captcha.test.ts",
+      "description": "Unit tests for eFPS sync captcha handling.",
+      "relations": [
+        { "target": "module-efps-backend-tests", "type": "partOf" }
+      ]
+    },
+    {
+      "id": "file-efps-backend-tests-unit-efps-sync-mappings",
+      "type": "file",
+      "label": "efps-sync-mappings.test.ts",
+      "path": "efps-backend/tests/unit/efps-sync-mappings.test.ts",
+      "description": "Unit tests for eFPS sync field mappings.",
+      "relations": [
+        { "target": "module-efps-backend-tests", "type": "partOf" }
+      ]
+    },
+    {
+      "id": "file-efps-backend-tests-unit-encrypt",
+      "type": "file",
+      "label": "encrypt.test.ts",
+      "path": "efps-backend/tests/unit/encrypt.test.ts",
+      "description": "Unit tests for encryption utilities.",
+      "relations": [
+        { "target": "module-efps-backend-tests", "type": "partOf" }
+      ]
+    },
+    {
+      "id": "file-efps-backend-tests-unit-hash",
+      "type": "file",
+      "label": "hash.test.ts",
+      "path": "efps-backend/tests/unit/hash.test.ts",
+      "description": "Unit tests for hashing utilities.",
+      "relations": [
+        { "target": "module-efps-backend-tests", "type": "partOf" }
+      ]
+    },
+    {
+      "id": "file-efps-backend-tests-unit-otp",
+      "type": "file",
+      "label": "otp.test.ts",
+      "path": "efps-backend/tests/unit/otp.test.ts",
+      "description": "Unit tests for OTP generation/verification.",
+      "relations": [
+        { "target": "module-efps-backend-tests", "type": "partOf" }
+      ]
+    },
+    {
+      "id": "file-efps-backend-tests-unit-pagination",
+      "type": "file",
+      "label": "pagination.test.ts",
+      "path": "efps-backend/tests/unit/pagination.test.ts",
+      "description": "Unit tests for pagination utilities.",
+      "relations": [
+        { "target": "module-efps-backend-tests", "type": "partOf" }
+      ]
+    },
+    {
+      "id": "file-efps-backend-tests-integration-audit",
+      "type": "file",
+      "label": "audit.test.ts",
+      "path": "efps-backend/tests/integration/audit.test.ts",
+      "description": "Integration tests for audit module.",
+      "relations": [
+        { "target": "module-efps-backend-tests", "type": "partOf" }
+      ]
+    },
+    {
+      "id": "file-efps-backend-tests-integration-auth",
+      "type": "file",
+      "label": "auth.test.ts",
+      "path": "efps-backend/tests/integration/auth.test.ts",
+      "description": "Integration tests for auth module.",
+      "relations": [
+        { "target": "module-efps-backend-tests", "type": "partOf" }
+      ]
+    },
+    {
+      "id": "file-efps-backend-tests-integration-commission",
+      "type": "file",
+      "label": "commission.test.ts",
+      "path": "efps-backend/tests/integration/commission.test.ts",
+      "description": "Integration tests for commission module.",
+      "relations": [
+        { "target": "module-efps-backend-tests", "type": "partOf" }
+      ]
+    },
+    {
+      "id": "file-efps-backend-tests-integration-finance",
+      "type": "file",
+      "label": "finance.test.ts",
+      "path": "efps-backend/tests/integration/finance.test.ts",
+      "description": "Integration tests for finance module.",
+      "relations": [
+        { "target": "module-efps-backend-tests", "type": "partOf" }
+      ]
+    },
+    {
+      "id": "file-efps-backend-tests-integration-internal-sync",
+      "type": "file",
+      "label": "internal-sync.test.ts",
+      "path": "efps-backend/tests/integration/internal-sync.test.ts",
+      "description": "Integration tests for internal-sync module.",
+      "relations": [
+        { "target": "module-efps-backend-tests", "type": "partOf" }
+      ]
+    },
+    {
+      "id": "file-efps-backend-tests-integration-sync",
+      "type": "file",
+      "label": "sync.test.ts",
+      "path": "efps-backend/tests/integration/sync.test.ts",
+      "description": "Integration tests for sync module.",
+      "relations": [
+        { "target": "module-efps-backend-tests", "type": "partOf" }
+      ]
+    },
+    {
+      "id": "file-efps-backend-tests-integration-transaction",
+      "type": "file",
+      "label": "transaction.test.ts",
+      "path": "efps-backend/tests/integration/transaction.test.ts",
+      "description": "Integration tests for transaction module.",
+      "relations": [
+        { "target": "module-efps-backend-tests", "type": "partOf" }
+      ]
+    },
+    {
+      "id": "file-efps-backend-tests-fixtures-factories",
+      "type": "file",
+      "label": "factories.ts",
+      "path": "efps-backend/tests/fixtures/factories.ts",
+      "description": "Test data factories for creating mock entities.",
+      "relations": [
+        { "target": "module-efps-backend-tests", "type": "partOf" }
+      ]
+    },
+    {
+      "id": "file-efps-backend-tests-fixtures-setup",
+      "type": "file",
+      "label": "setup.ts",
+      "path": "efps-backend/tests/fixtures/setup.ts",
+      "description": "Test setup/teardown utilities (database, mocks).",
+      "relations": [
+        { "target": "module-efps-backend-tests", "type": "partOf" }
+      ]
+    },
+    {
+      "id": "module-efps-backend-modules",
+      "type": "directory",
+      "label": "modules/",
+      "path": "efps-backend/src/modules/",
+      "description": "21 backend feature modules: admin, ads, audit, auth, beneficiary, commission, dashboard, dealer, directory, enterprise-sync, finance, hierarchy, internal-sync, lifting, mdm, notification, report, stock-entry, stock, sync, transaction.",
+      "relations": [
+        { "target": "module-efps-backend", "type": "partOf" }
+      ]
+    },
+    {
+      "id": "component-ui-Button",
+      "type": "component",
+      "label": "Button.tsx",
+      "path": "efps-frontend/src/components/ui/Button.tsx",
+      "description": "Reusable button UI component.",
+      "relations": [
+        { "target": "module-efps-frontend-components-ui", "type": "partOf" }
+      ]
+    },
+    {
+      "id": "component-ui-Card",
+      "type": "component",
+      "label": "Card.tsx",
+      "path": "efps-frontend/src/components/ui/Card.tsx",
+      "description": "Card container UI component.",
+      "relations": [
+        { "target": "module-efps-frontend-components-ui", "type": "partOf" }
+      ]
+    },
+    {
+      "id": "component-ui-DonutChart",
+      "type": "component",
+      "label": "DonutChart.tsx",
+      "path": "efps-frontend/src/components/ui/DonutChart.tsx",
+      "description": "Donut chart visualization UI component.",
+      "relations": [
+        { "target": "module-efps-frontend-components-ui", "type": "partOf" }
+      ]
+    },
+    {
+      "id": "component-ui-EmptyState",
+      "type": "component",
+      "label": "EmptyState.tsx",
+      "path": "efps-frontend/src/components/ui/EmptyState.tsx",
+      "description": "Empty state placeholder UI component.",
+      "relations": [
+        { "target": "module-efps-frontend-components-ui", "type": "partOf" }
+      ]
+    },
+    {
+      "id": "component-ui-ErrorState",
+      "type": "component",
+      "label": "ErrorState.tsx",
+      "path": "efps-frontend/src/components/ui/ErrorState.tsx",
+      "description": "Error state display UI component.",
+      "relations": [
+        { "target": "module-efps-frontend-components-ui", "type": "partOf" }
+      ]
+    },
+    {
+      "id": "component-ui-LoadingScreen",
+      "type": "component",
+      "label": "LoadingScreen.tsx",
+      "path": "efps-frontend/src/components/ui/LoadingScreen.tsx",
+      "description": "Full-page loading screen UI component.",
+      "relations": [
+        { "target": "module-efps-frontend-components-ui", "type": "partOf" }
+      ]
+    },
+    {
+      "id": "component-ui-Skeleton",
+      "type": "component",
+      "label": "Skeleton.tsx",
+      "path": "efps-frontend/src/components/ui/Skeleton.tsx",
+      "description": "Skeleton loading placeholder UI component.",
+      "relations": [
+        { "target": "module-efps-frontend-components-ui", "type": "partOf" }
+      ]
+    },
+    {
+      "id": "module-efps-frontend-components-ui",
+      "type": "directory",
+      "label": "ui/",
+      "path": "efps-frontend/src/components/ui/",
+      "description": "7 reusable UI primitives: Button, Card, DonutChart, EmptyState, ErrorState, LoadingScreen, Skeleton.",
+      "relations": [
+        { "target": "module-efps-frontend", "type": "partOf" }
+      ]
+    },
+    {
+      "id": "component-auth-AuthCard",
+      "type": "component",
+      "label": "AuthCard.tsx",
+      "path": "efps-frontend/src/components/auth/AuthCard.tsx",
+      "description": "Auth flow card wrapper component.",
+      "relations": [
+        { "target": "module-efps-frontend-components-auth", "type": "partOf" }
+      ]
+    },
+    {
+      "id": "component-auth-BackLink",
+      "type": "component",
+      "label": "BackLink.tsx",
+      "path": "efps-frontend/src/components/auth/BackLink.tsx",
+      "description": "Back navigation link for auth pages.",
+      "relations": [
+        { "target": "module-efps-frontend-components-auth", "type": "partOf" }
+      ]
+    },
+    {
+      "id": "component-auth-FormInput",
+      "type": "component",
+      "label": "FormInput.tsx",
+      "path": "efps-frontend/src/components/auth/FormInput.tsx",
+      "description": "Form input field for auth forms.",
+      "relations": [
+        { "target": "module-efps-frontend-components-auth", "type": "partOf" }
+      ]
+    },
+    {
+      "id": "component-auth-OtpInput",
+      "type": "component",
+      "label": "OtpInput.tsx",
+      "path": "efps-frontend/src/components/auth/OtpInput.tsx",
+      "description": "OTP input component for multi-digit code entry.",
+      "relations": [
+        { "target": "module-efps-frontend-components-auth", "type": "partOf" }
+      ]
+    },
+    {
+      "id": "component-auth-PasswordField",
+      "type": "component",
+      "label": "PasswordField.tsx",
+      "path": "efps-frontend/src/components/auth/PasswordField.tsx",
+      "description": "Password input with visibility toggle.",
+      "relations": [
+        { "target": "module-efps-frontend-components-auth", "type": "partOf" }
+      ]
+    },
+    {
+      "id": "component-auth-ProgressStepper",
+      "type": "component",
+      "label": "ProgressStepper.tsx",
+      "path": "efps-frontend/src/components/auth/ProgressStepper.tsx",
+      "description": "Multi-step progress indicator for auth flow.",
+      "relations": [
+        { "target": "module-efps-frontend-components-auth", "type": "partOf" }
+      ]
+    },
+    {
+      "id": "component-auth-SubmitButton",
+      "type": "component",
+      "label": "SubmitButton.tsx",
+      "path": "efps-frontend/src/components/auth/SubmitButton.tsx",
+      "description": "Auth form submit button with loading state.",
+      "relations": [
+        { "target": "module-efps-frontend-components-auth", "type": "partOf" }
+      ]
+    },
+    {
+      "id": "module-efps-frontend-components-auth",
+      "type": "directory",
+      "label": "auth/",
+      "path": "efps-frontend/src/components/auth/",
+      "description": "7 auth-specific components: AuthCard, BackLink, FormInput, OtpInput, PasswordField, ProgressStepper, SubmitButton.",
+      "relations": [
+        { "target": "module-efps-frontend", "type": "partOf" }
+      ]
+    },
+    {
+      "id": "note-package-lock-exists",
+      "type": "note",
+      "label": "package-lock.json (backend)",
+      "path": "efps-backend/package-lock.json",
+      "description": "Exists but was skipped per instructions (too large).",
+      "relations": []
+    },
+    {
+      "id": "note-no-errors-index",
+      "type": "note",
+      "label": "No errors/index.ts barrel export",
+      "path": "efps-backend/src/shared/errors/",
+      "description": "No index.ts barrel file found in errors/; individual error files are imported directly (e.g. import { AuthError } from '../errors/AuthError.js').",
+      "relations": []
+    }
+  ]
+}

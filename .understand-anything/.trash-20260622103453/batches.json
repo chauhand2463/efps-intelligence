@@ -1,0 +1,1149 @@
+{
+    "schemaVersion":  1,
+    "algorithm":  "louvain",
+    "totalFiles":  376,
+    "totalBatches":  23,
+    "exportsByPath":  {
+                          ".understand-anything/.understandignore":  [
+
+                                                                     ],
+                          "delete":  [
+                                         "14"
+                                     ],
+                          "efps-backend/ecosystem.config.cjs":  [
+
+                                                                ],
+                          "efps-backend/eng.traineddata":  [
+
+                                                           ],
+                          "efps-backend/eslint.config.js":  [
+
+                                                            ],
+                          "efps-backend/scratch/inspect-captcha.js":  [
+
+                                                                      ],
+                          "efps-backend/scratch/inspect-ipds.js":  [
+
+                                                                   ],
+                          "efps-backend/scratch/inspect-portal.js":  [
+
+                                                                     ],
+                          "efps-backend/scratch/inspect-post-login.js":  [
+
+                                                                         ],
+                          "efps-backend/scripts/complete-seed.mjs":  [
+                                                                         "14"
+                                                                     ],
+                          "efps-backend/scripts/generate-openapi.ts":  [
+                                                                           "14"
+                                                                       ],
+                          "efps-backend/scripts/import-gujarat-csv.ts":  [
+                                                                             "14"
+                                                                         ],
+                          "efps-backend/scripts/list_tables.mjs":  [
+                                                                       "14"
+                                                                   ],
+                          "efps-backend/scripts/migrate.ts":  [
+                                                                  "14"
+                                                              ],
+                          "efps-backend/scripts/seed.ts":  [
+                                                               "14"
+                                                           ],
+                          "efps-backend/src/app.ts":  [
+                                                          "buildApp"
+                                                      ],
+                          "efps-backend/src/config/constants.ts":  [
+                                                                       "COMMODITIES",
+                                                                       "COMMODITY_UNITS",
+                                                                       "BENEFICIARY_CATEGORIES",
+                                                                       "TRANSACTION_MODES",
+                                                                       "NOTIFICATION_TYPES",
+                                                                       "PAGINATION_DEFAULTS",
+                                                                       "ONLINE_TTL_SECONDS",
+                                                                       "ERROR_CODES"
+                                                                   ],
+                          "efps-backend/src/config/database.ts":  [
+                                                                      "getReadPool",
+                                                                      "query",
+                                                                      "readQuery",
+                                                                      "getClient",
+                                                                      "withClient"
+                                                                  ],
+                          "efps-backend/src/config/index.ts":  [
+                                                                   "config"
+                                                               ],
+                          "efps-backend/src/config/redis.ts":  [
+                                                                   "getRedis",
+                                                                   "getBullRedis",
+                                                                   "closeRedis"
+                                                               ],
+                          "efps-backend/src/database/migration-runner.ts":  [
+                                                                                "runMigrations"
+                                                                            ],
+                          "efps-backend/src/jobs/audit-flush.job.ts":  [
+                                                                           "auditFlushQueue",
+                                                                           "enqueueAuditLog",
+                                                                           "auditFlushWorker"
+                                                                       ],
+                          "efps-backend/src/jobs/daily-report.job.ts":  [
+                                                                            "dailyReportQueue",
+                                                                            "enqueueDailyReport",
+                                                                            "dailyReportWorker"
+                                                                        ],
+                          "efps-backend/src/jobs/domain-events.queue.ts":  [
+                                                                               "domainEventsQueue",
+                                                                               "enqueueDomainEvent",
+                                                                               "domainEventsWorker"
+                                                                           ],
+                          "efps-backend/src/jobs/session-cleanup.job.ts":  [
+                                                                               "sessionCleanupQueue",
+                                                                               "sessionCleanupWorker"
+                                                                           ],
+                          "efps-backend/src/jobs/sms-otp.job.ts":  [
+                                                                       "smsOtpQueue",
+                                                                       "enqueueSmsOtp",
+                                                                       "smsOtpWorker"
+                                                                   ],
+                          "efps-backend/src/jobs/sync/efps-sync.worker.ts":  [
+                                                                                 "efpsSyncQueue",
+                                                                                 "enqueueEfpsSync",
+                                                                                 "efpsSyncWorker"
+                                                                             ],
+                          "efps-backend/src/jobs/sync/govt-data-sync.job.ts":  [
+                                                                                   "govtDataSyncQueue",
+                                                                                   "enqueueGovtSync",
+                                                                                   "enqueueFullStateSync",
+                                                                                   "enqueueDistrictSync",
+                                                                                   "govtDataSyncWorker"
+                                                                               ],
+                          "efps-backend/src/jobs/sync/ipds-sync.worker.ts":  [
+                                                                                 "ipdsSyncQueue",
+                                                                                 "enqueueIpdsSync",
+                                                                                 "ipdsSyncWorker"
+                                                                             ],
+                          "efps-backend/src/jobs/sync/sync-scheduler.job.ts":  [
+                                                                                   "syncSchedulerQueue",
+                                                                                   "syncSchedulerWorker"
+                                                                               ],
+                          "efps-backend/src/modules/admin/admin.controller.ts":  [
+                                                                                     "listDealersHandler",
+                                                                                     "suspendDealerHandler",
+                                                                                     "getPlatformStatsHandler",
+                                                                                     "bulkNotifyHandler"
+                                                                                 ],
+                          "efps-backend/src/modules/admin/admin.routes.ts":  [
+                                                                                 "adminRoutes"
+                                                                             ],
+                          "efps-backend/src/modules/admin/admin.schema.ts":  [
+                                                                                 "listDealersSchema",
+                                                                                 "bulkNotifySchema"
+                                                                             ],
+                          "efps-backend/src/modules/admin/admin.service.ts":  [
+                                                                                  "AdminService",
+                                                                                  "adminService"
+                                                                              ],
+                          "efps-backend/src/modules/ads/ads.controller.ts":  [
+                                                                                 "createAdHandler",
+                                                                                 "listAdsHandler",
+                                                                                 "getAdHandler",
+                                                                                 "updateAdHandler",
+                                                                                 "deleteAdHandler"
+                                                                             ],
+                          "efps-backend/src/modules/ads/ads.routes.ts":  [
+                                                                             "adsRoutes"
+                                                                         ],
+                          "efps-backend/src/modules/ads/ads.schema.ts":  [
+                                                                             "createAdSchema",
+                                                                             "updateAdSchema",
+                                                                             "listAdsSchema"
+                                                                         ],
+                          "efps-backend/src/modules/ads/ads.service.ts":  [
+                                                                              "AdsService",
+                                                                              "adsService"
+                                                                          ],
+                          "efps-backend/src/modules/audit/audit.controller.ts":  [
+                                                                                     "createAuditMeetingHandler",
+                                                                                     "listAuditMeetingsHandler",
+                                                                                     "getAuditMeetingHandler",
+                                                                                     "updateAuditMeetingHandler",
+                                                                                     "deleteAuditMeetingHandler"
+                                                                                 ],
+                          "efps-backend/src/modules/audit/audit.routes.ts":  [
+                                                                                 "auditRoutes"
+                                                                             ],
+                          "efps-backend/src/modules/audit/audit.schema.ts":  [
+                                                                                 "createAuditSchema",
+                                                                                 "updateAuditSchema",
+                                                                                 "listAuditSchema"
+                                                                             ],
+                          "efps-backend/src/modules/audit/audit.service.ts":  [
+                                                                                  "AuditService",
+                                                                                  "auditService"
+                                                                              ],
+                          "efps-backend/src/modules/auth/auth.controller.ts":  [
+                                                                                   "loginHandler",
+                                                                                   "logoutHandler",
+                                                                                   "refreshHandler",
+                                                                                   "forgotPasswordRequestHandler",
+                                                                                   "forgotPasswordVerifyHandler",
+                                                                                   "forgotPasswordResetHandler",
+                                                                                   "changePasswordHandler",
+                                                                                   "getMeHandler"
+                                                                               ],
+                          "efps-backend/src/modules/auth/auth.routes.ts":  [
+                                                                               "authRoutes"
+                                                                           ],
+                          "efps-backend/src/modules/auth/auth.schema.ts":  [
+                                                                               "loginSchema",
+                                                                               "forgotPasswordRequestSchema",
+                                                                               "forgotPasswordVerifySchema",
+                                                                               "forgotPasswordResetSchema",
+                                                                               "changePasswordSchema",
+                                                                               "refreshTokenSchema"
+                                                                           ],
+                          "efps-backend/src/modules/auth/auth.service.ts":  [
+                                                                                "AuthService",
+                                                                                "authService"
+                                                                            ],
+                          "efps-backend/src/modules/beneficiary/beneficiary.controller.ts":  [
+                                                                                                 "listBeneficiariesHandler",
+                                                                                                 "getBeneficiaryHandler",
+                                                                                                 "searchBeneficiariesHandler",
+                                                                                                 "createBeneficiaryHandler",
+                                                                                                 "updateBeneficiaryHandler",
+                                                                                                 "deleteBeneficiaryHandler"
+                                                                                             ],
+                          "efps-backend/src/modules/beneficiary/beneficiary.routes.ts":  [
+                                                                                             "beneficiaryRoutes"
+                                                                                         ],
+                          "efps-backend/src/modules/beneficiary/beneficiary.schema.ts":  [
+                                                                                             "createBeneficiarySchema",
+                                                                                             "updateBeneficiarySchema",
+                                                                                             "searchBeneficiarySchema"
+                                                                                         ],
+                          "efps-backend/src/modules/beneficiary/beneficiary.service.ts":  [
+                                                                                              "BeneficiaryService",
+                                                                                              "beneficiaryService"
+                                                                                          ],
+                          "efps-backend/src/modules/commission/commission.controller.ts":  [
+                                                                                               "setCommissionRateHandler",
+                                                                                               "getCommissionRatesHandler",
+                                                                                               "calculateCommissionHandler",
+                                                                                               "listCommissionsHandler",
+                                                                                               "getSettlementHistoryHandler",
+                                                                                               "createSettlementHandler",
+                                                                                               "savePaymentsHandler"
+                                                                                           ],
+                          "efps-backend/src/modules/commission/commission.routes.ts":  [
+                                                                                           "commissionRoutes"
+                                                                                       ],
+                          "efps-backend/src/modules/commission/commission.schema.ts":  [
+                                                                                           "setCommissionRateSchema",
+                                                                                           "listCommissionSchema",
+                                                                                           "settlementSchema",
+                                                                                           "savePaymentsSchema"
+                                                                                       ],
+                          "efps-backend/src/modules/commission/commission.service.ts":  [
+                                                                                            "CommissionService",
+                                                                                            "commissionService"
+                                                                                        ],
+                          "efps-backend/src/modules/dashboard/dashboard.controller.ts":  [
+                                                                                             "getDashboardSummaryHandler"
+                                                                                         ],
+                          "efps-backend/src/modules/dashboard/dashboard.master.controller.ts":  [
+                                                                                                    "getMasterDashboardHandler"
+                                                                                                ],
+                          "efps-backend/src/modules/dashboard/dashboard.master.service.ts":  [
+                                                                                                 "DashboardMasterService",
+                                                                                                 "dashboardMasterService"
+                                                                                             ],
+                          "efps-backend/src/modules/dashboard/dashboard.routes.ts":  [
+                                                                                         "dashboardRoutes"
+                                                                                     ],
+                          "efps-backend/src/modules/dashboard/dashboard.service.ts":  [
+                                                                                          "DashboardService",
+                                                                                          "dashboardService"
+                                                                                      ],
+                          "efps-backend/src/modules/dealer/dealer.controller.ts":  [
+                                                                                       "registerHandler",
+                                                                                       "getDealerHandler",
+                                                                                       "updateDealerHandler",
+                                                                                       "getStatsHandler",
+                                                                                       "getSessionsHandler",
+                                                                                       "revokeSessionHandler",
+                                                                                       "lookupFpsIdHandler",
+                                                                                       "heartbeatHandler"
+                                                                                   ],
+                          "efps-backend/src/modules/dealer/dealer.routes.ts":  [
+                                                                                   "dealerRoutes"
+                                                                               ],
+                          "efps-backend/src/modules/dealer/dealer.schema.ts":  [
+                                                                                   "registerDealerSchema",
+                                                                                   "updateDealerSchema"
+                                                                               ],
+                          "efps-backend/src/modules/dealer/dealer.service.ts":  [
+                                                                                    "DealerService",
+                                                                                    "dealerService"
+                                                                                ],
+                          "efps-backend/src/modules/directory/directory.controller.ts":  [
+                                                                                             "listDirectoryHandler"
+                                                                                         ],
+                          "efps-backend/src/modules/directory/directory.routes.ts":  [
+                                                                                         "directoryRoutes"
+                                                                                     ],
+                          "efps-backend/src/modules/directory/directory.schema.ts":  [
+                                                                                         "directoryQuerySchema"
+                                                                                     ],
+                          "efps-backend/src/modules/directory/directory.service.ts":  [
+                                                                                          "DirectoryService",
+                                                                                          "directoryService"
+                                                                                      ],
+                          "efps-backend/src/modules/enterprise-sync/enterprise-sync.controller.ts":  [
+                                                                                                         "importTransactionsHandler",
+                                                                                                         "importTransactionsFlexibleHandler",
+                                                                                                         "getStockLedgerHandler",
+                                                                                                         "getStockLedgerMovementsHandler",
+                                                                                                         "getFinancialLedgerHandler",
+                                                                                                         "getFinancialSummaryHandler",
+                                                                                                         "getRollingStockHandler"
+                                                                                                     ],
+                          "efps-backend/src/modules/enterprise-sync/enterprise-sync.routes.ts":  [
+                                                                                                     "enterpriseSyncRoutes"
+                                                                                                 ],
+                          "efps-backend/src/modules/enterprise-sync/enterprise-sync.schema.ts":  [
+                                                                                                     "importTransactionRowSchema",
+                                                                                                     "importTransactionsSchema",
+                                                                                                     "stockLedgerQuerySchema",
+                                                                                                     "financialLedgerQuerySchema"
+                                                                                                 ],
+                          "efps-backend/src/modules/enterprise-sync/enterprise-sync.service.ts":  [
+                                                                                                      "EnterpriseSyncService",
+                                                                                                      "enterpriseSyncService"
+                                                                                                  ],
+                          "efps-backend/src/modules/finance/finance.controller.ts":  [
+                                                                                         "addIncomeHandler",
+                                                                                         "addExpenseHandler",
+                                                                                         "listIncomeHandler",
+                                                                                         "listExpensesHandler",
+                                                                                         "getProfitLossHandler",
+                                                                                         "deleteIncomeHandler",
+                                                                                         "deleteExpenseHandler"
+                                                                                     ],
+                          "efps-backend/src/modules/finance/finance.routes.ts":  [
+                                                                                     "financeRoutes"
+                                                                                 ],
+                          "efps-backend/src/modules/finance/finance.schema.ts":  [
+                                                                                     "incomeSchema",
+                                                                                     "expenseSchema",
+                                                                                     "financeQuerySchema"
+                                                                                 ],
+                          "efps-backend/src/modules/finance/finance.service.ts":  [
+                                                                                      "FinanceService",
+                                                                                      "financeService"
+                                                                                  ],
+                          "efps-backend/src/modules/hierarchy/hierarchy.controller.ts":  [
+                                                                                             "getStateHandler",
+                                                                                             "getChildrenHandler",
+                                                                                             "getRegionHandler",
+                                                                                             "getFpsHandler",
+                                                                                             "getBreadcrumbHandler",
+                                                                                             "importCsvHandler",
+                                                                                             "searchRegionsHandler",
+                                                                                             "getMonthsHandler",
+                                                                                             "getChangeHistoryHandler"
+                                                                                         ],
+                          "efps-backend/src/modules/hierarchy/hierarchy.routes.ts":  [
+                                                                                         "hierarchyRoutes"
+                                                                                     ],
+                          "efps-backend/src/modules/hierarchy/hierarchy.schema.ts":  [
+                                                                                         "paginationSchema",
+                                                                                         "regionParamsSchema",
+                                                                                         "monthParamSchema",
+                                                                                         "importCsvRowSchema",
+                                                                                         "importCsvSchema"
+                                                                                     ],
+                          "efps-backend/src/modules/hierarchy/hierarchy.service.ts":  [
+                                                                                          "HierarchyService",
+                                                                                          "hierarchyService"
+                                                                                      ],
+                          "efps-backend/src/modules/internal-sync/internal-sync.controller.ts":  [
+                                                                                                     "handleSync"
+                                                                                                 ],
+                          "efps-backend/src/modules/internal-sync/internal-sync.router.ts":  [
+                                                                                                 "internalSyncRouter"
+                                                                                             ],
+                          "efps-backend/src/modules/internal-sync/internal-sync.schema.ts":  [
+                                                                                                 "beneficiaryRecordSchema",
+                                                                                                 "transactionRecordSchema",
+                                                                                                 "stockAllocationRecordSchema",
+                                                                                                 "syncPayloadSchema"
+                                                                                             ],
+                          "efps-backend/src/modules/internal-sync/internal-sync.service.ts":  [
+                                                                                                  "processSyncPayload"
+                                                                                              ],
+                          "efps-backend/src/modules/lifting/lifting.controller.ts":  [
+                                                                                         "createLiftingHandler",
+                                                                                         "listLiftingHandler",
+                                                                                         "getLiftingHistoryHandler"
+                                                                                     ],
+                          "efps-backend/src/modules/lifting/lifting.routes.ts":  [
+                                                                                     "liftingRoutes"
+                                                                                 ],
+                          "efps-backend/src/modules/lifting/lifting.schema.ts":  [
+                                                                                     "createLiftingSchema",
+                                                                                     "listLiftingSchema"
+                                                                                 ],
+                          "efps-backend/src/modules/lifting/lifting.service.ts":  [
+                                                                                      "LiftingService",
+                                                                                      "liftingService"
+                                                                                  ],
+                          "efps-backend/src/modules/mdm/mdm.controller.ts":  [
+                                                                                 "createSchemeHandler",
+                                                                                 "listSchemesHandler",
+                                                                                 "getSchemeHandler",
+                                                                                 "updateSchemeHandler",
+                                                                                 "deleteSchemeHandler",
+                                                                                 "createIcdsCodeHandler",
+                                                                                 "listIcdsCodesHandler",
+                                                                                 "getIcdsCodeHandler",
+                                                                                 "deleteIcdsCodeHandler"
+                                                                             ],
+                          "efps-backend/src/modules/mdm/mdm.monthly.controller.ts":  [
+                                                                                         "saveMonthlyRecordsHandler",
+                                                                                         "getMonthlyRecordsHandler"
+                                                                                     ],
+                          "efps-backend/src/modules/mdm/mdm.monthly.service.ts":  [
+                                                                                      "MdmMonthlyService",
+                                                                                      "mdmMonthlyService"
+                                                                                  ],
+                          "efps-backend/src/modules/mdm/mdm.routes.ts":  [
+                                                                             "mdmRoutes"
+                                                                         ],
+                          "efps-backend/src/modules/mdm/mdm.schema.ts":  [
+                                                                             "createSchemeSchema",
+                                                                             "updateSchemeSchema",
+                                                                             "listSchemesSchema",
+                                                                             "createIcdsCodeSchema",
+                                                                             "listIcdsCodesSchema",
+                                                                             "saveMonthlyRecordSchema",
+                                                                             "getMonthlyRecordSchema"
+                                                                         ],
+                          "efps-backend/src/modules/mdm/mdm.service.ts":  [
+                                                                              "MdmService",
+                                                                              "mdmService"
+                                                                          ],
+                          "efps-backend/src/modules/notification/notification.controller.ts":  [
+                                                                                                   "listNotificationsHandler",
+                                                                                                   "markAsReadHandler",
+                                                                                                   "markAllAsReadHandler",
+                                                                                                   "deleteNotificationHandler"
+                                                                                               ],
+                          "efps-backend/src/modules/notification/notification.routes.ts":  [
+                                                                                               "notificationRoutes"
+                                                                                           ],
+                          "efps-backend/src/modules/notification/notification.schema.ts":  [
+                                                                                               "listNotificationsSchema"
+                                                                                           ],
+                          "efps-backend/src/modules/notification/notification.service.ts":  [
+                                                                                                "NotificationService",
+                                                                                                "notificationService"
+                                                                                            ],
+                          "efps-backend/src/modules/report/report.controller.ts":  [
+                                                                                       "getMonthlyReportHandler",
+                                                                                       "getAuditLogHandler",
+                                                                                       "exportPdfHandler",
+                                                                                       "exportCsvHandler"
+                                                                                   ],
+                          "efps-backend/src/modules/report/report.routes.ts":  [
+                                                                                   "reportRoutes"
+                                                                               ],
+                          "efps-backend/src/modules/report/report.schema.ts":  [
+                                                                                   "monthlyReportSchema",
+                                                                                   "auditLogSchema"
+                                                                               ],
+                          "efps-backend/src/modules/report/report.service.ts":  [
+                                                                                    "ReportService",
+                                                                                    "reportService"
+                                                                                ],
+                          "efps-backend/src/modules/stock-entry/stock-entry.controller.ts":  [
+                                                                                                 "getTodayStockHandler",
+                                                                                                 "saveStockEntryHandler",
+                                                                                                 "getAllocationsHandler",
+                                                                                                 "allocateHandler",
+                                                                                                 "getStockHistoryHandler"
+                                                                                             ],
+                          "efps-backend/src/modules/stock-entry/stock-entry.routes.ts":  [
+                                                                                             "stockEntryRoutes"
+                                                                                         ],
+                          "efps-backend/src/modules/stock-entry/stock-entry.schema.ts":  [
+                                                                                             "stockEntryRowSchema",
+                                                                                             "saveStockEntrySchema",
+                                                                                             "allocateSchema",
+                                                                                             "listStockHistorySchema"
+                                                                                         ],
+                          "efps-backend/src/modules/stock-entry/stock-entry.service.ts":  [
+                                                                                              "StockEntryService",
+                                                                                              "stockEntryService"
+                                                                                          ],
+                          "efps-backend/src/modules/stock/stock.controller.ts":  [
+                                                                                     "getCurrentStockHandler",
+                                                                                     "getStockHistoryHandler",
+                                                                                     "updateAllocationHandler",
+                                                                                     "deleteAllocationHandler"
+                                                                                 ],
+                          "efps-backend/src/modules/stock/stock.routes.ts":  [
+                                                                                 "stockRoutes"
+                                                                             ],
+                          "efps-backend/src/modules/stock/stock.schema.ts":  [
+                                                                                 "listStockHistorySchema",
+                                                                                 "updateAllocationSchema"
+                                                                             ],
+                          "efps-backend/src/modules/stock/stock.service.ts":  [
+                                                                                  "StockService",
+                                                                                  "stockService"
+                                                                              ],
+                          "efps-backend/src/modules/sync/govt-importer.service.ts":  [
+                                                                                         "GovtImporterService",
+                                                                                         "govtImporterService"
+                                                                                     ],
+                          "efps-backend/src/modules/sync/sync.controller.ts":  [
+                                                                                   "triggerSyncHandler",
+                                                                                   "getSyncHistoryHandler",
+                                                                                   "getBankInfoHandler",
+                                                                                   "updateBankInfoHandler",
+                                                                                   "importCsvHandler",
+                                                                                   "importSingleRowHandler",
+                                                                                   "syncAllDealersHandler",
+                                                                                   "syncDistrictHandler",
+                                                                                   "getImportBatchesHandler",
+                                                                                   "getChangeLogHandler",
+                                                                                   "triggerSelfSyncHandler",
+                                                                                   "getSelfSyncStatusHandler",
+                                                                                   "getSelfDashboardHandler",
+                                                                                   "saveCredentialsHandler",
+                                                                                   "getCredentialsStatusHandler"
+                                                                               ],
+                          "efps-backend/src/modules/sync/sync.routes.ts":  [
+                                                                               "syncRoutes"
+                                                                           ],
+                          "efps-backend/src/modules/sync/sync.schema.ts":  [
+                                                                               "triggerSyncSchema",
+                                                                               "triggerSelfSyncSchema",
+                                                                               "updateBankInfoSchema",
+                                                                               "importRowSchema",
+                                                                               "importCsvSchema",
+                                                                               "syncAllSchema",
+                                                                               "syncDistrictSchema",
+                                                                               "saveCredentialsSchema"
+                                                                           ],
+                          "efps-backend/src/modules/sync/sync.service.ts":  [
+                                                                                "SyncService",
+                                                                                "syncService"
+                                                                            ],
+                          "efps-backend/src/modules/transaction/transaction.controller.ts":  [
+                                                                                                 "createTransactionHandler",
+                                                                                                 "listTransactionsHandler",
+                                                                                                 "getTransactionHandler",
+                                                                                                 "getTransactionSummaryHandler",
+                                                                                                 "getPendingHandler",
+                                                                                                 "deleteTransactionHandler"
+                                                                                             ],
+                          "efps-backend/src/modules/transaction/transaction.routes.ts":  [
+                                                                                             "transactionRoutes"
+                                                                                         ],
+                          "efps-backend/src/modules/transaction/transaction.schema.ts":  [
+                                                                                             "createTransactionSchema",
+                                                                                             "listTransactionsSchema"
+                                                                                         ],
+                          "efps-backend/src/modules/transaction/transaction.service.ts":  [
+                                                                                              "TransactionService",
+                                                                                              "transactionService"
+                                                                                          ],
+                          "efps-backend/src/plugins/auth.plugin.ts":  [
+                                                                          "registerAuthPlugin"
+                                                                      ],
+                          "efps-backend/src/plugins/cors.plugin.ts":  [
+                                                                          "registerCors"
+                                                                      ],
+                          "efps-backend/src/plugins/helmet.plugin.ts":  [
+                                                                            "registerHelmet"
+                                                                        ],
+                          "efps-backend/src/plugins/metrics.plugin.ts":  [
+                                                                             "httpRequestDuration",
+                                                                             "httpRequestsTotal",
+                                                                             "activeConnections",
+                                                                             "registerMetrics"
+                                                                         ],
+                          "efps-backend/src/plugins/multipart.plugin.ts":  [
+                                                                               "registerMultipart"
+                                                                           ],
+                          "efps-backend/src/plugins/rate-limit.plugin.ts":  [
+                                                                                "registerRateLimit"
+                                                                            ],
+                          "efps-backend/src/plugins/swagger.plugin.ts":  [
+                                                                             "registerSwagger"
+                                                                         ],
+                          "efps-backend/src/scraper/govt-efps-scraper.ts":  [
+                                                                                "GovtEfpsScraper",
+                                                                                "triggerScraperDownload"
+                                                                            ],
+                          "efps-backend/src/server.ts":  [
+
+                                                         ],
+                          "efps-backend/src/shared/errors/AppError.ts":  [
+                                                                             "AppError"
+                                                                         ],
+                          "efps-backend/src/shared/errors/AuthError.ts":  [
+                                                                              "AuthError",
+                                                                              "ForbiddenError",
+                                                                              "SessionNotFoundError"
+                                                                          ],
+                          "efps-backend/src/shared/errors/error-handler.ts":  [
+                                                                                  "errorHandler"
+                                                                              ],
+                          "efps-backend/src/shared/errors/ValidationError.ts":  [
+                                                                                    "ValidationError"
+                                                                                ],
+                          "efps-backend/src/shared/events/event-bus.ts":  [
+                                                                              "EventTypes",
+                                                                              "EventBus",
+                                                                              "eventBus"
+                                                                          ],
+                          "efps-backend/src/shared/events/index.ts":  [
+                                                                          "eventBus",
+                                                                          "EventTypes",
+                                                                          "EventType",
+                                                                          "registerEventHandlers"
+                                                                      ],
+                          "efps-backend/src/shared/events/register-handlers.ts":  [
+                                                                                      "registerEventHandlers"
+                                                                                  ],
+                          "efps-backend/src/shared/middleware/audit-log.ts":  [
+                                                                                  "createAuditLog"
+                                                                              ],
+                          "efps-backend/src/shared/middleware/authenticate.ts":  [
+                                                                                     "authenticate"
+                                                                                 ],
+                          "efps-backend/src/shared/middleware/authorize.ts":  [
+                                                                                  "authorize",
+                                                                                  "authorizeSelf"
+                                                                              ],
+                          "efps-backend/src/shared/middleware/idempotency.ts":  [
+                                                                                    "idempotencyKey"
+                                                                                ],
+                          "efps-backend/src/shared/middleware/validate-fps-id.ts":  [
+                                                                                        "validateFpsIdParam"
+                                                                                    ],
+                          "efps-backend/src/shared/sync/normalization.service.ts":  [
+                                                                                        "normalizeRecord"
+                                                                                    ],
+                          "efps-backend/src/shared/sync/quarantine.service.ts":  [
+                                                                                     "insertQuarantineRecords",
+                                                                                     "getQuarantineSummary"
+                                                                                 ],
+                          "efps-backend/src/shared/sync/system-events.service.ts":  [
+                                                                                        "insertSystemEvent",
+                                                                                        "getRecentEvents"
+                                                                                    ],
+                          "efps-backend/src/shared/sync/validation.service.ts":  [
+                                                                                     "validateRecord",
+                                                                                     "validateBatch"
+                                                                                 ],
+                          "efps-backend/src/shared/types/enums.ts":  [
+                                                                         "Role",
+                                                                         "AccountStatus",
+                                                                         "CommodityType",
+                                                                         "BeneficiaryCategory",
+                                                                         "TransactionMode",
+                                                                         "NotificationType",
+                                                                         "OtpPurpose"
+                                                                     ],
+                          "efps-backend/src/shared/types/fastify.d.ts":  [
+
+                                                                         ],
+                          "efps-backend/src/shared/types/models.ts":  [
+
+                                                                      ],
+                          "efps-backend/src/shared/utils/circuit-breaker.ts":  [
+                                                                                   "CircuitBreaker"
+                                                                               ],
+                          "efps-backend/src/shared/utils/encrypt.ts":  [
+                                                                           "encrypt",
+                                                                           "decrypt",
+                                                                           "encryptMany"
+                                                                       ],
+                          "efps-backend/src/shared/utils/hash.ts":  [
+                                                                        "hashPassword",
+                                                                        "verifyPassword",
+                                                                        "hashOtp",
+                                                                        "verifyOtpHash",
+                                                                        "hashToken"
+                                                                    ],
+                          "efps-backend/src/shared/utils/logger.ts":  [
+                                                                          "logger"
+                                                                      ],
+                          "efps-backend/src/shared/utils/otp.ts":  [
+                                                                       "generateOtp",
+                                                                       "isOtpExpiresAt"
+                                                                   ],
+                          "efps-backend/src/shared/utils/pagination.ts":  [
+                                                                              "parsePaginationParams",
+                                                                              "buildPaginationMeta"
+                                                                          ],
+                          "efps-backend/src/shared/utils/pdf.ts":  [
+                                                                       "htmlToPdf"
+                                                                   ],
+                          "efps-backend/src/shared/utils/response.ts":  [
+                                                                            "sendSuccess",
+                                                                            "sendPaginated",
+                                                                            "sendCreated",
+                                                                            "sendNoContent"
+                                                                        ],
+                          "efps-backend/src/shared/utils/token.ts":  [
+                                                                         "signAccessToken",
+                                                                         "signRefreshToken",
+                                                                         "verifyAccessToken",
+                                                                         "verifyRefreshToken",
+                                                                         "decodeAccessToken"
+                                                                     ],
+                          "efps-backend/test-argon.cjs":  [
+
+                                                          ],
+                          "efps-backend/test-argon.js":  [
+
+                                                         ],
+                          "efps-backend/tests/fixtures/factories.ts":  [
+                                                                           "createTestDealer",
+                                                                           "createTestBeneficiary",
+                                                                           "createTestTransaction"
+                                                                       ],
+                          "efps-backend/tests/fixtures/setup.ts":  [
+
+                                                                   ],
+                          "efps-backend/tests/integration/audit.test.ts":  [
+
+                                                                           ],
+                          "efps-backend/tests/integration/auth.test.ts":  [
+
+                                                                          ],
+                          "efps-backend/tests/integration/commission.test.ts":  [
+
+                                                                                ],
+                          "efps-backend/tests/integration/finance.test.ts":  [
+
+                                                                             ],
+                          "efps-backend/tests/integration/internal-sync.test.ts":  [
+
+                                                                                   ],
+                          "efps-backend/tests/integration/sync.test.ts":  [
+
+                                                                          ],
+                          "efps-backend/tests/integration/transaction.test.ts":  [
+
+                                                                                 ],
+                          "efps-backend/tests/unit/circuit-breaker.test.ts":  [
+
+                                                                              ],
+                          "efps-backend/tests/unit/efps-sync-captcha.test.ts":  [
+
+                                                                                ],
+                          "efps-backend/tests/unit/efps-sync-mappings.test.ts":  [
+
+                                                                                 ],
+                          "efps-backend/tests/unit/encrypt.test.ts":  [
+
+                                                                      ],
+                          "efps-backend/tests/unit/hash.test.ts":  [
+
+                                                                   ],
+                          "efps-backend/tests/unit/otp.test.ts":  [
+
+                                                                  ],
+                          "efps-backend/tests/unit/pagination.test.ts":  [
+
+                                                                         ],
+                          "efps-backend/vitest.config.ts":  [
+
+                                                            ],
+                          "efps-frontend/eslint.config.mjs":  [
+
+                                                              ],
+                          "efps-frontend/next.config.ts":  [
+
+                                                           ],
+                          "efps-frontend/src/app/(auth)/change-profile/page.tsx":  [
+                                                                                       "ChangeProfilePage"
+                                                                                   ],
+                          "efps-frontend/src/app/(auth)/forgot-password/page.tsx":  [
+                                                                                        "ForgotPasswordPage"
+                                                                                    ],
+                          "efps-frontend/src/app/(auth)/layout.tsx":  [
+                                                                          "AuthLayout"
+                                                                      ],
+                          "efps-frontend/src/app/(auth)/login/page.tsx":  [
+                                                                              "LoginPage"
+                                                                          ],
+                          "efps-frontend/src/app/(auth)/password-success/page.tsx":  [
+                                                                                         "PasswordSuccessPage"
+                                                                                     ],
+                          "efps-frontend/src/app/(auth)/register/page.tsx":  [
+                                                                                 "RegisterPage"
+                                                                             ],
+                          "efps-frontend/src/app/(auth)/set-password/page.tsx":  [
+                                                                                     "SetPasswordPage"
+                                                                                 ],
+                          "efps-frontend/src/app/(auth)/verify-identity/page.tsx":  [
+                                                                                        "VerifyIdentityPage"
+                                                                                    ],
+                          "efps-frontend/src/app/(auth)/verify-otp/page.tsx":  [
+                                                                                   "VerifyOtpPage"
+                                                                               ],
+                          "efps-frontend/src/app/(dashboard)/ads/page.tsx":  [
+                                                                                 "AdsPage"
+                                                                             ],
+                          "efps-frontend/src/app/(dashboard)/bank-commission/page.tsx":  [
+                                                                                             "BankCommissionPage"
+                                                                                         ],
+                          "efps-frontend/src/app/(dashboard)/calculator/page.tsx":  [
+                                                                                        "CommissionCalculatorPage"
+                                                                                    ],
+                          "efps-frontend/src/app/(dashboard)/customers/page.tsx":  [
+                                                                                       "CustomerRegisterPage"
+                                                                                   ],
+                          "efps-frontend/src/app/(dashboard)/dashboard/page.tsx":  [
+                                                                                       "DashboardPage"
+                                                                                   ],
+                          "efps-frontend/src/app/(dashboard)/dealers/page.tsx":  [
+                                                                                     "DealersPage"
+                                                                                 ],
+                          "efps-frontend/src/app/(dashboard)/income-expense/page.tsx":  [
+                                                                                            "IncomeExpensePage"
+                                                                                        ],
+                          "efps-frontend/src/app/(dashboard)/incoming-stock/page.tsx":  [
+                                                                                            "IncomingStockPage"
+                                                                                        ],
+                          "efps-frontend/src/app/(dashboard)/layout.tsx":  [
+                                                                               "DashboardLayout"
+                                                                           ],
+                          "efps-frontend/src/app/(dashboard)/ledger/page.tsx":  [
+                                                                                    "LedgerPage"
+                                                                                ],
+                          "efps-frontend/src/app/(dashboard)/manual-sale/page.tsx":  [
+                                                                                         "ManualSalePage"
+                                                                                     ],
+                          "efps-frontend/src/app/(dashboard)/mdm-record/page.tsx":  [
+                                                                                        "MdmRecordPage"
+                                                                                    ],
+                          "efps-frontend/src/app/(dashboard)/monthly-record/page.tsx":  [
+                                                                                            "MonthlyRecordPage"
+                                                                                        ],
+                          "efps-frontend/src/app/(dashboard)/monthly-sales-report/page.tsx":  [
+                                                                                                  "MonthlySalesReportPage"
+                                                                                              ],
+                          "efps-frontend/src/app/(dashboard)/operational-dashboard/page.tsx":  [
+                                                                                                   "OperationalDashboardPage"
+                                                                                               ],
+                          "efps-frontend/src/app/(dashboard)/pending-customers/page.tsx":  [
+                                                                                               "PendingCustomersPage"
+                                                                                           ],
+                          "efps-frontend/src/app/(dashboard)/profile/edit/page.tsx":  [
+                                                                                          "FpsProfileDashboardPage"
+                                                                                      ],
+                          "efps-frontend/src/app/(dashboard)/sales/page.tsx":  [
+                                                                                   "ItemWiseSalesPage"
+                                                                               ],
+                          "efps-frontend/src/app/(dashboard)/social-audit/page.tsx":  [
+                                                                                          "SocialAuditPage"
+                                                                                      ],
+                          "efps-frontend/src/app/(dashboard)/stock-entry/page.tsx":  [
+                                                                                         "StockEntryPage"
+                                                                                     ],
+                          "efps-frontend/src/app/(dashboard)/stock-record/page.tsx":  [
+                                                                                          "StockRecordPage"
+                                                                                      ],
+                          "efps-frontend/src/app/(dashboard)/sync/page.tsx":  [
+                                                                                  "SyncPage"
+                                                                              ],
+                          "efps-frontend/src/app/(dashboard)/updates/page.tsx":  [
+                                                                                     "UpdatesPage"
+                                                                                 ],
+                          "efps-frontend/src/app/layout.tsx":  [
+                                                                   "metadata",
+                                                                   "RootLayout"
+                                                               ],
+                          "efps-frontend/src/app/page.tsx":  [
+                                                                 "Home"
+                                                             ],
+                          "efps-frontend/src/app/providers.tsx":  [
+                                                                      "Providers"
+                                                                  ],
+                          "efps-frontend/src/components/auth/AuthCard.tsx":  [
+                                                                                 "AuthCard"
+                                                                             ],
+                          "efps-frontend/src/components/auth/BackLink.tsx":  [
+                                                                                 "BackLink"
+                                                                             ],
+                          "efps-frontend/src/components/auth/FormInput.tsx":  [
+                                                                                  "FormInput"
+                                                                              ],
+                          "efps-frontend/src/components/auth/OtpInput.tsx":  [
+                                                                                 "OtpInput"
+                                                                             ],
+                          "efps-frontend/src/components/auth/PasswordField.tsx":  [
+                                                                                      "PasswordField"
+                                                                                  ],
+                          "efps-frontend/src/components/auth/ProgressStepper.tsx":  [
+                                                                                        "ProgressStepper"
+                                                                                    ],
+                          "efps-frontend/src/components/auth/SubmitButton.tsx":  [
+                                                                                     "SubmitButton"
+                                                                                 ],
+                          "efps-frontend/src/components/Sidebar.tsx":  [
+                                                                           "Sidebar"
+                                                                       ],
+                          "efps-frontend/src/components/ui/Button.tsx":  [
+                                                                             "Button"
+                                                                         ],
+                          "efps-frontend/src/components/ui/Card.tsx":  [
+                                                                           "Card"
+                                                                       ],
+                          "efps-frontend/src/components/ui/DonutChart.tsx":  [
+                                                                                 "DonutChart"
+                                                                             ],
+                          "efps-frontend/src/components/ui/EmptyState.tsx":  [
+                                                                                 "EmptyState"
+                                                                             ],
+                          "efps-frontend/src/components/ui/ErrorState.tsx":  [
+                                                                                 "ErrorState"
+                                                                             ],
+                          "efps-frontend/src/components/ui/LoadingScreen.tsx":  [
+                                                                                    "LoadingScreen"
+                                                                                ],
+                          "efps-frontend/src/components/ui/Skeleton.tsx":  [
+                                                                               "Skeleton",
+                                                                               "SkeletonCard",
+                                                                               "SkeletonTable"
+                                                                           ],
+                          "efps-frontend/src/lib/api-hooks.ts":  [
+                                                                     "usePaginatedList",
+                                                                     "useBeneficiaries",
+                                                                     "useTransactions",
+                                                                     "useStock",
+                                                                     "useNotifications",
+                                                                     "useFinance",
+                                                                     "useCommission",
+                                                                     "useLifting",
+                                                                     "useDashboard",
+                                                                     "useProfile",
+                                                                     "useAds",
+                                                                     "useSync"
+                                                                 ],
+                          "efps-frontend/src/lib/api.ts":  [
+                                                               "ApiRequestError",
+                                                               "api"
+                                                           ],
+                          "efps-frontend/src/lib/auth-context.tsx":  [
+                                                                         "AuthProvider",
+                                                                         "useAuth"
+                                                                     ],
+                          "efps-frontend/src/lib/auth-guard.tsx":  [
+                                                                       "RequireAuth"
+                                                                   ],
+                          "efps-frontend/src/lib/types.ts":  [
+                                                                 "Role",
+                                                                 "CommodityType",
+                                                                 "COMMODITIES",
+                                                                 "BeneficiaryCategory",
+                                                                 "TransactionMode",
+                                                                 "NotificationType"
+                                                             ],
+                          "efps-frontend/src/lib/utils.ts":  [
+                                                                 "monthToApi"
+                                                             ],
+                          "README.md":  [
+                                            "14"
+                                        ],
+                          "components.md":  [
+                                                "14"
+                                            ],
+                          "data_flow.md":  [
+                                               "14"
+                                           ],
+                          "full_stack.md":  [
+                                                "14"
+                                            ],
+                          "full_stack_design.md":  [
+                                                       "14"
+                                                   ],
+                          "efps_backend_prd.md":  [
+                                                      "14"
+                                                  ],
+                          "solution.md":  [
+                                              "14"
+                                          ],
+                          "RUNBOOK.md":  [
+                                             "14"
+                                         ],
+                          "skills-lock.json":  [
+                                                   "14"
+                                               ],
+                          "cookies.txt":  [
+                                              "14"
+                                          ],
+                          "cookies2.txt":  [
+                                               "14"
+                                           ],
+                          "efps-backend/.env":  [
+                                                    "14"
+                                                ],
+                          "efps-backend/.env.example":  [
+                                                            "14"
+                                                        ],
+                          "efps-backend/.gitignore":  [
+                                                          "14"
+                                                      ],
+                          "efps-backend/docker-entrypoint.sh":  [
+                                                                    "14"
+                                                                ]
+                      },
+    "batches":  [
+                    {
+                        "batchIndex":  1,
+                        "files":  "                         ",
+                        "batchImportData":  "@{efps-frontend/src/app/(auth)/change-profile/page.tsx=System.Object[]; efps-frontend/src/app/(auth)/forgot-password/page.tsx=System.Object[]; efps-frontend/src/app/(auth)/login/page.tsx=System.Object[]; efps-frontend/src/app/(auth)/password-success/page.tsx=System.Object[]; efps-frontend/src/app/(auth)/register/page.tsx=System.Object[]; efps-frontend/src/app/(auth)/set-password/page.tsx=System.Object[]; efps-frontend/src/app/(auth)/verify-identity/page.tsx=System.Object[]; efps-frontend/src/app/(auth)/verify-otp/page.tsx=System.Object[]; efps-frontend/src/app/(dashboard)/ads/page.tsx=System.Object[]; efps-frontend/src/app/(dashboard)/bank-commission/page.tsx=System.Object[]; efps-frontend/src/app/(dashboard)/calculator/page.tsx=System.Object[]; efps-frontend/src/app/(dashboard)/customers/page.tsx=System.Object[]; efps-frontend/src/app/(dashboard)/dashboard/page.tsx=System.Object[]; efps-frontend/src/app/(dashboard)/dealers/page.tsx=System.Object[]; efps-frontend/src/app/(dashboard)/income-expense/page.tsx=System.Object[]; efps-frontend/src/app/(dashboard)/incoming-stock/page.tsx=System.Object[]; efps-frontend/src/app/(dashboard)/layout.tsx=System.Object[]; efps-frontend/src/app/(dashboard)/ledger/page.tsx=System.Object[]; efps-frontend/src/app/(dashboard)/manual-sale/page.tsx=System.Object[]; efps-frontend/src/app/(dashboard)/mdm-record/page.tsx=System.Object[]; efps-frontend/src/app/(dashboard)/monthly-record/page.tsx=System.Object[]; efps-frontend/src/app/(dashboard)/monthly-sales-report/page.tsx=System.Object[]; efps-frontend/src/app/(dashboard)/operational-dashboard/page.tsx=System.Object[]; efps-frontend/src/app/(dashboard)/pending-customers/page.tsx=System.Object[]; efps-frontend/src/app/(dashboard)/profile/edit/page.tsx=System.Object[]; efps-frontend/src/app/(dashboard)/sales/page.tsx=System.Object[]}",
+                        "neighborMap":  "@{efps-frontend/src/app/(auth)/change-profile/page.tsx=System.Object[]; efps-frontend/src/app/(auth)/forgot-password/page.tsx=System.Object[]; efps-frontend/src/app/(auth)/login/page.tsx=System.Object[]; efps-frontend/src/app/(auth)/password-success/page.tsx=System.Object[]; efps-frontend/src/app/(auth)/register/page.tsx=System.Object[]; efps-frontend/src/app/(auth)/set-password/page.tsx=System.Object[]; efps-frontend/src/app/(auth)/verify-identity/page.tsx=System.Object[]; efps-frontend/src/app/(auth)/verify-otp/page.tsx=System.Object[]; efps-frontend/src/app/(dashboard)/ads/page.tsx=System.Object[]; efps-frontend/src/app/(dashboard)/bank-commission/page.tsx=System.Object[]; efps-frontend/src/app/(dashboard)/calculator/page.tsx=System.Object[]; efps-frontend/src/app/(dashboard)/customers/page.tsx=System.Object[]; efps-frontend/src/app/(dashboard)/dashboard/page.tsx=System.Object[]; efps-frontend/src/app/(dashboard)/dealers/page.tsx=System.Object[]; efps-frontend/src/app/(dashboard)/income-expense/page.tsx=System.Object[]; efps-frontend/src/app/(dashboard)/incoming-stock/page.tsx=System.Object[]; efps-frontend/src/app/(dashboard)/layout.tsx=System.Object[]; efps-frontend/src/app/(dashboard)/ledger/page.tsx=System.Object[]; efps-frontend/src/app/(dashboard)/manual-sale/page.tsx=System.Object[]; efps-frontend/src/app/(dashboard)/mdm-record/page.tsx=System.Object[]; efps-frontend/src/app/(dashboard)/monthly-record/page.tsx=System.Object[]; efps-frontend/src/app/(dashboard)/monthly-sales-report/page.tsx=System.Object[]; efps-frontend/src/app/(dashboard)/operational-dashboard/page.tsx=System.Object[]; efps-frontend/src/app/(dashboard)/pending-customers/page.tsx=System.Object[]; efps-frontend/src/app/(dashboard)/profile/edit/page.tsx=System.Object[]; efps-frontend/src/app/(dashboard)/sales/page.tsx=System.Object[]}"
+                    },
+                    {
+                        "batchIndex":  2,
+                        "files":  "                         ",
+                        "batchImportData":  "@{efps-frontend/src/app/(dashboard)/social-audit/page.tsx=System.Object[]; efps-frontend/src/app/(dashboard)/stock-entry/page.tsx=System.Object[]; efps-frontend/src/app/(dashboard)/stock-record/page.tsx=System.Object[]; efps-frontend/src/app/(dashboard)/sync/page.tsx=System.Object[]; efps-frontend/src/app/layout.tsx=System.Object[]; efps-frontend/src/app/providers.tsx=System.Object[]; efps-frontend/src/components/Sidebar.tsx=System.Object[]; efps-frontend/src/components/auth/AuthCard.tsx=System.Object[]; efps-frontend/src/components/auth/FormInput.tsx=System.Object[]; efps-frontend/src/components/auth/OtpInput.tsx=System.Object[]; efps-frontend/src/components/auth/PasswordField.tsx=System.Object[]; efps-frontend/src/components/auth/ProgressStepper.tsx=System.Object[]; efps-frontend/src/components/auth/SubmitButton.tsx=System.Object[]; efps-frontend/src/components/ui/Button.tsx=System.Object[]; efps-frontend/src/components/ui/Card.tsx=System.Object[]; efps-frontend/src/components/ui/DonutChart.tsx=System.Object[]; efps-frontend/src/components/ui/EmptyState.tsx=System.Object[]; efps-frontend/src/components/ui/ErrorState.tsx=System.Object[]; efps-frontend/src/components/ui/LoadingScreen.tsx=System.Object[]; efps-frontend/src/components/ui/Skeleton.tsx=System.Object[]; efps-frontend/src/lib/api-hooks.ts=System.Object[]; efps-frontend/src/lib/api.ts=System.Object[]; efps-frontend/src/lib/auth-context.tsx=System.Object[]; efps-frontend/src/lib/auth-guard.tsx=System.Object[]; efps-frontend/src/lib/types.ts=System.Object[]; efps-frontend/src/lib/utils.ts=System.Object[]}",
+                        "neighborMap":  "@{efps-frontend/src/app/(dashboard)/social-audit/page.tsx=System.Object[]; efps-frontend/src/app/(dashboard)/stock-entry/page.tsx=System.Object[]; efps-frontend/src/app/(dashboard)/stock-record/page.tsx=System.Object[]; efps-frontend/src/app/(dashboard)/sync/page.tsx=System.Object[]; efps-frontend/src/app/layout.tsx=System.Object[]; efps-frontend/src/components/Sidebar.tsx=System.Object[]; efps-frontend/src/components/auth/AuthCard.tsx=System.Object[]; efps-frontend/src/components/auth/FormInput.tsx=System.Object[]; efps-frontend/src/components/auth/OtpInput.tsx=System.Object[]; efps-frontend/src/components/auth/PasswordField.tsx=System.Object[]; efps-frontend/src/components/auth/ProgressStepper.tsx=System.Object[]; efps-frontend/src/components/auth/SubmitButton.tsx=System.Object[]; efps-frontend/src/components/ui/Button.tsx=System.Object[]; efps-frontend/src/components/ui/Card.tsx=System.Object[]; efps-frontend/src/components/ui/DonutChart.tsx=System.Object[]; efps-frontend/src/components/ui/EmptyState.tsx=System.Object[]; efps-frontend/src/components/ui/ErrorState.tsx=System.Object[]; efps-frontend/src/components/ui/Skeleton.tsx=System.Object[]; efps-frontend/src/lib/api-hooks.ts=System.Object[]; efps-frontend/src/lib/api.ts=System.Object[]; efps-frontend/src/lib/auth-context.tsx=System.Object[]; efps-frontend/src/lib/auth-guard.tsx=System.Object[]; efps-frontend/src/lib/types.ts=System.Object[]; efps-frontend/src/lib/utils.ts=System.Object[]}"
+                    },
+                    {
+                        "batchIndex":  3,
+                        "files":  "                        ",
+                        "batchImportData":  "@{efps-backend/src/modules/ads/ads.controller.ts=System.Object[]; efps-backend/src/modules/ads/ads.routes.ts=System.Object[]; efps-backend/src/modules/ads/ads.schema.ts=System.Object[]; efps-backend/src/modules/audit/audit.controller.ts=System.Object[]; efps-backend/src/modules/audit/audit.routes.ts=System.Object[]; efps-backend/src/modules/audit/audit.schema.ts=System.Object[]; efps-backend/src/modules/beneficiary/beneficiary.controller.ts=System.Object[]; efps-backend/src/modules/beneficiary/beneficiary.routes.ts=System.Object[]; efps-backend/src/modules/beneficiary/beneficiary.schema.ts=System.Object[]; efps-backend/src/modules/dashboard/dashboard.controller.ts=System.Object[]; efps-backend/src/modules/dashboard/dashboard.master.controller.ts=System.Object[]; efps-backend/src/modules/dashboard/dashboard.master.service.ts=System.Object[]; efps-backend/src/modules/dashboard/dashboard.routes.ts=System.Object[]; efps-backend/src/modules/dashboard/dashboard.service.ts=System.Object[]; efps-backend/src/modules/enterprise-sync/enterprise-sync.controller.ts=System.Object[]; efps-backend/src/modules/enterprise-sync/enterprise-sync.routes.ts=System.Object[]; efps-backend/src/modules/enterprise-sync/enterprise-sync.schema.ts=System.Object[]; efps-backend/src/modules/enterprise-sync/enterprise-sync.service.ts=System.Object[]; efps-backend/src/modules/finance/finance.controller.ts=System.Object[]; efps-backend/src/modules/finance/finance.routes.ts=System.Object[]; efps-backend/src/modules/finance/finance.schema.ts=System.Object[]; efps-backend/src/modules/stock-entry/stock-entry.controller.ts=System.Object[]; efps-backend/src/modules/stock-entry/stock-entry.routes.ts=System.Object[]; efps-backend/src/modules/stock-entry/stock-entry.schema.ts=System.Object[]; efps-backend/src/shared/utils/response.ts=System.Object[]}",
+                        "neighborMap":  "@{efps-backend/src/modules/ads/ads.controller.ts=System.Object[]; efps-backend/src/modules/ads/ads.routes.ts=System.Object[]; efps-backend/src/modules/ads/ads.schema.ts=System.Object[]; efps-backend/src/modules/audit/audit.controller.ts=System.Object[]; efps-backend/src/modules/audit/audit.routes.ts=System.Object[]; efps-backend/src/modules/audit/audit.schema.ts=System.Object[]; efps-backend/src/modules/beneficiary/beneficiary.controller.ts=System.Object[]; efps-backend/src/modules/beneficiary/beneficiary.routes.ts=System.Object[]; efps-backend/src/modules/beneficiary/beneficiary.schema.ts=System.Object[]; efps-backend/src/modules/dashboard/dashboard.master.service.ts=System.Object[]; efps-backend/src/modules/dashboard/dashboard.routes.ts=System.Object[]; efps-backend/src/modules/dashboard/dashboard.service.ts=System.Object[]; efps-backend/src/modules/enterprise-sync/enterprise-sync.routes.ts=System.Object[]; efps-backend/src/modules/enterprise-sync/enterprise-sync.service.ts=System.Object[]; efps-backend/src/modules/finance/finance.controller.ts=System.Object[]; efps-backend/src/modules/finance/finance.routes.ts=System.Object[]; efps-backend/src/modules/finance/finance.schema.ts=System.Object[]; efps-backend/src/modules/stock-entry/stock-entry.controller.ts=System.Object[]; efps-backend/src/modules/stock-entry/stock-entry.routes.ts=System.Object[]; efps-backend/src/modules/stock-entry/stock-entry.schema.ts=System.Object[]; efps-backend/src/shared/utils/response.ts=System.Object[]}"
+                    },
+                    {
+                        "batchIndex":  4,
+                        "files":  "                      ",
+                        "batchImportData":  "@{efps-backend/src/config/constants.ts=System.Object[]; efps-backend/src/modules/admin/admin.controller.ts=System.Object[]; efps-backend/src/modules/admin/admin.schema.ts=System.Object[]; efps-backend/src/modules/admin/admin.service.ts=System.Object[]; efps-backend/src/modules/ads/ads.service.ts=System.Object[]; efps-backend/src/modules/audit/audit.service.ts=System.Object[]; efps-backend/src/modules/auth/auth.controller.ts=System.Object[]; efps-backend/src/modules/auth/auth.routes.ts=System.Object[]; efps-backend/src/modules/auth/auth.schema.ts=System.Object[]; efps-backend/src/modules/auth/auth.service.ts=System.Object[]; efps-backend/src/modules/beneficiary/beneficiary.service.ts=System.Object[]; efps-backend/src/modules/commission/commission.controller.ts=System.Object[]; efps-backend/src/modules/commission/commission.schema.ts=System.Object[]; efps-backend/src/modules/commission/commission.service.ts=System.Object[]; efps-backend/src/modules/dealer/dealer.controller.ts=System.Object[]; efps-backend/src/modules/dealer/dealer.schema.ts=System.Object[]; efps-backend/src/modules/dealer/dealer.service.ts=System.Object[]; efps-backend/src/modules/finance/finance.service.ts=System.Object[]; efps-backend/src/modules/mdm/mdm.service.ts=System.Object[]; efps-backend/src/modules/notification/notification.controller.ts=System.Object[]; efps-backend/src/modules/notification/notification.routes.ts=System.Object[]; efps-backend/src/modules/notification/notification.schema.ts=System.Object[]; efps-backend/src/modules/notification/notification.service.ts=System.Object[]}",
+                        "neighborMap":  "@{efps-backend/src/config/constants.ts=System.Object[]; efps-backend/src/modules/admin/admin.controller.ts=System.Object[]; efps-backend/src/modules/admin/admin.service.ts=System.Object[]; efps-backend/src/modules/ads/ads.service.ts=System.Object[]; efps-backend/src/modules/audit/audit.service.ts=System.Object[]; efps-backend/src/modules/auth/auth.controller.ts=System.Object[]; efps-backend/src/modules/auth/auth.routes.ts=System.Object[]; efps-backend/src/modules/auth/auth.service.ts=System.Object[]; efps-backend/src/modules/beneficiary/beneficiary.service.ts=System.Object[]; efps-backend/src/modules/commission/commission.controller.ts=System.Object[]; efps-backend/src/modules/commission/commission.service.ts=System.Object[]; efps-backend/src/modules/dealer/dealer.controller.ts=System.Object[]; efps-backend/src/modules/dealer/dealer.service.ts=System.Object[]; efps-backend/src/modules/finance/finance.service.ts=System.Object[]; efps-backend/src/modules/mdm/mdm.service.ts=System.Object[]; efps-backend/src/modules/notification/notification.controller.ts=System.Object[]; efps-backend/src/modules/notification/notification.routes.ts=System.Object[]; efps-backend/src/modules/notification/notification.service.ts=System.Object[]}"
+                    },
+                    {
+                        "batchIndex":  5,
+                        "files":  "                     ",
+                        "batchImportData":  "@{efps-backend/scripts/generate-openapi.ts=System.Object[]; efps-backend/scripts/import-gujarat-csv.ts=System.Object[]; efps-backend/scripts/seed.ts=System.Object[]; efps-backend/src/app.ts=System.Object[]; efps-backend/src/config/database.ts=System.Object[]; efps-backend/src/config/index.ts=System.Object[]; efps-backend/src/config/redis.ts=System.Object[]; efps-backend/src/database/migration-runner.ts=System.Object[]; efps-backend/src/jobs/audit-flush.job.ts=System.Object[]; efps-backend/src/jobs/daily-report.job.ts=System.Object[]; efps-backend/src/jobs/domain-events.queue.ts=System.Object[]; efps-backend/src/jobs/session-cleanup.job.ts=System.Object[]; efps-backend/src/jobs/sms-otp.job.ts=System.Object[]; efps-backend/src/jobs/sync/efps-sync.worker.ts=System.Object[]; efps-backend/src/jobs/sync/govt-data-sync.job.ts=System.Object[]; efps-backend/src/jobs/sync/ipds-sync.worker.ts=System.Object[]; efps-backend/src/jobs/sync/sync-scheduler.job.ts=System.Object[]; efps-backend/src/modules/sync/govt-importer.service.ts=System.Object[]; efps-backend/src/modules/sync/sync.controller.ts=System.Object[]; efps-backend/src/modules/sync/sync.schema.ts=System.Object[]; efps-backend/src/modules/sync/sync.service.ts=System.Object[]; efps-backend/src/plugins/auth.plugin.ts=System.Object[]}",
+                        "neighborMap":  "@{efps-backend/src/app.ts=System.Object[]; efps-backend/src/config/database.ts=System.Object[]; efps-backend/src/config/index.ts=System.Object[]; efps-backend/src/config/redis.ts=System.Object[]; efps-backend/src/database/migration-runner.ts=System.Object[]; efps-backend/src/jobs/audit-flush.job.ts=System.Object[]; efps-backend/src/jobs/daily-report.job.ts=System.Object[]; efps-backend/src/jobs/domain-events.queue.ts=System.Object[]; efps-backend/src/jobs/session-cleanup.job.ts=System.Object[]; efps-backend/src/jobs/sms-otp.job.ts=System.Object[]; efps-backend/src/jobs/sync/efps-sync.worker.ts=System.Object[]; efps-backend/src/jobs/sync/govt-data-sync.job.ts=System.Object[]; efps-backend/src/jobs/sync/ipds-sync.worker.ts=System.Object[]; efps-backend/src/jobs/sync/sync-scheduler.job.ts=System.Object[]; efps-backend/src/modules/sync/sync.controller.ts=System.Object[]; efps-backend/src/modules/sync/sync.service.ts=System.Object[]}"
+                    },
+                    {
+                        "batchIndex":  6,
+                        "files":  "                     ",
+                        "batchImportData":  "@{efps-backend/src/modules/admin/admin.routes.ts=System.Object[]; efps-backend/src/modules/commission/commission.routes.ts=System.Object[]; efps-backend/src/modules/dealer/dealer.routes.ts=System.Object[]; efps-backend/src/modules/directory/directory.controller.ts=System.Object[]; efps-backend/src/modules/directory/directory.routes.ts=System.Object[]; efps-backend/src/modules/directory/directory.schema.ts=System.Object[]; efps-backend/src/modules/directory/directory.service.ts=System.Object[]; efps-backend/src/modules/hierarchy/hierarchy.controller.ts=System.Object[]; efps-backend/src/modules/hierarchy/hierarchy.routes.ts=System.Object[]; efps-backend/src/modules/hierarchy/hierarchy.schema.ts=System.Object[]; efps-backend/src/modules/hierarchy/hierarchy.service.ts=System.Object[]; efps-backend/src/modules/mdm/mdm.controller.ts=System.Object[]; efps-backend/src/modules/mdm/mdm.monthly.controller.ts=System.Object[]; efps-backend/src/modules/mdm/mdm.monthly.service.ts=System.Object[]; efps-backend/src/modules/mdm/mdm.routes.ts=System.Object[]; efps-backend/src/modules/mdm/mdm.schema.ts=System.Object[]; efps-backend/src/modules/stock/stock.routes.ts=System.Object[]; efps-backend/src/modules/sync/sync.routes.ts=System.Object[]; efps-backend/src/shared/middleware/authenticate.ts=System.Object[]; efps-backend/src/shared/middleware/authorize.ts=System.Object[]; efps-backend/src/shared/middleware/validate-fps-id.ts=System.Object[]; efps-backend/src/shared/types/enums.ts=System.Object[]}",
+                        "neighborMap":  "@{efps-backend/src/modules/admin/admin.routes.ts=System.Object[]; efps-backend/src/modules/commission/commission.routes.ts=System.Object[]; efps-backend/src/modules/dealer/dealer.routes.ts=System.Object[]; efps-backend/src/modules/directory/directory.routes.ts=System.Object[]; efps-backend/src/modules/directory/directory.service.ts=System.Object[]; efps-backend/src/modules/hierarchy/hierarchy.controller.ts=System.Object[]; efps-backend/src/modules/hierarchy/hierarchy.routes.ts=System.Object[]; efps-backend/src/modules/hierarchy/hierarchy.service.ts=System.Object[]; efps-backend/src/modules/mdm/mdm.controller.ts=System.Object[]; efps-backend/src/modules/mdm/mdm.monthly.service.ts=System.Object[]; efps-backend/src/modules/mdm/mdm.routes.ts=System.Object[]; efps-backend/src/modules/mdm/mdm.schema.ts=System.Object[]; efps-backend/src/modules/stock/stock.routes.ts=System.Object[]; efps-backend/src/modules/sync/sync.routes.ts=System.Object[]; efps-backend/src/shared/middleware/authenticate.ts=System.Object[]; efps-backend/src/shared/middleware/authorize.ts=System.Object[]; efps-backend/src/shared/middleware/validate-fps-id.ts=System.Object[]; efps-backend/src/shared/types/enums.ts=System.Object[]}"
+                    },
+                    {
+                        "batchIndex":  7,
+                        "files":  "                     ",
+                        "batchImportData":  "@{efps-backend/src/modules/stock-entry/stock-entry.service.ts=System.Object[]; efps-backend/src/modules/stock/stock.controller.ts=System.Object[]; efps-backend/src/modules/stock/stock.schema.ts=System.Object[]; efps-backend/src/modules/stock/stock.service.ts=System.Object[]; efps-backend/src/modules/transaction/transaction.controller.ts=System.Object[]; efps-backend/src/modules/transaction/transaction.routes.ts=System.Object[]; efps-backend/src/modules/transaction/transaction.schema.ts=System.Object[]; efps-backend/src/modules/transaction/transaction.service.ts=System.Object[]; efps-backend/src/shared/errors/AppError.ts=System.Object[]; efps-backend/src/shared/errors/AuthError.ts=System.Object[]; efps-backend/src/shared/errors/ValidationError.ts=System.Object[]; efps-backend/src/shared/errors/error-handler.ts=System.Object[]; efps-backend/src/shared/events/index.ts=System.Object[]; efps-backend/src/shared/types/fastify.d.ts=System.Object[]; efps-backend/src/shared/types/models.ts=System.Object[]; efps-backend/src/shared/utils/hash.ts=System.Object[]; efps-backend/src/shared/utils/logger.ts=System.Object[]; efps-backend/src/shared/utils/otp.ts=System.Object[]; efps-backend/src/shared/utils/pagination.ts=System.Object[]; efps-backend/tests/unit/hash.test.ts=System.Object[]; efps-backend/tests/unit/otp.test.ts=System.Object[]; efps-backend/tests/unit/pagination.test.ts=System.Object[]}",
+                        "neighborMap":  "@{efps-backend/src/modules/stock-entry/stock-entry.service.ts=System.Object[]; efps-backend/src/modules/stock/stock.controller.ts=System.Object[]; efps-backend/src/modules/stock/stock.service.ts=System.Object[]; efps-backend/src/modules/transaction/transaction.controller.ts=System.Object[]; efps-backend/src/modules/transaction/transaction.routes.ts=System.Object[]; efps-backend/src/modules/transaction/transaction.service.ts=System.Object[]; efps-backend/src/shared/errors/AppError.ts=System.Object[]; efps-backend/src/shared/errors/AuthError.ts=System.Object[]; efps-backend/src/shared/errors/ValidationError.ts=System.Object[]; efps-backend/src/shared/errors/error-handler.ts=System.Object[]; efps-backend/src/shared/events/index.ts=System.Object[]; efps-backend/src/shared/types/models.ts=System.Object[]; efps-backend/src/shared/utils/hash.ts=System.Object[]; efps-backend/src/shared/utils/logger.ts=System.Object[]; efps-backend/src/shared/utils/otp.ts=System.Object[]; efps-backend/src/shared/utils/pagination.ts=System.Object[]}"
+                    },
+                    {
+                        "batchIndex":  8,
+                        "files":  "                     ",
+                        "batchImportData":  "@{efps-backend/src/plugins/cors.plugin.ts=System.Object[]; efps-backend/src/plugins/helmet.plugin.ts=System.Object[]; efps-backend/src/plugins/metrics.plugin.ts=System.Object[]; efps-backend/src/plugins/multipart.plugin.ts=System.Object[]; efps-backend/src/plugins/rate-limit.plugin.ts=System.Object[]; efps-backend/src/plugins/swagger.plugin.ts=System.Object[]; efps-backend/src/server.ts=System.Object[]; efps-backend/src/shared/events/event-bus.ts=System.Object[]; efps-backend/src/shared/middleware/audit-log.ts=System.Object[]; efps-backend/src/shared/middleware/idempotency.ts=System.Object[]; efps-backend/src/shared/utils/circuit-breaker.ts=System.Object[]; efps-backend/src/shared/utils/encrypt.ts=System.Object[]; efps-backend/src/shared/utils/token.ts=System.Object[]; efps-backend/tests/integration/audit.test.ts=System.Object[]; efps-backend/tests/integration/auth.test.ts=System.Object[]; efps-backend/tests/integration/commission.test.ts=System.Object[]; efps-backend/tests/integration/finance.test.ts=System.Object[]; efps-backend/tests/integration/internal-sync.test.ts=System.Object[]; efps-backend/tests/integration/sync.test.ts=System.Object[]; efps-backend/tests/integration/transaction.test.ts=System.Object[]; efps-backend/tests/unit/circuit-breaker.test.ts=System.Object[]; efps-backend/tests/unit/encrypt.test.ts=System.Object[]}",
+                        "neighborMap":  "@{efps-backend/src/plugins/cors.plugin.ts=System.Object[]; efps-backend/src/plugins/helmet.plugin.ts=System.Object[]; efps-backend/src/plugins/metrics.plugin.ts=System.Object[]; efps-backend/src/plugins/multipart.plugin.ts=System.Object[]; efps-backend/src/plugins/rate-limit.plugin.ts=System.Object[]; efps-backend/src/plugins/swagger.plugin.ts=System.Object[]; efps-backend/src/server.ts=System.Object[]; efps-backend/src/shared/events/event-bus.ts=System.Object[]; efps-backend/src/shared/middleware/audit-log.ts=System.Object[]; efps-backend/src/shared/middleware/idempotency.ts=System.Object[]; efps-backend/src/shared/utils/circuit-breaker.ts=System.Object[]; efps-backend/src/shared/utils/encrypt.ts=System.Object[]; efps-backend/src/shared/utils/token.ts=System.Object[]; efps-backend/tests/integration/audit.test.ts=System.Object[]; efps-backend/tests/integration/auth.test.ts=System.Object[]; efps-backend/tests/integration/commission.test.ts=System.Object[]; efps-backend/tests/integration/finance.test.ts=System.Object[]; efps-backend/tests/integration/internal-sync.test.ts=System.Object[]; efps-backend/tests/integration/sync.test.ts=System.Object[]; efps-backend/tests/integration/transaction.test.ts=System.Object[]}"
+                    },
+                    {
+                        "batchIndex":  9,
+                        "files":  "       ",
+                        "batchImportData":  "@{efps-backend/src/modules/internal-sync/internal-sync.controller.ts=System.Object[]; efps-backend/src/modules/internal-sync/internal-sync.router.ts=System.Object[]; efps-backend/src/modules/internal-sync/internal-sync.schema.ts=System.Object[]; efps-backend/src/modules/internal-sync/internal-sync.service.ts=System.Object[]; efps-backend/src/shared/sync/normalization.service.ts=System.Object[]; efps-backend/src/shared/sync/quarantine.service.ts=System.Object[]; efps-backend/src/shared/sync/system-events.service.ts=System.Object[]; efps-backend/src/shared/sync/validation.service.ts=System.Object[]}",
+                        "neighborMap":  "@{efps-backend/src/modules/internal-sync/internal-sync.controller.ts=System.Object[]; efps-backend/src/modules/internal-sync/internal-sync.router.ts=System.Object[]; efps-backend/src/modules/internal-sync/internal-sync.service.ts=System.Object[]; efps-backend/src/shared/sync/quarantine.service.ts=System.Object[]; efps-backend/src/shared/sync/system-events.service.ts=System.Object[]}"
+                    },
+                    {
+                        "batchIndex":  10,
+                        "files":  "    ",
+                        "batchImportData":  "@{efps-backend/src/modules/report/report.controller.ts=System.Object[]; efps-backend/src/modules/report/report.routes.ts=System.Object[]; efps-backend/src/modules/report/report.schema.ts=System.Object[]; efps-backend/src/modules/report/report.service.ts=System.Object[]; efps-backend/src/shared/utils/pdf.ts=System.Object[]}",
+                        "neighborMap":  "@{efps-backend/src/modules/report/report.controller.ts=System.Object[]; efps-backend/src/modules/report/report.routes.ts=System.Object[]; efps-backend/src/modules/report/report.service.ts=System.Object[]}"
+                    },
+                    {
+                        "batchIndex":  11,
+                        "files":  "   ",
+                        "batchImportData":  "@{efps-backend/src/modules/lifting/lifting.controller.ts=System.Object[]; efps-backend/src/modules/lifting/lifting.routes.ts=System.Object[]; efps-backend/src/modules/lifting/lifting.schema.ts=System.Object[]; efps-backend/src/modules/lifting/lifting.service.ts=System.Object[]}",
+                        "neighborMap":  "@{efps-backend/src/modules/lifting/lifting.controller.ts=System.Object[]; efps-backend/src/modules/lifting/lifting.routes.ts=System.Object[]; efps-backend/src/modules/lifting/lifting.service.ts=System.Object[]}"
+                    },
+                    {
+                        "batchIndex":  12,
+                        "files":  "  ",
+                        "batchImportData":  "@{efps-backend/.dockerignore=System.Object[]; efps-backend/docker-compose.yml=System.Object[]; efps-backend/Dockerfile=System.Object[]}",
+                        "neighborMap":  ""
+                    },
+                    {
+                        "batchIndex":  13,
+                        "files":  " ",
+                        "batchImportData":  "@{efps-backend/docker/docker-compose.yml=System.Object[]; efps-backend/docker/Dockerfile=System.Object[]}",
+                        "neighborMap":  ""
+                    },
+                    {
+                        "batchIndex":  14,
+                        "files":  "                              ",
+                        "batchImportData":  "@{efps-backend/src/database/migrations/001_init_tables.sql=System.Object[]; efps-backend/src/database/migrations/002_add_sessions.sql=System.Object[]; efps-backend/src/database/migrations/003_add_otp.sql=System.Object[]; efps-backend/src/database/migrations/004_add_audit_log.sql=System.Object[]; efps-backend/src/database/migrations/005_add_notifications.sql=System.Object[]; efps-backend/src/database/migrations/006_inventory_movements.sql=System.Object[]; efps-backend/src/database/migrations/007_add_commissions.sql=System.Object[]; efps-backend/src/database/migrations/008_add_finance.sql=System.Object[]; efps-backend/src/database/migrations/009_add_ads.sql=System.Object[]; efps-backend/src/database/migrations/010_add_mdm.sql=System.Object[]; efps-backend/src/database/migrations/011_add_sync_logs.sql=System.Object[]; efps-backend/src/database/migrations/012_add_social_audit.sql=System.Object[]; efps-backend/src/database/migrations/013_add_missing_tables.sql=System.Object[]; efps-backend/src/database/migrations/014_add_views.sql=System.Object[]; efps-backend/src/database/migrations/015_add_govt_sync_enhancements.sql=System.Object[]; efps-backend/src/database/migrations/016_add_gujarat_hierarchy.sql=System.Object[]; efps-backend/src/database/migrations/017_add_dealer_credentials.sql=System.Object[]; efps-backend/src/database/migrations/018_add_sync_jobs.sql=System.Object[]; efps-backend/src/database/migrations/019_add_composite_indexes.sql=System.Object[]; efps-backend/src/database/migrations/020_add_mdm_monthly_records.sql=System.Object[]; efps-backend/src/database/migrations/021_add_dealer_credential_iv_password.sql=System.Object[]; efps-backend/src/database/migrations/022_add_sync_scheduler_source_url.sql=System.Object[]; efps-backend/src/database/migrations/023_add_tds_rates.sql=System.Object[]; efps-backend/src/database/migrations/024_add_on_delete_cascade.sql=System.Object[]; efps-backend/src/database/migrations/025_add_updated_at_trigger.sql=System.Object[]; efps-backend/src/database/migrations/026_enterprise_sync_infrastructure.sql=System.Object[]; efps-backend/src/database/migrations/027_auth_refresh_optimization.sql=System.Object[]; efps-backend/src/database/migrations/028_add_commission_payments.sql=System.Object[]; efps-backend/src/database/migrations/029_add_sync_columns.sql=System.Object[]; efps-backend/src/database/migrations/030_create_stock_entry_system.sql=System.Object[]; efps-backend/src/database/migrations/031_enterprise_erp_redesign.sql=System.Object[]}",
+                        "neighborMap":  ""
+                    },
+                    {
+                        "batchIndex":  15,
+                        "files":  "                   ",
+                        "batchImportData":  "@{.agents/skills/ui-craft/references/accessibility.md=System.Object[]; .agents/skills/ui-craft/references/ai-chat.md=System.Object[]; .agents/skills/ui-craft/references/brief.md=System.Object[]; .agents/skills/ui-craft/references/color.md=System.Object[]; .agents/skills/ui-craft/references/components.md=System.Object[]; .agents/skills/ui-craft/references/copy.md=System.Object[]; .agents/skills/ui-craft/references/dashboard.md=System.Object[]; .agents/skills/ui-craft/references/dataviz.md=System.Object[]; .agents/skills/ui-craft/references/finish-bar.md=System.Object[]; .agents/skills/ui-craft/references/forms.md=System.Object[]; .agents/skills/ui-craft/references/heuristics.md=System.Object[]; .agents/skills/ui-craft/references/inspiration.md=System.Object[]; .agents/skills/ui-craft/references/layout.md=System.Object[]; .agents/skills/ui-craft/references/modern-css.md=System.Object[]; .agents/skills/ui-craft/references/motion.md=System.Object[]; .agents/skills/ui-craft/references/personas.md=System.Object[]; .agents/skills/ui-craft/references/principles-catalog.md=System.Object[]; .agents/skills/ui-craft/references/recipe-auth.md=System.Object[]; .agents/skills/ui-craft/references/recipe-dashboard.md=System.Object[]; .agents/skills/ui-craft/references/recipe-landing.md=System.Object[]}",
+                        "neighborMap":  ""
+                    },
+                    {
+                        "batchIndex":  16,
+                        "files":  "       ",
+                        "batchImportData":  "@{.agents/skills/ui-craft/references/responsive.md=System.Object[]; .agents/skills/ui-craft/references/review.md=System.Object[]; .agents/skills/ui-craft/references/sound.md=System.Object[]; .agents/skills/ui-craft/references/stack.md=System.Object[]; .agents/skills/ui-craft/references/state-design.md=System.Object[]; .agents/skills/ui-craft/references/themes.md=System.Object[]; .agents/skills/ui-craft/references/tokens.md=System.Object[]; .agents/skills/ui-craft/references/typography.md=System.Object[]}",
+                        "neighborMap":  ""
+                    },
+                    {
+                        "batchIndex":  17,
+                        "files":  "          ",
+                        "batchImportData":  "@{README.md=System.Object[]; RUNBOOK.md=System.Object[]; components.md=System.Object[]; cookies.txt=System.Object[]; cookies2.txt=System.Object[]; data_flow.md=System.Object[]; efps_backend_prd.md=System.Object[]; full_stack.md=System.Object[]; full_stack_design.md=System.Object[]; skills-lock.json=System.Object[]; solution.md=System.Object[]}",
+                        "neighborMap":  ""
+                    },
+                    {
+                        "batchIndex":  18,
+                        "files":  "     ",
+                        "batchImportData":  "@{efps-backend/.env.example=System.Object[]; efps-backend/README.md=System.Object[]; efps-backend/dev.ps1=System.Object[]; efps-backend/docker-entrypoint.sh=System.Object[]; efps-backend/package.json=System.Object[]; efps-backend/tsconfig.json=System.Object[]}",
+                        "neighborMap":  ""
+                    },
+                    {
+                        "batchIndex":  19,
+                        "files":  "    ",
+                        "batchImportData":  "@{efps-frontend/AGENTS.md=System.Object[]; efps-frontend/CLAUDE.md=System.Object[]; efps-frontend/README.md=System.Object[]; efps-frontend/package.json=System.Object[]; efps-frontend/tsconfig.json=System.Object[]}",
+                        "neighborMap":  ""
+                    },
+                    {
+                        "batchIndex":  20,
+                        "files":  "                        ",
+                        "batchImportData":  "@{.agents/skills/audit/SKILL.md=System.Object[]; .agents/skills/brandkit/SKILL.md=System.Object[]; .agents/skills/brief/SKILL.md=System.Object[]; .agents/skills/colorize/SKILL.md=System.Object[]; .agents/skills/design-taste-frontend-v1/SKILL.md=System.Object[]; .agents/skills/design-taste-frontend/SKILL.md=System.Object[]; .agents/skills/finalize/SKILL.md=System.Object[]; .agents/skills/full-output-enforcement/SKILL.md=System.Object[]; .agents/skills/gpt-taste/SKILL.md=System.Object[]; .agents/skills/heuristic/SKILL.md=System.Object[]; .agents/skills/high-end-visual-design/SKILL.md=System.Object[]; .agents/skills/image-to-code/SKILL.md=System.Object[]; .agents/skills/imagegen-frontend-mobile/SKILL.md=System.Object[]; .agents/skills/imagegen-frontend-web/SKILL.md=System.Object[]; .agents/skills/industrial-brutalist-ui/SKILL.md=System.Object[]; .agents/skills/minimalist-ui/SKILL.md=System.Object[]; .agents/skills/redesign-existing-projects/SKILL.md=System.Object[]; .agents/skills/shape/SKILL.md=System.Object[]; .agents/skills/stitch-design-taste/DESIGN.md=System.Object[]; .agents/skills/stitch-design-taste/SKILL.md=System.Object[]; .agents/skills/tokens/SKILL.md=System.Object[]; .agents/skills/ui-craft-dense-dashboard/SKILL.md=System.Object[]; .agents/skills/ui-craft-editorial/SKILL.md=System.Object[]; .agents/skills/ui-craft-minimal/SKILL.md=System.Object[]; .agents/skills/ui-craft/SKILL.md=System.Object[]}",
+                        "neighborMap":  ""
+                    },
+                    {
+                        "batchIndex":  21,
+                        "files":  "                        ",
+                        "batchImportData":  "@{.understand-anything/.understandignore=System.Object[]; .understand-anything/config.json=System.Object[]; .understand-anything/intermediate/scan-result.json=System.Object[]; .understand-anything/tmp/import-map-input.json=System.Object[]; delete=System.Object[]; efps-backend/docker/Dockerfile.dev=System.Object[]; efps-backend/docker/Dockerfile.worker=System.Object[]; efps-backend/ecosystem.config.cjs=System.Object[]; efps-backend/eng.traineddata=System.Object[]; efps-backend/eslint.config.js=System.Object[]; efps-backend/scratch/inspect-captcha.js=System.Object[]; efps-backend/scratch/inspect-ipds.js=System.Object[]; efps-backend/scratch/inspect-portal.js=System.Object[]; efps-backend/scratch/inspect-post-login.js=System.Object[]; efps-backend/scripts/complete-seed.mjs=System.Object[]; efps-backend/scripts/list_tables.mjs=System.Object[]; efps-backend/scripts/migrate.ts=System.Object[]; efps-backend/scripts/upgrade-redis.ps1=System.Object[]; efps-backend/src/scraper/govt-efps-scraper.ts=System.Object[]; efps-backend/src/shared/events/register-handlers.ts=System.Object[]; efps-backend/test-argon.cjs=System.Object[]; efps-backend/test-argon.js=System.Object[]; efps-backend/tests/fixtures/factories.ts=System.Object[]; efps-backend/tests/fixtures/setup.ts=System.Object[]; efps-backend/tests/unit/efps-sync-captcha.test.ts=System.Object[]}",
+                        "neighborMap":  ""
+                    },
+                    {
+                        "batchIndex":  22,
+                        "files":  "                        ",
+                        "batchImportData":  "@{efps-backend/tests/unit/efps-sync-mappings.test.ts=System.Object[]; efps-backend/vitest.config.ts=System.Object[]; efps-frontend/eslint.config.mjs=System.Object[]; efps-frontend/next.config.ts=System.Object[]; efps-frontend/src/app/(auth)/change-profile/ChangeProfile.module.css=System.Object[]; efps-frontend/src/app/(auth)/layout.tsx=System.Object[]; efps-frontend/src/app/(auth)/login/Login.module.css=System.Object[]; efps-frontend/src/app/(auth)/register/Register.module.css=System.Object[]; efps-frontend/src/app/(dashboard)/ads/Ads.module.css=System.Object[]; efps-frontend/src/app/(dashboard)/bank-commission/BankCommission.module.css=System.Object[]; efps-frontend/src/app/(dashboard)/calculator/Calculator.module.css=System.Object[]; efps-frontend/src/app/(dashboard)/customers/Customers.module.css=System.Object[]; efps-frontend/src/app/(dashboard)/dashboard/Dashboard.module.css=System.Object[]; efps-frontend/src/app/(dashboard)/dealers/Dealers.module.css=System.Object[]; efps-frontend/src/app/(dashboard)/income-expense/IncomeExpense.module.css=System.Object[]; efps-frontend/src/app/(dashboard)/incoming-stock/IncomingStock.module.css=System.Object[]; efps-frontend/src/app/(dashboard)/ledger/StockLedger.module.css=System.Object[]; efps-frontend/src/app/(dashboard)/manual-sale/ManualSale.module.css=System.Object[]; efps-frontend/src/app/(dashboard)/mdm-record/MdmRecord.module.css=System.Object[]; efps-frontend/src/app/(dashboard)/monthly-record/MonthlyRecord.module.css=System.Object[]; efps-frontend/src/app/(dashboard)/monthly-sales-report/Report.module.css=System.Object[]; efps-frontend/src/app/(dashboard)/operational-dashboard/Operational.module.css=System.Object[]; efps-frontend/src/app/(dashboard)/pending-customers/PendingCustomers.module.css=System.Object[]; efps-frontend/src/app/(dashboard)/profile/edit/Profile.module.css=System.Object[]; efps-frontend/src/app/(dashboard)/sales/Sales.module.css=System.Object[]}",
+                        "neighborMap":  "@{efps-frontend/src/app/(auth)/change-profile/ChangeProfile.module.css=System.Object[]; efps-frontend/src/app/(auth)/login/Login.module.css=System.Object[]; efps-frontend/src/app/(auth)/register/Register.module.css=System.Object[]; efps-frontend/src/app/(dashboard)/ads/Ads.module.css=System.Object[]; efps-frontend/src/app/(dashboard)/bank-commission/BankCommission.module.css=System.Object[]; efps-frontend/src/app/(dashboard)/calculator/Calculator.module.css=System.Object[]; efps-frontend/src/app/(dashboard)/customers/Customers.module.css=System.Object[]; efps-frontend/src/app/(dashboard)/dashboard/Dashboard.module.css=System.Object[]; efps-frontend/src/app/(dashboard)/dealers/Dealers.module.css=System.Object[]; efps-frontend/src/app/(dashboard)/income-expense/IncomeExpense.module.css=System.Object[]; efps-frontend/src/app/(dashboard)/incoming-stock/IncomingStock.module.css=System.Object[]; efps-frontend/src/app/(dashboard)/ledger/StockLedger.module.css=System.Object[]; efps-frontend/src/app/(dashboard)/manual-sale/ManualSale.module.css=System.Object[]; efps-frontend/src/app/(dashboard)/mdm-record/MdmRecord.module.css=System.Object[]; efps-frontend/src/app/(dashboard)/monthly-record/MonthlyRecord.module.css=System.Object[]; efps-frontend/src/app/(dashboard)/monthly-sales-report/Report.module.css=System.Object[]; efps-frontend/src/app/(dashboard)/operational-dashboard/Operational.module.css=System.Object[]; efps-frontend/src/app/(dashboard)/pending-customers/PendingCustomers.module.css=System.Object[]; efps-frontend/src/app/(dashboard)/profile/edit/Profile.module.css=System.Object[]; efps-frontend/src/app/(dashboard)/sales/Sales.module.css=System.Object[]}"
+                    },
+                    {
+                        "batchIndex":  23,
+                        "files":  "         ",
+                        "batchImportData":  "@{efps-frontend/src/app/(dashboard)/social-audit/SocialAudit.module.css=System.Object[]; efps-frontend/src/app/(dashboard)/stock-entry/StockEntry.module.css=System.Object[]; efps-frontend/src/app/(dashboard)/stock-record/StockRecord.module.css=System.Object[]; efps-frontend/src/app/(dashboard)/sync/Sync.module.css=System.Object[]; efps-frontend/src/app/(dashboard)/updates/page.tsx=System.Object[]; efps-frontend/src/app/(dashboard)/updates/Updates.module.css=System.Object[]; efps-frontend/src/app/globals.css=System.Object[]; efps-frontend/src/app/page.tsx=System.Object[]; efps-frontend/src/components/auth/BackLink.tsx=System.Object[]; efps-frontend/src/components/Sidebar.module.css=System.Object[]}",
+                        "neighborMap":  "@{efps-frontend/src/app/(dashboard)/social-audit/SocialAudit.module.css=System.Object[]; efps-frontend/src/app/(dashboard)/stock-entry/StockEntry.module.css=System.Object[]; efps-frontend/src/app/(dashboard)/stock-record/StockRecord.module.css=System.Object[]; efps-frontend/src/app/(dashboard)/sync/Sync.module.css=System.Object[]; efps-frontend/src/app/globals.css=System.Object[]; efps-frontend/src/components/Sidebar.module.css=System.Object[]}"
+                    }
+                ]
+}

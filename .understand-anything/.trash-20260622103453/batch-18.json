@@ -1,0 +1,255 @@
+{
+  "batch": 18,
+  "total": 23,
+  "description": "Agent skills: SKILL.md files from .agents/skills/",
+  "files": [
+    {
+      "path": ".agents/skills/imagegen-frontend-mobile/SKILL.md",
+      "exists": true,
+      "type": "agent-skill",
+      "name": "imagegen-frontend-mobile",
+      "description": "Elite mobile app image-generation skill for creating premium, app-native screen concepts and flows. iOS/Android/cross-platform. Generates images only, no code.",
+      "lines": 1465,
+      "sections": [
+        "Core Directive: Premium Mobile App Image Direction",
+        "Active Baseline Configuration (18 knobs: design variance, density, art direction, etc.)",
+        "Platform Mode Rule (iOS-native, Android-native, cross-platform)",
+        "Mandatory Screen-First Rule",
+        "Generate Enough Screens Rule",
+        "Do Not Crop Old Images Rule",
+        "App Design Bible Rule",
+        "Multi-Screen Consistency Rule",
+        "Logical Flow Rule",
+        "Default Mockup Presence Rule",
+        "Device Mockup Frame Rule",
+        "Onboarding Flow Rule",
+        "First Screen Cleanliness Rule",
+        "Safe Area and System Region Rule",
+        "Navigation Rule",
+        "Clean Layout Rule",
+        "Creative Image Direction Rule",
+        "Background Texture and Surface Rule",
+        "Image-Behind-Text Rule",
+        "Creative Asset Rule",
+        "Iconography Rule",
+        "Mobile Anti-AI-Tells Rule (visual, layout, copy, UI clutter tells)",
+        "Style Variation Engine (theme, typography, structure, art direction, texture, palette, components, assets, motion)",
+        "Color Palette Rule",
+        "Non-Genericity Rule",
+        "Not Always Simple Rule",
+        "Image System Rule",
+        "Fixed Mobile Media Frame Rule",
+        "Text Rule",
+        "Text Size and Readability Rule",
+        "Typography Rule",
+        "Spacing and Density Rule",
+        "Screen-to-Screen Variation Rule",
+        "Category-Specific Bias (fintech, health/fitness, productivity, social, commerce, wellness)",
+        "Regeneration Rule",
+        "Quality Check (27 verification points)",
+        "Response Behavior (28-step output protocol)",
+        "Example Interpretations",
+        "Final Goal"
+      ]
+    },
+    {
+      "path": ".agents/skills/imagegen-frontend-web/SKILL.md",
+      "exists": true,
+      "type": "agent-skill",
+      "name": "imagegen-frontend-web",
+      "description": "Elite frontend image-direction skill for generating premium, conversion-aware website design references. One horizontal image per section. Awwwards-level art direction.",
+      "lines": 987,
+      "sections": [
+        "Hard Output Rule (one horizontal image per section)",
+        "Hero Composition Bias (break left-text/right-image default)",
+        "Core Directive: Awwwards-Level Image Art Direction",
+        "Active Baseline Configuration (9 knobs)",
+        "Brief-to-Direction Mapping (minimalist, editorial, cinematic, SaaS, agency, e-commerce)",
+        "The Combinatorial Variation Engine (theme, background, typography, hero architecture, section system, components, motion, composition anchor, background mode, CTA, hero scale, narrative spine, second-read moment)",
+        "Frontend Reference Rule",
+        "Hero Minimalism Rules",
+        "Image Count & Page Slicing",
+        "Creativity Escalation Rule",
+        "Image-First Art Direction",
+        "Anti-AI-Slop Rules (layout, visual, typography, content, density, carousel, KPI)",
+        "Typography-First Discipline",
+        "Section Rhythm Rule",
+        "Component Execution Guidelines",
+        "Density & Spacing Discipline",
+        "Color & Material Rules",
+        "Image / Media Direction",
+        "Default Site Packs (4, 8, 12 sections)",
+        "Multi-Image Consistency Rule",
+        "Clarity Check (21 verification points)",
+        "Extra Creativity & Implementation Edge",
+        "Response Behavior",
+        "Example Interpretations",
+        "Final Goal"
+      ]
+    },
+    {
+      "path": ".agents/skills/industrial-brutalist-ui/SKILL.md",
+      "exists": true,
+      "type": "agent-skill",
+      "name": "industrial-brutalist-ui",
+      "description": "Raw mechanical interfaces fusing Swiss typographic print with military terminal aesthetics. Rigid grids, extreme type scale contrast, utilitarian color, analog degradation effects.",
+      "lines": 92,
+      "sections": [
+        "Skill Meta",
+        "Visual Archetypes (Swiss Industrial Print, Tactical Telemetry & CRT Terminal)",
+        "Typographic Architecture (Macro-Typography, Micro-Typography, Textural Contrast)",
+        "Color System",
+        "Layout and Spatial Engineering",
+        "UI Components and Symbology",
+        "Textural and Post-Processing Effects (halftone, CRT scanlines, mechanical noise)",
+        "Web Engineering Directives"
+      ]
+    },
+    {
+      "path": ".agents/skills/minimalist-ui/SKILL.md",
+      "exists": true,
+      "type": "agent-skill",
+      "name": "minimalist-ui",
+      "description": "Clean editorial-style interfaces. Warm monochrome palette, typographic contrast, flat bento grids, muted pastels. No gradients, no heavy shadows.",
+      "lines": 85,
+      "sections": [
+        "Protocol Overview",
+        "Absolute Negative Constraints (banned elements: font, icons, shadows, gradients, emoji, cliches)",
+        "Typographic Architecture (primary sans, editorial serif, monospace)",
+        "Color Palette (warm monochrome + spot pastels)",
+        "Component Specifications (bento grids, CTAs, tags, accordions, keystrokes, OS window chrome)",
+        "Iconography & Imagery Directives",
+        "Subtle Motion & Micro-Animations",
+        "Execution Protocol"
+      ]
+    },
+    {
+      "path": ".agents/skills/redesign-existing-projects/SKILL.md",
+      "exists": true,
+      "type": "agent-skill",
+      "name": "redesign-existing-projects",
+      "description": "Upgrades existing websites and apps to premium quality. Audits current design, identifies generic AI patterns, and applies high-end design standards without breaking functionality.",
+      "lines": 178,
+      "sections": [
+        "How This Works (scan, diagnose, fix)",
+        "Design Audit by category: Typography, Color and Surfaces, Layout, Interactivity and States, Content, Component Patterns, Iconography, Code Quality, Strategic Omissions",
+        "Upgrade Techniques (typography, layout, motion, surface upgrades)",
+        "Fix Priority (font swap → color cleanup → states → layout → components → states → typography polish)"
+      ]
+    },
+    {
+      "path": ".agents/skills/shape/SKILL.md",
+      "exists": true,
+      "type": "agent-skill",
+      "name": "shape",
+      "description": "Wireframe-first pass — ASCII layout + state list + content inventory + question list before any code. Sub-skill of ui-craft for low-fi thinking before building.",
+      "lines": 109,
+      "sections": [
+        "Step 1: Clarify (3-5 questions to user)",
+        "Step 2: Content inventory (P0/P1/P2 priorities)",
+        "Step 3: ASCII layout (desktop + mobile variants)",
+        "Step 4: State list (idle, loading, empty, error, partial, conflict, offline, success)",
+        "Step 5: Open questions",
+        "Knob awareness (CRAFT_LEVEL thresholds)",
+        "Output contract"
+      ]
+    },
+    {
+      "path": ".agents/skills/stitch-design-taste/SKILL.md",
+      "exists": true,
+      "type": "agent-skill",
+      "name": "stitch-design-taste",
+      "description": "Semantic Design System Skill for Google Stitch. Generates agent-friendly DESIGN.md files with premium, anti-generic UI standards.",
+      "lines": 184,
+      "sections": [
+        "Overview",
+        "The Goal (7 encoding points)",
+        "Analysis & Synthesis Instructions (atmosphere, color palette, typography rules, hero section, components, layout, responsive, motion, anti-patterns)",
+        "Output Format (DESIGN.md structure with 7 sections)",
+        "Best Practices, Tips, Common Pitfalls"
+      ]
+    },
+    {
+      "path": ".agents/skills/tokens/SKILL.md",
+      "exists": true,
+      "type": "agent-skill",
+      "name": "tokens",
+      "description": "Audit or establish the project's 3-layer token spine (primitive → semantic → component). Sub-skill of ui-craft for design token systems.",
+      "lines": 105,
+      "sections": [
+        "Step 1: Detect existing tokens",
+        "Step 2: Route based on target (audit/establish/focus)",
+        "Step 3: Audit (3-layer coverage, 7-category coverage, intentional dark mode, naming discipline, no arbitrary values)",
+        "Step 4: Establish (minimal spine: primitives, semantics, component tokens)",
+        "Step 5: Never overwrite (propose as patches)"
+      ]
+    },
+    {
+      "path": ".agents/skills/ui-craft/SKILL.md",
+      "exists": true,
+      "type": "agent-skill",
+      "name": "ui-craft",
+      "description": "Core UI design skill — anti-slop rules, discovery phase, craft tests, layout/typography/color/motion guidance. The parent skill for all ui-craft-* sub-skills.",
+      "lines": 291,
+      "sections": [
+        "Knobs (CRAFT_LEVEL, MOTION_INTENSITY, VISUAL_DENSITY)",
+        "Quick Start: Top 12 rules",
+        "Routing table (25+ modes/references)",
+        "Stack Detection",
+        "Discovery Phase (project analysis, quick ask, apply decisions)",
+        "Core Rules (Anti-Slop Test, Craft Test, When Rules Break, Animation Decision Ladder, Design Rules)",
+        "Review Format",
+        "Quick Decision Frameworks",
+        "Reference Files (Tier 1-4)"
+      ]
+    },
+    {
+      "path": ".agents/skills/ui-craft-dense-dashboard/SKILL.md",
+      "exists": true,
+      "type": "agent-skill",
+      "name": "ui-craft-dense-dashboard",
+      "description": "Dense dashboard / admin / Bloomberg / Retool / data-heavy internal tools. CRAFT=7, MOTION=3, DENSITY=9. IBM Plex + mono numbers, semantic palette, 4/8px grid.",
+      "lines": 113,
+      "sections": [
+        "Knobs (locked: CRAFT=7, MOTION=3, DENSITY=9)",
+        "Style anchors (tabular-nums, sparklines, keyboard shortcuts, dense chrome)",
+        "Base rules (inherited from ui-craft)",
+        "Style-specific overrides: Typography, Color, Spacing & Layout, Data Display, Chrome & Navigation, Motion",
+        "Reference files to read first",
+        "Anti-patterns for this style"
+      ]
+    },
+    {
+      "path": ".agents/skills/ui-craft-editorial/SKILL.md",
+      "exists": true,
+      "type": "agent-skill",
+      "name": "ui-craft-editorial",
+      "description": "Editorial / magazine / long-form / Medium / Substack / content-heavy UIs. CRAFT=9, MOTION=4, DENSITY=3. Serif display + humanist body, wide reading column, OpenType.",
+      "lines": 98,
+      "sections": [
+        "Knobs (locked: CRAFT=9, MOTION=4, DENSITY=3)",
+        "Style anchors (serif display, baseline grid, 65ch reading column, OpenType features, warm canvas)",
+        "Base rules (inherited from ui-craft)",
+        "Style-specific overrides: Typography, Color, Spacing & Layout, Motion, Content Components",
+        "Reference files to read first",
+        "Anti-patterns for this style"
+      ]
+    },
+    {
+      "path": ".agents/skills/ui-craft-minimal/SKILL.md",
+      "exists": true,
+      "type": "agent-skill",
+      "name": "ui-craft-minimal",
+      "description": "Minimal / clean / Linear / Notion / Vercel / whitespace-heavy UIs. CRAFT=8, MOTION=3, DENSITY=2. Monochrome + one accent, hairline borders, no shadows.",
+      "lines": 97,
+      "sections": [
+        "Knobs (locked: CRAFT=8, MOTION=3, DENSITY=2)",
+        "Style anchors (near-black on near-white, Inter/Geist, generous padding, hairline borders)",
+        "Base rules (inherited from ui-craft)",
+        "Style-specific overrides: Typography, Color, Spacing & Layout, Borders & Elevation, Motion, Composition",
+        "Reference files to read first",
+        "Anti-patterns for this style"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,314 @@
+{
+  "batch": 21,
+  "batchLabel": "Backend Shared Module — Utilities, Errors, Middleware, Sync Services, Types, Events",
+  "files": [
+    {
+      "path": "efps-backend/src/shared/utils/encrypt.ts",
+      "size": 1420,
+      "type": "Cryptographic Utility",
+      "summary": "AES-256-GCM symmetric encryption/decryption for field-level data. Uses node:crypto with a hex key from config. Provides `encrypt`, `decrypt`, and `encryptMany` (batch field encryption). Returns base64-encoded ciphertext, IV, and auth tag.",
+      "exports": ["encrypt", "decrypt", "encryptMany"],
+      "dependencies": ["node:crypto", "../../config/index.js"],
+      "keyPoints": [
+        "Static algorithm (aes-256-gcm) with 12-byte IV",
+        "Key derived from config.ENCRYPTION_KEY as hex buffer",
+        "encryptMany loops Object.entries for bulk field encryption"
+      ]
+    },
+    {
+      "path": "efps-backend/src/shared/utils/hash.ts",
+      "size": 1107,
+      "type": "Hashing Utility",
+      "summary": "Password hashing via argon2id (memory 64MB, time 3, parallelism 4), plus SHA-256 salted OTP hashing and generic SHA-256 token hashing.",
+      "exports": ["hashPassword", "verifyPassword", "hashOtp", "verifyOtpHash", "hashToken"],
+      "dependencies": ["argon2", "node:crypto"],
+      "keyPoints": [
+        "argon2id with OWASP-recommended parameters",
+        "OTP hash uses random 16-char hex salt + SHA-256(salt+otp)",
+        "hashToken is plain SHA-256 hex digest"
+      ]
+    },
+    {
+      "path": "efps-backend/src/shared/utils/otp.ts",
+      "size": 293,
+      "type": "OTP Utility",
+      "summary": "Generates cryptographically random numeric OTP (default 6 digits) using node:crypto randomInt. Checks expiration against a Date.",
+      "exports": ["generateOtp", "isOtpExpiresAt"],
+      "dependencies": ["node:crypto"],
+      "keyPoints": [
+        "Uses crypto.randomInt (not Math.random) for security",
+        "isOtpExpiresAt compares current time to expiresAt Date"
+      ]
+    },
+    {
+      "path": "efps-backend/src/shared/utils/pagination.ts",
+      "size": 992,
+      "type": "Pagination Utility",
+      "summary": "Offset-based pagination with cursor encoding. Parses page/limit from query params (clamped to config max), builds meta with total, page, limit, and a base64 cursor for hasMore.",
+      "exports": ["parsePaginationParams", "buildPaginationMeta"],
+      "dependencies": ["../../config/constants.js", "../types/models.js"],
+      "keyPoints": [
+        "Cursor is base64-encoded 'nextPage:limit' string",
+        "page defaults to 1, limit clamped to PAGINATION_DEFAULTS.maxLimit",
+        "PaginationMeta returned inside PaginatedResult wrapper"
+      ]
+    },
+    {
+      "path": "efps-backend/src/shared/utils/pdf.ts",
+      "size": 687,
+      "type": "PDF Generation Utility",
+      "summary": "Converts HTML to PDF using Playwright (headless Chromium). Singleton browser instance, A4 format with 20/15px margins, prints background graphics.",
+      "exports": ["htmlToPdf"],
+      "dependencies": ["playwright"],
+      "keyPoints": [
+        "Lazy singleton browser initialization",
+        "New context per call — closes after PDF generation",
+        "Returns Buffer"
+      ]
+    },
+    {
+      "path": "efps-backend/src/shared/utils/response.ts",
+      "size": 704,
+      "type": "HTTP Response Utility",
+      "summary": "Standardized Fastify reply helpers using ApiResponse<T> shape. Methods for success (200), paginated (200), created (201), and no-content (204).",
+      "exports": ["sendSuccess", "sendPaginated", "sendCreated", "sendNoContent"],
+      "dependencies": ["fastify", "../types/models.js"],
+      "keyPoints": [
+        "Consistent { success: true, data } envelope via satisfies",
+        "sendCreated delegates to sendSuccess with status 201",
+        "Typed with ApiResponse<T> generic"
+      ]
+    },
+    {
+      "path": "efps-backend/src/shared/utils/circuit-breaker.ts",
+      "size": 1511,
+      "type": "Resilience Utility",
+      "summary": "Generic circuit-breaker with CLOSED → OPEN → HALF_OPEN states. Configurable failure threshold (default 3) and reset timeout (default 30s). Supports optional fallback function.",
+      "exports": ["CircuitBreaker"],
+      "dependencies": [],
+      "keyPoints": [
+        "3 states: CLOSED, OPEN, HALF_OPEN",
+        "Auto-transitions to HALF_OPEN after resetTimeout",
+        "Fallback invoked on failure if provided, else error thrown",
+        "Console.warn on circuit open"
+      ]
+    },
+    {
+      "path": "efps-backend/src/shared/errors/AppError.ts",
+      "size": 360,
+      "type": "Base Error Class",
+      "summary": "Base application error with statusCode, machine-readable code, and optional field. All custom errors inherit from this.",
+      "exports": ["AppError"],
+      "dependencies": [],
+      "keyPoints": [
+        "Extends Error with name='AppError'",
+        "Properties: message, statusCode, code, field"
+      ]
+    },
+    {
+      "path": "efps-backend/src/shared/errors/ValidationError.ts",
+      "size": 233,
+      "type": "Validation-specific Error",
+      "summary": "Concrete error extending AppError with hardcoded 400 status and VALIDATION_ERROR code. Optional field for pointing to the invalid input.",
+      "exports": ["ValidationError"],
+      "dependencies": ["./AppError.js"],
+      "keyPoints": [
+        "Wrapper: AppError(message, 400, 'VALIDATION_ERROR', field)"
+      ]
+    },
+    {
+      "path": "efps-backend/src/shared/middleware/authenticate.ts",
+      "size": 1472,
+      "type": "Authentication Middleware",
+      "summary": "Fastify preHandler that verifies access token (Bearer header or cookie). Checks Redis blacklist, refreshes dealer online presence, and attaches user payload to request.",
+      "exports": ["authenticate"],
+      "dependencies": ["fastify", "../utils/token.js", "../errors/AuthError.js", "../../config/redis.js"],
+      "keyPoints": [
+        "Supports Bearer header and access_token cookie",
+        "Catches TokenExpiredError specifically",
+        "Redis blacklist check + online presence heartbeat (15min TTL)",
+        "Degraded mode if Redis unavailable (swallows error)",
+        "Sets request.user with { id, role, fps_id }"
+      ]
+    },
+    {
+      "path": "efps-backend/src/shared/middleware/authorize.ts",
+      "size": 975,
+      "type": "Authorization Middleware",
+      "summary": "Role-based access control middleware. `authorize(...roles)` checks user.role is in allowed list. `authorizeSelf()` allows admin or same-ID access only.",
+      "exports": ["authorize", "authorizeSelf"],
+      "dependencies": ["fastify", "../types/enums.js", "../errors/AuthError.js"],
+      "keyPoints": [
+        "authorize is a higher-order function returning middleware",
+        "authorizeSelf checks id param vs request.user.id"
+      ]
+    },
+    {
+      "path": "efps-backend/src/shared/middleware/audit-log.ts",
+      "size": 969,
+      "type": "Audit Logging Middleware/Utility",
+      "summary": "Inserts audit trail rows into audit_logs table with before/after data snapshots, IP, and user agent. Silently fails on DB error.",
+      "exports": ["createAuditLog"],
+      "dependencies": ["fastify", "../../config/database.js"],
+      "keyPoints": [
+        "Stores old_data/new_data as JSON stringified",
+        "Captures request.ip and user-agent header",
+        "Console.error on failure (non-blocking)"
+      ]
+    },
+    {
+      "path": "efps-backend/src/shared/middleware/idempotency.ts",
+      "size": 832,
+      "type": "Idempotency Middleware",
+      "summary": "POST-only idempotency key middleware. Validates key format (hex UUID-like, 8-128 chars), caches response in Redis for 24h, and replays cached response on repeat key.",
+      "exports": ["idempotencyKey"],
+      "dependencies": ["fastify", "../../config/redis.js"],
+      "keyPoints": [
+        "Skips non-POST methods",
+        "Key format: /^[a-f0-9\\-]{8,128}$/i",
+        "Initial cache stores { statusCode: 200, body: null } as placeholder (not final response)",
+        "24-hour TTL"
+      ]
+    },
+    {
+      "path": "efps-backend/src/shared/sync/normalization.service.ts",
+      "size": 4229,
+      "type": "Data Normalization Service",
+      "summary": "Cleans and standardizes raw sync records for PDS/ration data. Normalizes names (title case), mobile numbers (+91 prefix), dates (multiple formats → ISO date), addresses, ration card numbers, and numeric fields.",
+      "exports": ["normalizeRecord"],
+      "dependencies": [],
+      "keyPoints": [
+        "toTitleCase strips non-alpha chars, lowercases then capitalizes first letter per word",
+        "normalizeMobile strips non-digits, adds +91 prefix for 10-digit Indian numbers",
+        "normalizeDate handles YYYY-MM-DD, DD/MM/YYYY, etc.",
+        "normalizeNumeric strips non-numeric except '.'",
+        "Returns shallow copy with normalized fields"
+      ]
+    },
+    {
+      "path": "efps-backend/src/shared/sync/validation.service.ts",
+      "size": 5631,
+      "type": "Record Validation Service",
+      "summary": "Rule-based validator for four PDS record types (beneficiary, transaction, stock_allocation, lifting_record). Rules: required fields, numeric range, date format, ration card format, and lifted-vs-allocated quantity check.",
+      "exports": ["validateRecord", "validateBatch"],
+      "dependencies": [],
+      "keyPoints": [
+        "4 record types with different required field sets",
+        "LIFTED_EXCEEDS_ALLOCATED is a warning (not error)",
+        "validateBatch splits into pass/fail arrays",
+        "Ration card rule: 4-20 chars, alphanumeric + / - only"
+      ]
+    },
+    {
+      "path": "efps-backend/src/shared/sync/quarantine.service.ts",
+      "size": 2096,
+      "type": "Quarantine Management Service",
+      "summary": "Inserts failed validation records into sync_quarantine table. Provides summary grouped by record_type and error code, optionally filtered by dealer.",
+      "exports": ["insertQuarantineRecords", "getQuarantineSummary"],
+      "dependencies": ["../../config/database.js", "./validation.service"],
+      "keyPoints": [
+        "Accepts batch of QuarantineEntry objects",
+        "Records stored with raw_data and errors as jsonb",
+        "Source defaults to 'playwright'",
+        "Summary uses JSONB_AGG for aggregate counts by type and error code"
+      ]
+    },
+    {
+      "path": "efps-backend/src/shared/sync/system-events.service.ts",
+      "size": 1123,
+      "type": "System Event Logging Service",
+      "summary": "Insert and query system events with severity levels (info/warn/error/critical), source, optional trace ID, and metadata. Insert is best-effort (silent catch).",
+      "exports": ["insertSystemEvent", "getRecentEvents"],
+      "dependencies": ["../../config/database.js"],
+      "keyPoints": [
+        "4 severity levels with critical for highest",
+        "getRecentEvents optionally filters by severity",
+        "Insert wraps in try/catch — non-blocking"
+      ]
+    },
+    {
+      "path": "efps-backend/src/shared/types/models.ts",
+      "size": 2865,
+      "type": "Type Definitions — Domain Models",
+      "summary": "TypeScript interfaces for all core PDS entities: Dealer, Session, OtpRequest, Beneficiary, StockAllocation, Transaction, AuditLog, Notification, plus shared API shapes (PaginationMeta, ApiResponse, ApiError, JwtPayload, AuthUser).",
+      "exports": ["Dealer", "Session", "OtpRequest", "Beneficiary", "StockAllocation", "Transaction", "AuditLog", "Notification", "PaginationMeta", "ApiResponse", "ApiError", "JwtPayload", "AuthUser"],
+      "dependencies": ["./enums.js"],
+      "keyPoints": [
+        "All entity types use string IDs (UUIDs)",
+        "Dates are ISO 8601 strings",
+        "ApiResponse uses optional meta for paginated responses",
+        "AuthUser mirrors JwtPayload for request.user shape"
+      ]
+    },
+    {
+      "path": "efps-backend/src/shared/types/enums.ts",
+      "size": 1392,
+      "type": "Type Definitions — Enums",
+      "summary": "Const object enums with derived TypeScript types. Covers Role (dealer/area_officer/admin), AccountStatus, CommodityType (6 commodities), BeneficiaryCategory (APL/BPL/AAY/PHH), TransactionMode (pos/manual/otg), NotificationType, and OtpPurpose.",
+      "exports": ["Role", "AccountStatus", "CommodityType", "BeneficiaryCategory", "TransactionMode", "NotificationType", "OtpPurpose"],
+      "dependencies": [],
+      "keyPoints": [
+        "All use 'as const' pattern for literal union types",
+        "Commodities: Rice, Wheat, Sugar, Kerosene, Oil, Pulses",
+        "Transaction modes include OTG (offline transaction gadget)",
+        "Otp purposes: password_reset, verify_mobile, 2fa"
+      ]
+    },
+    {
+      "path": "efps-backend/src/shared/events/event-bus.ts",
+      "size": 1026,
+      "type": "Event Bus (Domain Events)",
+      "summary": "Simple event bus that asynchronously enqueues domain events into a job queue. Defines event type constants for key domain actions (transactions, lifting, commissions, stock, beneficiaries, allocations, sync, dashboard refresh, govt sync).",
+      "exports": ["EventTypes", "EventBus", "eventBus"],
+      "dependencies": ["../../jobs/domain-events.queue.js"],
+      "keyPoints": [
+        "emit() lazily imports domain-events.queue and enqueues",
+        "Error is caught and logged (non-blocking)",
+        "Singleton eventBus instance exported",
+        "removeAll() is intentionally no-op; handlers on worker side"
+      ]
+    }
+  ],
+  "summary": {
+    "totalFiles": 20,
+    "categories": {
+      "utilities": 7,
+      "errors": 2,
+      "middleware": 4,
+      "sync": 4,
+      "types": 2,
+      "events": 1
+    },
+    "keyFindings": [
+      "Utilities cover encryption (AES-256-GCM), hashing (argon2id), OTP generation (crypto.randomInt), pagination (offset + base64 cursor), PDF generation (Playwright), standardized HTTP responses, and circuit-breaker resilience.",
+      "Error hierarchy: AppError base class → ValidationError (400). AuthError, ForbiddenError, SessionNotFoundError referenced but defined elsewhere.",
+      "Authentication uses JWT + Redis for blacklist/online tracking with degraded-mode fallback. Authorization supports role-based and self-only access.",
+      "Sync pipeline: normalization.service (cleanse raw import) → validation.service (rule-based pass/fail) → quarantine.service (store failures). System events provide observability.",
+      "Models cover 7 domain entities (Dealer, Session, OtpRequest, Beneficiary, StockAllocation, Transaction, AuditLog, Notification) plus shared API shapes.",
+      "Enums use TypeScript 'as const' pattern for 7 domain enumerations with literal union types.",
+      "Event bus is lightweight — delegates to a job queue for async processing. No in-process handler registry."
+    ],
+    "dependencyGraph": {
+      "encrypt.ts": ["config/index.js"],
+      "hash.ts": ["argon2"],
+      "otp.ts": [],
+      "pagination.ts": ["config/constants.js", "types/models.js"],
+      "pdf.ts": ["playwright"],
+      "response.ts": ["types/models.js"],
+      "circuit-breaker.ts": [],
+      "AppError.ts": [],
+      "ValidationError.ts": ["AppError.ts"],
+      "authenticate.ts": ["utils/token.js", "errors/AuthError.js", "config/redis.js"],
+      "authorize.ts": ["types/enums.js", "errors/AuthError.js"],
+      "audit-log.ts": ["config/database.js"],
+      "idempotency.ts": ["config/redis.js"],
+      "normalization.service.ts": [],
+      "validation.service.ts": [],
+      "quarantine.service.ts": ["config/database.js", "validation.service.ts"],
+      "system-events.service.ts": ["config/database.js"],
+      "models.ts": ["types/enums.js"],
+      "enums.ts": [],
+      "event-bus.ts": ["../../jobs/domain-events.queue.js"]
+    }
+  }
+}

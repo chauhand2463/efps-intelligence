@@ -1,0 +1,1866 @@
+{
+  "batch": 4,
+  "projectRoot": "E:\\efps",
+  "description": "eFPS Backend — Fastify application core, config, plugins, shared errors/middleware/types/utils",
+  "nodes": [
+    {
+      "id": "file:efps-backend/src/app.ts",
+      "type": "file",
+      "label": "app.ts",
+      "filePath": "efps-backend/src/app.ts",
+      "language": "typescript",
+      "description": "Fastify application builder — creates the Fastify instance, registers all plugins (cors, helmet, rate-limit, swagger, auth, metrics, multipart, compress), health/ready/metrics endpoints, and mounts all module routes under /api/v1 prefix"
+    },
+    {
+      "id": "file:efps-backend/src/server.ts",
+      "type": "file",
+      "label": "server.ts",
+      "filePath": "efps-backend/src/server.ts",
+      "language": "typescript",
+      "description": "Server entrypoint — calls buildApp, runs migrations, connects Redis, starts HTTP listener, and manages graceful shutdown (SIGTERM/SIGINT) with worker cleanup and connection draining"
+    },
+    {
+      "id": "file:efps-backend/src/config/constants.ts",
+      "type": "file",
+      "label": "constants.ts",
+      "filePath": "efps-backend/src/config/constants.ts",
+      "language": "typescript",
+      "description": "Domain constants — commodities, units, beneficiary categories, transaction modes, notification types, pagination defaults, online TTL, error code strings"
+    },
+    {
+      "id": "file:efps-backend/src/config/database.ts",
+      "type": "file",
+      "label": "database.ts",
+      "filePath": "efps-backend/src/config/database.ts",
+      "language": "typescript",
+      "description": "PostgreSQL pool management — primary and replica pools, query helpers with slow-query logging, transaction helper withClient"
+    },
+    {
+      "id": "file:efps-backend/src/config/index.ts",
+      "type": "file",
+      "label": "config/index.ts",
+      "filePath": "efps-backend/src/config/index.ts",
+      "language": "typescript",
+      "description": "Environment configuration — zod schema parsing and validation of all env vars (database, Redis, JWT, encryption, sync, SMS, CORS, rate-limit, R2, logging)"
+    },
+    {
+      "id": "file:efps-backend/src/config/redis.ts",
+      "type": "file",
+      "label": "redis.ts",
+      "filePath": "efps-backend/src/config/redis.ts",
+      "language": "typescript",
+      "description": "Redis client management — lazy-connect singleton for main Redis and BullMQ Redis with retry strategies and error handling, plus closeRedis for shutdown"
+    },
+    {
+      "id": "file:efps-backend/src/plugins/auth.plugin.ts",
+      "type": "file",
+      "label": "auth.plugin.ts",
+      "filePath": "efps-backend/src/plugins/auth.plugin.ts",
+      "language": "typescript",
+      "description": "Auth plugin — registers @fastify/cookie with JWT secret for cookie-based token handling"
+    },
+    {
+      "id": "file:efps-backend/src/plugins/cors.plugin.ts",
+      "type": "file",
+      "label": "cors.plugin.ts",
+      "filePath": "efps-backend/src/plugins/cors.plugin.ts",
+      "language": "typescript",
+      "description": "CORS plugin — registers @fastify/cors with allowlist from config, credentials enabled, standard HTTP methods"
+    },
+    {
+      "id": "file:efps-backend/src/plugins/helmet.plugin.ts",
+      "type": "file",
+      "label": "helmet.plugin.ts",
+      "filePath": "efps-backend/src/plugins/helmet.plugin.ts",
+      "language": "typescript",
+      "description": "Helmet plugin — registers @fastify/helmet with strict CSP in production, disabled in dev"
+    },
+    {
+      "id": "file:efps-backend/src/plugins/rate-limit.plugin.ts",
+      "type": "file",
+      "label": "rate-limit.plugin.ts",
+      "filePath": "efps-backend/src/plugins/rate-limit.plugin.ts",
+      "language": "typescript",
+      "description": "Rate-limit plugin — global 500/min via @fastify/rate-limit backed by Redis; per-route overrides for login, register, OTP, sync, refresh endpoints with route hook"
+    },
+    {
+      "id": "file:efps-backend/src/plugins/swagger.plugin.ts",
+      "type": "file",
+      "label": "swagger.plugin.ts",
+      "filePath": "efps-backend/src/plugins/swagger.plugin.ts",
+      "language": "typescript",
+      "description": "Swagger plugin — registers @fastify/swagger + @fastify/swagger-ui with OpenAPI 3.0 spec, bearer auth scheme, docs at /docs (dev only)"
+    },
+    {
+      "id": "file:efps-backend/src/plugins/metrics.plugin.ts",
+      "type": "file",
+      "label": "metrics.plugin.ts",
+      "filePath": "efps-backend/src/plugins/metrics.plugin.ts",
+      "language": "typescript",
+      "description": "Metrics plugin — Prometheus client metrics with default metrics collection, custom histogram/counter/gauge for HTTP request duration, total requests, and active connections"
+    },
+    {
+      "id": "file:efps-backend/src/plugins/multipart.plugin.ts",
+      "type": "file",
+      "label": "multipart.plugin.ts",
+      "filePath": "efps-backend/src/plugins/multipart.plugin.ts",
+      "language": "typescript",
+      "description": "Multipart plugin — registers @fastify/multipart with 10MB file size limit, single file upload"
+    },
+    {
+      "id": "file:efps-backend/src/shared/errors/AppError.ts",
+      "type": "file",
+      "label": "AppError.ts",
+      "filePath": "efps-backend/src/shared/errors/AppError.ts",
+      "language": "typescript",
+      "description": "Base AppError class — extends Error with statusCode, error code, and optional field for structured API error responses"
+    },
+    {
+      "id": "file:efps-backend/src/shared/errors/AuthError.ts",
+      "type": "file",
+      "label": "AuthError.ts",
+      "filePath": "efps-backend/src/shared/errors/AuthError.ts",
+      "language": "typescript",
+      "description": "Auth error classes — AuthError (401), ForbiddenError (403), SessionNotFoundError (401) extending AppError with standardized error codes from constants"
+    },
+    {
+      "id": "file:efps-backend/src/shared/errors/ValidationError.ts",
+      "type": "file",
+      "label": "ValidationError.ts",
+      "filePath": "efps-backend/src/shared/errors/ValidationError.ts",
+      "language": "typescript",
+      "description": "ValidationError class — extends AppError with 400 status and VALIDATION_ERROR code, optional field context"
+    },
+    {
+      "id": "file:efps-backend/src/shared/errors/error-handler.ts",
+      "type": "file",
+      "label": "error-handler.ts",
+      "filePath": "efps-backend/src/shared/errors/error-handler.ts",
+      "language": "typescript",
+      "description": "Global Fastify error handler — handles AppError, Fastify validation errors, rate-limit (429), ZodError, and unknown errors with structured JSON responses and logging"
+    },
+    {
+      "id": "file:efps-backend/src/shared/middleware/authenticate.ts",
+      "type": "file",
+      "label": "authenticate.ts",
+      "filePath": "efps-backend/src/shared/middleware/authenticate.ts",
+      "language": "typescript",
+      "description": "Authentication middleware — extracts JWT from Authorization header or cookie, verifies access token, checks Redis blacklist, updates dealer online presence"
+    },
+    {
+      "id": "file:efps-backend/src/shared/middleware/authorize.ts",
+      "type": "file",
+      "label": "authorize.ts",
+      "filePath": "efps-backend/src/shared/middleware/authorize.ts",
+      "language": "typescript",
+      "description": "Authorization middleware — role-based access control with authorize(allowedRoles) and authorizeSelf() for self-data access"
+    },
+    {
+      "id": "file:efps-backend/src/shared/middleware/idempotency.ts",
+      "type": "file",
+      "label": "idempotency.ts",
+      "filePath": "efps-backend/src/shared/middleware/idempotency.ts",
+      "language": "typescript",
+      "description": "Idempotency middleware — checks idempotency-key header for POST requests against Redis cache to prevent duplicate processing"
+    },
+    {
+      "id": "file:efps-backend/src/shared/middleware/audit-log.ts",
+      "type": "file",
+      "label": "audit-log.ts",
+      "filePath": "efps-backend/src/shared/middleware/audit-log.ts",
+      "language": "typescript",
+      "description": "Audit log utility — inserts audit trail entries (dealer, action, entity, old/new data, IP, user-agent) into audit_logs table"
+    },
+    {
+      "id": "file:efps-backend/src/shared/middleware/validate-fps-id.ts",
+      "type": "file",
+      "label": "validate-fps-id.ts",
+      "filePath": "efps-backend/src/shared/middleware/validate-fps-id.ts",
+      "language": "typescript",
+      "description": "FPS ID validator middleware — validates fpsId param length (3-20 chars)"
+    },
+    {
+      "id": "file:efps-backend/src/shared/types/models.ts",
+      "type": "file",
+      "label": "models.ts",
+      "filePath": "efps-backend/src/shared/types/models.ts",
+      "language": "typescript",
+      "description": "Core domain type definitions — Dealer, Session, OtpRequest, Beneficiary, StockAllocation, Transaction, AuditLog, Notification, PaginationMeta, ApiResponse, ApiError, JwtPayload, AuthUser interfaces"
+    },
+    {
+      "id": "file:efps-backend/src/shared/types/enums.ts",
+      "type": "file",
+      "label": "enums.ts",
+      "filePath": "efps-backend/src/shared/types/enums.ts",
+      "language": "typescript",
+      "description": "Enum-like const objects + type aliases — Role, AccountStatus, CommodityType, BeneficiaryCategory, TransactionMode, NotificationType, OtpPurpose with corresponding type exports"
+    },
+    {
+      "id": "file:efps-backend/src/shared/types/fastify.d.ts",
+      "type": "file",
+      "label": "fastify.d.ts",
+      "filePath": "efps-backend/src/shared/types/fastify.d.ts",
+      "language": "typescript",
+      "description": "Fastify type augmentation — adds optional user property (AuthUser) to FastifyRequest via module declaration"
+    },
+    {
+      "id": "file:efps-backend/src/shared/utils/logger.ts",
+      "type": "file",
+      "label": "logger.ts",
+      "filePath": "efps-backend/src/shared/utils/logger.ts",
+      "language": "typescript",
+      "description": "Pino logger — configured with level from env, pino-pretty transport in dev, redaction for auth headers/passwords/OTP"
+    },
+    {
+      "id": "file:efps-backend/src/shared/utils/token.ts",
+      "type": "file",
+      "label": "token.ts",
+      "filePath": "efps-backend/src/shared/utils/token.ts",
+      "language": "typescript",
+      "description": "JWT token utilities — signAccessToken, signRefreshToken (with random jti), verifyAccessToken, verifyRefreshToken, decodeAccessToken using jsonwebtoken"
+    },
+    {
+      "id": "file:efps-backend/src/shared/utils/hash.ts",
+      "type": "file",
+      "label": "hash.ts",
+      "filePath": "efps-backend/src/shared/utils/hash.ts",
+      "language": "typescript",
+      "description": "Password & hash utilities — argon2 password hashing/verification, SHA-256 OTP hashing with salt, token hashing"
+    },
+    {
+      "id": "file:efps-backend/src/shared/utils/response.ts",
+      "type": "file",
+      "label": "response.ts",
+      "filePath": "efps-backend/src/shared/utils/response.ts",
+      "language": "typescript",
+      "description": "HTTP response helpers — sendSuccess, sendPaginated, sendCreated, sendNoContent with typed ApiResponse wrapper"
+    },
+    {
+      "id": "file:efps-backend/src/shared/utils/pagination.ts",
+      "type": "file",
+      "label": "pagination.ts",
+      "filePath": "efps-backend/src/shared/utils/pagination.ts",
+      "language": "typescript",
+      "description": "Pagination utilities — parsePaginationParams (offset/limit/page), buildPaginationMeta with cursor-based pagination"
+    },
+    {
+      "id": "file:efps-backend/src/shared/utils/otp.ts",
+      "type": "file",
+      "label": "otp.ts",
+      "filePath": "efps-backend/src/shared/utils/otp.ts",
+      "language": "typescript",
+      "description": "OTP generation — random numeric OTP generation, expiry check"
+    },
+    {
+      "id": "file:efps-backend/src/shared/utils/encrypt.ts",
+      "type": "file",
+      "label": "encrypt.ts",
+      "filePath": "efps-backend/src/shared/utils/encrypt.ts",
+      "language": "typescript",
+      "description": "AES-256-GCM encryption — encrypt/decrypt with random IV, encryptMany for batch field encryption using ENCRYPTION_KEY"
+    },
+    {
+      "id": "file:efps-backend/src/shared/utils/circuit-breaker.ts",
+      "type": "file",
+      "label": "circuit-breaker.ts",
+      "filePath": "efps-backend/src/shared/utils/circuit-breaker.ts",
+      "language": "typescript",
+      "description": "Circuit breaker pattern — OPEN/CLOSED/HALF_OPEN state machine with configurable failure threshold and reset timeout, fallback support"
+    },
+    {
+      "id": "file:efps-backend/src/shared/utils/pdf.ts",
+      "type": "file",
+      "label": "pdf.ts",
+      "filePath": "efps-backend/src/shared/utils/pdf.ts",
+      "language": "typescript",
+      "description": "PDF generation — htmlToPdf using Playwright headless Chromium, A4 format with margins"
+    },
+    {
+      "id": "file:efps-backend/src/shared/events/event-bus.ts",
+      "type": "file",
+      "label": "event-bus.ts",
+      "filePath": "efps-backend/src/shared/events/event-bus.ts",
+      "language": "typescript",
+      "description": "Domain event bus — EventBus class with emit that enqueues domain events to BullMQ; EventTypes const with all domain event names"
+    },
+    {
+      "id": "file:efps-backend/src/shared/events/register-handlers.ts",
+      "type": "file",
+      "label": "register-handlers.ts",
+      "filePath": "efps-backend/src/shared/events/register-handlers.ts",
+      "language": "typescript",
+      "description": "Event handler registration — no-op placeholder; actual handlers run in BullMQ domain-events worker"
+    },
+    {
+      "id": "file:efps-backend/src/shared/events/index.ts",
+      "type": "file",
+      "label": "events/index.ts",
+      "filePath": "efps-backend/src/shared/events/index.ts",
+      "language": "typescript",
+      "description": "Events barrel export — re-exports eventBus, EventTypes, EventType type, and registerEventHandlers"
+    },
+    {
+      "id": "file:efps-backend/src/shared/sync/normalization.service.ts",
+      "type": "file",
+      "label": "normalization.service.ts",
+      "filePath": "efps-backend/src/shared/sync/normalization.service.ts",
+      "language": "typescript",
+      "description": "Data normalization service — cleans and standardizes names, mobile numbers (+91 prefix), addresses, dates, ration card numbers, and numeric fields for sync imports"
+    },
+    {
+      "id": "file:efps-backend/src/shared/sync/validation.service.ts",
+      "type": "file",
+      "label": "validation.service.ts",
+      "filePath": "efps-backend/src/shared/sync/validation.service.ts",
+      "language": "typescript",
+      "description": "Sync data validation service — per-record-type rule engine (beneficiary, transaction, stock_allocation, lifting_record) with required fields, numeric/date type checks, ration card format, and lifted-vs-allocated cross-field validation"
+    },
+    {
+      "id": "file:efps-backend/src/shared/sync/system-events.service.ts",
+      "type": "file",
+      "label": "system-events.service.ts",
+      "filePath": "efps-backend/src/shared/sync/system-events.service.ts",
+      "language": "typescript",
+      "description": "System event logging — inserts system events with type/severity/source/message/metadata into system_events table, getRecentEvents query"
+    },
+    {
+      "id": "file:efps-backend/src/shared/sync/quarantine.service.ts",
+      "type": "file",
+      "label": "quarantine.service.ts",
+      "filePath": "efps-backend/src/shared/sync/quarantine.service.ts",
+      "language": "typescript",
+      "description": "Sync quarantine service — inserts failed sync records into sync_quarantine, provides quarantine summary by type and failure reason"
+    },
+    {
+      "id": "symbol:func:buildApp",
+      "type": "function",
+      "label": "buildApp",
+      "filePath": "efps-backend/src/app.ts",
+      "description": "Async factory — creates Fastify instance, registers all plugins/middleware, adds health/ready/metrics endpoints, mounts 18 module routers at /api/v1, returns configured app"
+    },
+    {
+      "id": "symbol:func:main",
+      "type": "function",
+      "label": "main",
+      "filePath": "efps-backend/src/server.ts",
+      "description": "Server main — invokes buildApp, runs DB migrations, connects Redis, starts HTTP listener, registers signal handlers for graceful shutdown"
+    },
+    {
+      "id": "symbol:func:gracefulShutdown",
+      "type": "function",
+      "label": "gracefulShutdown",
+      "filePath": "efps-backend/src/server.ts",
+      "description": "Graceful shutdown handler — closes Fastify server, drains all BullMQ workers, closes Redis and DB pool, force-exits after 15s timeout"
+    },
+    {
+      "id": "symbol:const:EventTypes",
+      "type": "constant",
+      "label": "EventTypes",
+      "filePath": "efps-backend/src/shared/events/event-bus.ts",
+      "description": "Domain event name constants — TRANSACTION_COMPLETED, LIFTING_CREATED, COMMISSION_CALCULATED, STOCK_LOW, SYNC_COMPLETED, GOVT_SYNC_BATCH, etc."
+    },
+    {
+      "id": "symbol:class:EventBus",
+      "type": "class",
+      "label": "EventBus",
+      "filePath": "efps-backend/src/shared/events/event-bus.ts",
+      "description": "In-process event bus — emit asynchronously enqueues domain events to BullMQ domain-events queue"
+    },
+    {
+      "id": "symbol:const:eventBus",
+      "type": "constant",
+      "label": "eventBus",
+      "filePath": "efps-backend/src/shared/events/event-bus.ts",
+      "description": "Singleton EventBus instance used throughout the application"
+    },
+    {
+      "id": "symbol:class:AppError",
+      "type": "class",
+      "label": "AppError",
+      "filePath": "efps-backend/src/shared/errors/AppError.ts",
+      "description": "Base application error — extends Error with statusCode, code string, and optional field"
+    },
+    {
+      "id": "symbol:class:AuthError",
+      "type": "class",
+      "label": "AuthError",
+      "filePath": "efps-backend/src/shared/errors/AuthError.ts",
+      "description": "Authentication error (401) — extends AppError with error code from ERROR_CODES constants"
+    },
+    {
+      "id": "symbol:class:ForbiddenError",
+      "type": "class",
+      "label": "ForbiddenError",
+      "filePath": "efps-backend/src/shared/errors/AuthError.ts",
+      "description": "Authorization error (403) — extends AppError with FORBIDDEN code"
+    },
+    {
+      "id": "symbol:class:SessionNotFoundError",
+      "type": "class",
+      "label": "SessionNotFoundError",
+      "filePath": "efps-backend/src/shared/errors/AuthError.ts",
+      "description": "Session expired error (401) — extends AppError with SESSION_NOT_FOUND code"
+    },
+    {
+      "id": "symbol:class:ValidationError",
+      "type": "class",
+      "label": "ValidationError",
+      "filePath": "efps-backend/src/shared/errors/ValidationError.ts",
+      "description": "Input validation error (400) — extends AppError with VALIDATION_ERROR code and optional field"
+    },
+    {
+      "id": "symbol:func:errorHandler",
+      "type": "function",
+      "label": "errorHandler",
+      "filePath": "efps-backend/src/shared/errors/error-handler.ts",
+      "description": "Fastify setErrorHandler — dispatches AppError, Fastify validation, rate-limit, ZodError, and fallback INTERNAL_ERROR with structured JSON responses"
+    },
+    {
+      "id": "symbol:func:authenticate",
+      "type": "function",
+      "label": "authenticate",
+      "filePath": "efps-backend/src/shared/middleware/authenticate.ts",
+      "description": "Fastify preHandler — extracts Bearer token or cookie, verifies JWT, checks Redis blacklist, updates dealer online status, sets request.user"
+    },
+    {
+      "id": "symbol:func:authorize",
+      "type": "function",
+      "label": "authorize",
+      "filePath": "efps-backend/src/shared/middleware/authorize.ts",
+      "description": "Fastify preHandler factory — returns middleware that checks request.user.role is in allowedRoles array"
+    },
+    {
+      "id": "symbol:func:authorizeSelf",
+      "type": "function",
+      "label": "authorizeSelf",
+      "filePath": "efps-backend/src/shared/middleware/authorize.ts",
+      "description": "Fastify preHandler — allows access if user is admin or the resource id matches the authenticated user"
+    },
+    {
+      "id": "symbol:func:idempotencyKey",
+      "type": "function",
+      "label": "idempotencyKey",
+      "filePath": "efps-backend/src/shared/middleware/idempotency.ts",
+      "description": "Fastify preHandler — checks idempotency-key header, caches responses in Redis to prevent duplicate POST processing"
+    },
+    {
+      "id": "symbol:func:createAuditLog",
+      "type": "function",
+      "label": "createAuditLog",
+      "filePath": "efps-backend/src/shared/middleware/audit-log.ts",
+      "description": "Inserts an audit log entry into audit_logs table with dealer, action, entity, old/new data, IP, and user agent"
+    },
+    {
+      "id": "symbol:func:validateFpsIdParam",
+      "type": "function",
+      "label": "validateFpsIdParam",
+      "filePath": "efps-backend/src/shared/middleware/validate-fps-id.ts",
+      "description": "Validates fpsId route param length (3-20 chars), throws ValidationError if invalid"
+    },
+    {
+      "id": "symbol:func:registerAuthPlugin",
+      "type": "function",
+      "label": "registerAuthPlugin",
+      "filePath": "efps-backend/src/plugins/auth.plugin.ts",
+      "description": "Registers @fastify/cookie with secure options"
+    },
+    {
+      "id": "symbol:func:registerCors",
+      "type": "function",
+      "label": "registerCors",
+      "filePath": "efps-backend/src/plugins/cors.plugin.ts",
+      "description": "Registers @fastify/cors with configurable origin allowlist"
+    },
+    {
+      "id": "symbol:func:registerHelmet",
+      "type": "function",
+      "label": "registerHelmet",
+      "filePath": "efps-backend/src/plugins/helmet.plugin.ts",
+      "description": "Registers @fastify/helmet with strict CSP in production"
+    },
+    {
+      "id": "symbol:func:registerRateLimit",
+      "type": "function",
+      "label": "registerRateLimit",
+      "filePath": "efps-backend/src/plugins/rate-limit.plugin.ts",
+      "description": "Registers Redis-backed rate limiting with global 500/min and per-route overrides for login/register/OTP/sync/refresh"
+    },
+    {
+      "id": "symbol:func:registerSwagger",
+      "type": "function",
+      "label": "registerSwagger",
+      "filePath": "efps-backend/src/plugins/swagger.plugin.ts",
+      "description": "Registers @fastify/swagger + @fastify/swagger-ui with OpenAPI 3.0 at /docs (dev only)"
+    },
+    {
+      "id": "symbol:func:registerMetrics",
+      "type": "function",
+      "label": "registerMetrics",
+      "filePath": "efps-backend/src/plugins/metrics.plugin.ts",
+      "description": "Registers Prometheus hooks — tracks active connections, request duration histogram, request counter on onRequest/onResponse"
+    },
+    {
+      "id": "symbol:func:registerMultipart",
+      "type": "function",
+      "label": "registerMultipart",
+      "filePath": "efps-backend/src/plugins/multipart.plugin.ts",
+      "description": "Registers @fastify/multipart with 10MB file size limit"
+    },
+    {
+      "id": "symbol:func:getRedis",
+      "type": "function",
+      "label": "getRedis",
+      "filePath": "efps-backend/src/config/redis.ts",
+      "description": "Returns lazy-connect Redis singleton for general use"
+    },
+    {
+      "id": "symbol:func:getBullRedis",
+      "type": "function",
+      "label": "getBullRedis",
+      "filePath": "efps-backend/src/config/redis.ts",
+      "description": "Returns lazy-connect Redis singleton for BullMQ (maxRetriesPerRequest: null)"
+    },
+    {
+      "id": "symbol:func:closeRedis",
+      "type": "function",
+      "label": "closeRedis",
+      "filePath": "efps-backend/src/config/redis.ts",
+      "description": "Gracefully quits both Redis connections"
+    },
+    {
+      "id": "symbol:func:getReadPool",
+      "type": "function",
+      "label": "getReadPool",
+      "filePath": "efps-backend/src/config/database.ts",
+      "description": "Returns replica pool if DATABASE_REPLICA_URL configured, null otherwise"
+    },
+    {
+      "id": "symbol:func:query",
+      "type": "function",
+      "label": "query",
+      "filePath": "efps-backend/src/config/database.ts",
+      "description": "Primary DB query — executes on main pool with slow-query warning (>1s)"
+    },
+    {
+      "id": "symbol:func:readQuery",
+      "type": "function",
+      "label": "readQuery",
+      "filePath": "efps-backend/src/config/database.ts",
+      "description": "Read-only DB query — uses replica pool if available, falls back to primary with slow-query logging"
+    },
+    {
+      "id": "symbol:func:getClient",
+      "type": "function",
+      "label": "getClient",
+      "filePath": "efps-backend/src/config/database.ts",
+      "description": "Acquires a dedicated client from primary pool for transaction use"
+    },
+    {
+      "id": "symbol:func:withClient",
+      "type": "function",
+      "label": "withClient",
+      "filePath": "efps-backend/src/config/database.ts",
+      "description": "Transaction helper — acquires client, executes fn, releases client in finally"
+    },
+    {
+      "id": "symbol:const:config",
+      "type": "constant",
+      "label": "config",
+      "filePath": "efps-backend/src/config/index.ts",
+      "description": "Parsed and validated environment configuration object consumed by all modules"
+    },
+    {
+      "id": "symbol:const:COMMODITIES",
+      "type": "constant",
+      "label": "COMMODITIES",
+      "filePath": "efps-backend/src/config/constants.ts",
+      "description": "Tuple of commodity types: Rice, Wheat, Sugar, Kerosene, Oil, Pulses"
+    },
+    {
+      "id": "symbol:const:ERROR_CODES",
+      "type": "constant",
+      "label": "ERROR_CODES",
+      "filePath": "efps-backend/src/config/constants.ts",
+      "description": "Standardized error code strings for API error responses"
+    },
+    {
+      "id": "symbol:const:logger",
+      "type": "constant",
+      "label": "logger",
+      "filePath": "efps-backend/src/shared/utils/logger.ts",
+      "description": "Pino logger instance configured with env LOG_LEVEL and sensitive data redaction"
+    },
+    {
+      "id": "symbol:func:signAccessToken",
+      "type": "function",
+      "label": "signAccessToken",
+      "filePath": "efps-backend/src/shared/utils/token.ts",
+      "description": "Signs a JWT access token with JWT_ACCESS_SECRET and configured expiry"
+    },
+    {
+      "id": "symbol:func:signRefreshToken",
+      "type": "function",
+      "label": "signRefreshToken",
+      "filePath": "efps-backend/src/shared/utils/token.ts",
+      "description": "Signs a JWT refresh token with random jti and JWT_REFRESH_SECRET"
+    },
+    {
+      "id": "symbol:func:verifyAccessToken",
+      "type": "function",
+      "label": "verifyAccessToken",
+      "filePath": "efps-backend/src/shared/utils/token.ts",
+      "description": "Verifies access token JWT and returns decoded JwtPayload"
+    },
+    {
+      "id": "symbol:func:hashPassword",
+      "type": "function",
+      "label": "hashPassword",
+      "filePath": "efps-backend/src/shared/utils/hash.ts",
+      "description": "Argon2id password hashing with memory cost 65536, time cost 3, parallelism 4"
+    },
+    {
+      "id": "symbol:func:verifyPassword",
+      "type": "function",
+      "label": "verifyPassword",
+      "filePath": "efps-backend/src/shared/utils/hash.ts",
+      "description": "Argon2 password verification, returns false on error"
+    },
+    {
+      "id": "symbol:func:encrypt",
+      "type": "function",
+      "label": "encrypt",
+      "filePath": "efps-backend/src/shared/utils/encrypt.ts",
+      "description": "AES-256-GCM encryption with random 12-byte IV, returns ciphertext, iv, authTag"
+    },
+    {
+      "id": "symbol:func:decrypt",
+      "type": "function",
+      "label": "decrypt",
+      "filePath": "efps-backend/src/shared/utils/encrypt.ts",
+      "description": "AES-256-GCM decryption using ciphertext, iv, and authTag"
+    },
+    {
+      "id": "symbol:class:CircuitBreaker",
+      "type": "class",
+      "label": "CircuitBreaker",
+      "filePath": "efps-backend/src/shared/utils/circuit-breaker.ts",
+      "description": "Resilience pattern — wraps async functions with circuit breaker state machine, supports fallback"
+    },
+    {
+      "id": "symbol:func:sendSuccess",
+      "type": "function",
+      "label": "sendSuccess",
+      "filePath": "efps-backend/src/shared/utils/response.ts",
+      "description": "Sends success JSON response with typed ApiResponse wrapper"
+    },
+    {
+      "id": "symbol:func:sendPaginated",
+      "type": "function",
+      "label": "sendPaginated",
+      "filePath": "efps-backend/src/shared/utils/response.ts",
+      "description": "Sends paginated JSON response with data array and PaginationMeta"
+    },
+    {
+      "id": "symbol:func:parsePaginationParams",
+      "type": "function",
+      "label": "parsePaginationParams",
+      "filePath": "efps-backend/src/shared/utils/pagination.ts",
+      "description": "Parses page/limit query params with defaults (20) and max (100), computes offset"
+    },
+    {
+      "id": "symbol:func:buildPaginationMeta",
+      "type": "function",
+      "label": "buildPaginationMeta",
+      "filePath": "efps-backend/src/shared/utils/pagination.ts",
+      "description": "Builds PaginatedResult with cursor for cursor-based pagination"
+    },
+    {
+      "id": "symbol:func:generateOtp",
+      "type": "function",
+      "label": "generateOtp",
+      "filePath": "efps-backend/src/shared/utils/otp.ts",
+      "description": "Generates cryptographically random numeric OTP of specified length (default 6)"
+    },
+    {
+      "id": "symbol:func:htmlToPdf",
+      "type": "function",
+      "label": "htmlToPdf",
+      "filePath": "efps-backend/src/shared/utils/pdf.ts",
+      "description": "Converts HTML string to PDF via Playwright Chromium, A4 format with margins"
+    },
+    {
+      "id": "symbol:const:httpRequestDuration",
+      "type": "constant",
+      "label": "httpRequestDuration",
+      "filePath": "efps-backend/src/plugins/metrics.plugin.ts",
+      "description": "Prometheus Histogram tracking HTTP request duration in seconds"
+    },
+    {
+      "id": "symbol:const:httpRequestsTotal",
+      "type": "constant",
+      "label": "httpRequestsTotal",
+      "filePath": "efps-backend/src/plugins/metrics.plugin.ts",
+      "description": "Prometheus Counter tracking total HTTP requests by method, route, status"
+    },
+    {
+      "id": "symbol:const:activeConnections",
+      "type": "constant",
+      "label": "activeConnections",
+      "filePath": "efps-backend/src/plugins/metrics.plugin.ts",
+      "description": "Prometheus Gauge tracking current active connections"
+    },
+    {
+      "id": "symbol:func:normalizeRecord",
+      "type": "function",
+      "label": "normalizeRecord",
+      "filePath": "efps-backend/src/shared/sync/normalization.service.ts",
+      "description": "Normalizes sync record fields — names, mobiles (+91), addresses, dates, ration card numbers, numeric values"
+    },
+    {
+      "id": "symbol:func:validateRecord",
+      "type": "function",
+      "label": "validateRecord",
+      "filePath": "efps-backend/src/shared/sync/validation.service.ts",
+      "description": "Validates a single sync record against per-type rules (required fields, numeric, date, ration card format, quantity limits)"
+    },
+    {
+      "id": "symbol:func:validateBatch",
+      "type": "function",
+      "label": "validateBatch",
+      "filePath": "efps-backend/src/shared/sync/validation.service.ts",
+      "description": "Batch validation — splits records into pass/fail arrays based on validation results"
+    },
+    {
+      "id": "symbol:func:insertSystemEvent",
+      "type": "function",
+      "label": "insertSystemEvent",
+      "filePath": "efps-backend/src/shared/sync/system-events.service.ts",
+      "description": "Inserts a system event to database with type, severity, source, message, metadata"
+    },
+    {
+      "id": "symbol:func:getRecentEvents",
+      "type": "function",
+      "label": "getRecentEvents",
+      "filePath": "efps-backend/src/shared/sync/system-events.service.ts",
+      "description": "Queries recent system events, optionally filtered by severity"
+    },
+    {
+      "id": "symbol:func:insertQuarantineRecords",
+      "type": "function",
+      "label": "insertQuarantineRecords",
+      "filePath": "efps-backend/src/shared/sync/quarantine.service.ts",
+      "description": "Inserts failed sync records into quarantine table with raw data and validation errors"
+    },
+    {
+      "id": "symbol:func:getQuarantineSummary",
+      "type": "function",
+      "label": "getQuarantineSummary",
+      "filePath": "efps-backend/src/shared/sync/quarantine.service.ts",
+      "description": "Returns aggregate quarantine summary — total, by type, by failure reason"
+    },
+    {
+      "id": "symbol:func:registerEventHandlers",
+      "type": "function",
+      "label": "registerEventHandlers",
+      "filePath": "efps-backend/src/shared/events/register-handlers.ts",
+      "description": "No-op handler registration — domain event handlers live in BullMQ worker"
+    },
+    {
+      "id": "symbol:interface:Dealer",
+      "type": "interface",
+      "label": "Dealer",
+      "filePath": "efps-backend/src/shared/types/models.ts",
+      "description": "Dealer entity — fps_id, area_id, mobile, role, sync status fields"
+    },
+    {
+      "id": "symbol:interface:Beneficiary",
+      "type": "interface",
+      "label": "Beneficiary",
+      "filePath": "efps-backend/src/shared/types/models.ts",
+      "description": "Beneficiary entity — ration_card_no, head_of_family, member_count, category"
+    },
+    {
+      "id": "symbol:interface:Transaction",
+      "type": "interface",
+      "label": "Transaction",
+      "filePath": "efps-backend/src/shared/types/models.ts",
+      "description": "Transaction record — commodity, quantity, price, mode, biometric auth flag"
+    },
+    {
+      "id": "symbol:interface:StockAllocation",
+      "type": "interface",
+      "label": "StockAllocation",
+      "filePath": "efps-backend/src/shared/types/models.ts",
+      "description": "Monthly stock allocation — commodity, allocated_kg, lifted_kg per dealer"
+    },
+    {
+      "id": "symbol:interface:JwtPayload",
+      "type": "interface",
+      "label": "JwtPayload",
+      "filePath": "efps-backend/src/shared/types/models.ts",
+      "description": "JWT token payload — sub (dealer ID), role, fps_id"
+    },
+    {
+      "id": "symbol:interface:AuthUser",
+      "type": "interface",
+      "label": "AuthUser",
+      "filePath": "efps-backend/src/shared/types/models.ts",
+      "description": "Authenticated user context attached to FastifyRequest"
+    },
+    {
+      "id": "symbol:interface:ApiResponse",
+      "type": "interface",
+      "label": "ApiResponse",
+      "filePath": "efps-backend/src/shared/types/models.ts",
+      "description": "Generic success API response wrapper with optional PaginationMeta"
+    },
+    {
+      "id": "symbol:interface:ApiError",
+      "type": "interface",
+      "label": "ApiError",
+      "filePath": "efps-backend/src/shared/types/models.ts",
+      "description": "Standard error API response with code, message, field, statusCode"
+    },
+    {
+      "id": "symbol:type:RoleType",
+      "type": "type",
+      "label": "RoleType",
+      "filePath": "efps-backend/src/shared/types/enums.ts",
+      "description": "Union type: 'dealer' | 'area_officer' | 'admin'"
+    },
+    {
+      "id": "symbol:type:CommodityTypeType",
+      "type": "type",
+      "label": "CommodityTypeType",
+      "filePath": "efps-backend/src/shared/types/enums.ts",
+      "description": "Union type of commodity values: Rice, Wheat, Sugar, Kerosene, Oil, Pulses"
+    },
+    {
+      "id": "symbol:type:TransactionModeType",
+      "type": "type",
+      "label": "TransactionModeType",
+      "filePath": "efps-backend/src/shared/types/enums.ts",
+      "description": "Union type: 'pos' | 'manual' | 'otg'"
+    },
+    {
+      "id": "symbol:const:Role",
+      "type": "constant",
+      "label": "Role",
+      "filePath": "efps-backend/src/shared/types/enums.ts",
+      "description": "Role constants — DEALER, AREA_OFFICER, ADMIN"
+    },
+    {
+      "id": "symbol:const:CommodityType",
+      "type": "constant",
+      "label": "CommodityType",
+      "filePath": "efps-backend/src/shared/types/enums.ts",
+      "description": "Commodity type constants — RICE, WHEAT, SUGAR, KEROSENE, OIL, PULSES"
+    },
+    {
+      "id": "symbol:module:config",
+      "type": "module",
+      "label": "config",
+      "filePath": "efps-backend/src/config",
+      "description": "Configuration module — env validation, constants, database pool, Redis clients"
+    },
+    {
+      "id": "symbol:module:plugins",
+      "type": "module",
+      "label": "plugins",
+      "filePath": "efps-backend/src/plugins",
+      "description": "Fastify plugins — cors, helmet, rate-limit, auth (cookie), swagger, metrics, multipart"
+    },
+    {
+      "id": "symbol:module:shared-errors",
+      "type": "module",
+      "label": "shared/errors",
+      "filePath": "efps-backend/src/shared/errors",
+      "description": "Error classes and handler — AppError, AuthError, ValidationError, global error handler"
+    },
+    {
+      "id": "symbol:module:shared-middleware",
+      "type": "module",
+      "label": "shared/middleware",
+      "filePath": "efps-backend/src/shared/middleware",
+      "description": "Fastify middleware — authenticate, authorize, idempotency, audit-log, fps-id validation"
+    },
+    {
+      "id": "symbol:module:shared-types",
+      "type": "module",
+      "label": "shared/types",
+      "filePath": "efps-backend/src/shared/types",
+      "description": "Type definitions — domain models, enums, Fastify augmentation"
+    },
+    {
+      "id": "symbol:module:shared-utils",
+      "type": "module",
+      "label": "shared/utils",
+      "filePath": "efps-backend/src/shared/utils",
+      "description": "Utility functions — logger, token, hash, encrypt, response, pagination, OTP, PDF, circuit-breaker"
+    },
+    {
+      "id": "symbol:module:shared-events",
+      "type": "module",
+      "label": "shared/events",
+      "filePath": "efps-backend/src/shared/events",
+      "description": "Domain event system — EventBus, EventTypes constants, no-op handler registration"
+    },
+    {
+      "id": "symbol:module:shared-sync",
+      "type": "module",
+      "label": "shared/sync",
+      "filePath": "efps-backend/src/shared/sync",
+      "description": "Sync infrastructure — normalization, validation, system events, quarantine services"
+    }
+  ],
+  "edges": [
+    {
+      "source": "file:efps-backend/src/app.ts",
+      "target": "file:efps-backend/src/config/index.ts",
+      "type": "imports",
+      "label": "imports config"
+    },
+    {
+      "source": "file:efps-backend/src/app.ts",
+      "target": "file:efps-backend/src/config/redis.ts",
+      "type": "imports",
+      "label": "imports getRedis"
+    },
+    {
+      "source": "file:efps-backend/src/app.ts",
+      "target": "file:efps-backend/src/config/database.ts",
+      "type": "imports",
+      "label": "imports db pool"
+    },
+    {
+      "source": "file:efps-backend/src/app.ts",
+      "target": "file:efps-backend/src/shared/errors/error-handler.ts",
+      "type": "imports",
+      "label": "imports errorHandler"
+    },
+    {
+      "source": "file:efps-backend/src/app.ts",
+      "target": "file:efps-backend/src/plugins/cors.plugin.ts",
+      "type": "imports",
+      "label": "imports registerCors"
+    },
+    {
+      "source": "file:efps-backend/src/app.ts",
+      "target": "file:efps-backend/src/plugins/helmet.plugin.ts",
+      "type": "imports",
+      "label": "imports registerHelmet"
+    },
+    {
+      "source": "file:efps-backend/src/app.ts",
+      "target": "file:efps-backend/src/plugins/rate-limit.plugin.ts",
+      "type": "imports",
+      "label": "imports registerRateLimit"
+    },
+    {
+      "source": "file:efps-backend/src/app.ts",
+      "target": "file:efps-backend/src/plugins/swagger.plugin.ts",
+      "type": "imports",
+      "label": "imports registerSwagger"
+    },
+    {
+      "source": "file:efps-backend/src/app.ts",
+      "target": "file:efps-backend/src/plugins/auth.plugin.ts",
+      "type": "imports",
+      "label": "imports registerAuthPlugin"
+    },
+    {
+      "source": "file:efps-backend/src/app.ts",
+      "target": "file:efps-backend/src/plugins/metrics.plugin.ts",
+      "type": "imports",
+      "label": "imports registerMetrics"
+    },
+    {
+      "source": "file:efps-backend/src/app.ts",
+      "target": "file:efps-backend/src/plugins/multipart.plugin.ts",
+      "type": "imports",
+      "label": "imports registerMultipart"
+    },
+    {
+      "source": "file:efps-backend/src/app.ts",
+      "target": "file:efps-backend/src/shared/events/index.ts",
+      "type": "imports",
+      "label": "imports registerEventHandlers"
+    },
+    {
+      "source": "file:efps-backend/src/server.ts",
+      "target": "file:efps-backend/src/config/index.ts",
+      "type": "imports",
+      "label": "imports config"
+    },
+    {
+      "source": "file:efps-backend/src/server.ts",
+      "target": "file:efps-backend/src/app.ts",
+      "type": "imports",
+      "label": "imports buildApp"
+    },
+    {
+      "source": "file:efps-backend/src/server.ts",
+      "target": "file:efps-backend/src/config/redis.ts",
+      "type": "imports",
+      "label": "imports getRedis, closeRedis"
+    },
+    {
+      "source": "file:efps-backend/src/server.ts",
+      "target": "file:efps-backend/src/config/database.ts",
+      "type": "imports",
+      "label": "imports db pool"
+    },
+    {
+      "source": "file:efps-backend/src/server.ts",
+      "target": "symbol:func:buildApp",
+      "type": "calls",
+      "label": "calls buildApp on startup"
+    },
+    {
+      "source": "file:efps-backend/src/server.ts",
+      "target": "symbol:func:closeRedis",
+      "type": "calls",
+      "label": "calls closeRedis on shutdown"
+    },
+    {
+      "source": "file:efps-backend/src/app.ts",
+      "target": "symbol:func:buildApp",
+      "type": "contains",
+      "label": "exports buildApp"
+    },
+    {
+      "source": "file:efps-backend/src/server.ts",
+      "target": "symbol:func:main",
+      "type": "contains",
+      "label": "contains main"
+    },
+    {
+      "source": "file:efps-backend/src/server.ts",
+      "target": "symbol:func:gracefulShutdown",
+      "type": "contains",
+      "label": "contains gracefulShutdown"
+    },
+    {
+      "source": "file:efps-backend/src/config/database.ts",
+      "target": "file:efps-backend/src/config/index.ts",
+      "type": "imports",
+      "label": "imports config"
+    },
+    {
+      "source": "file:efps-backend/src/config/redis.ts",
+      "target": "file:efps-backend/src/config/index.ts",
+      "type": "imports",
+      "label": "imports config"
+    },
+    {
+      "source": "file:efps-backend/src/plugins/auth.plugin.ts",
+      "target": "file:efps-backend/src/config/index.ts",
+      "type": "imports",
+      "label": "imports config"
+    },
+    {
+      "source": "file:efps-backend/src/plugins/cors.plugin.ts",
+      "target": "file:efps-backend/src/config/index.ts",
+      "type": "imports",
+      "label": "imports config"
+    },
+    {
+      "source": "file:efps-backend/src/plugins/helmet.plugin.ts",
+      "target": "file:efps-backend/src/config/index.ts",
+      "type": "imports",
+      "label": "imports config"
+    },
+    {
+      "source": "file:efps-backend/src/plugins/rate-limit.plugin.ts",
+      "target": "file:efps-backend/src/config/index.ts",
+      "type": "imports",
+      "label": "imports config"
+    },
+    {
+      "source": "file:efps-backend/src/plugins/rate-limit.plugin.ts",
+      "target": "file:efps-backend/src/config/redis.ts",
+      "type": "imports",
+      "label": "imports getRedis"
+    },
+    {
+      "source": "file:efps-backend/src/plugins/swagger.plugin.ts",
+      "target": "file:efps-backend/src/config/index.ts",
+      "type": "imports",
+      "label": "imports config"
+    },
+    {
+      "source": "file:efps-backend/src/shared/errors/error-handler.ts",
+      "target": "file:efps-backend/src/shared/errors/AppError.ts",
+      "type": "imports",
+      "label": "imports AppError"
+    },
+    {
+      "source": "file:efps-backend/src/shared/errors/error-handler.ts",
+      "target": "file:efps-backend/src/shared/utils/logger.ts",
+      "type": "imports",
+      "label": "imports logger"
+    },
+    {
+      "source": "file:efps-backend/src/shared/errors/AuthError.ts",
+      "target": "file:efps-backend/src/shared/errors/AppError.ts",
+      "type": "imports",
+      "label": "imports AppError"
+    },
+    {
+      "source": "file:efps-backend/src/shared/errors/AuthError.ts",
+      "target": "file:efps-backend/src/config/constants.ts",
+      "type": "imports",
+      "label": "imports ERROR_CODES"
+    },
+    {
+      "source": "file:efps-backend/src/shared/errors/ValidationError.ts",
+      "target": "file:efps-backend/src/shared/errors/AppError.ts",
+      "type": "imports",
+      "label": "imports AppError"
+    },
+    {
+      "source": "file:efps-backend/src/shared/middleware/authenticate.ts",
+      "target": "file:efps-backend/src/shared/utils/token.ts",
+      "type": "imports",
+      "label": "imports verifyAccessToken"
+    },
+    {
+      "source": "file:efps-backend/src/shared/middleware/authenticate.ts",
+      "target": "file:efps-backend/src/shared/errors/AuthError.ts",
+      "type": "imports",
+      "label": "imports AuthError, SessionNotFoundError"
+    },
+    {
+      "source": "file:efps-backend/src/shared/middleware/authenticate.ts",
+      "target": "file:efps-backend/src/config/redis.ts",
+      "type": "imports",
+      "label": "imports getRedis"
+    },
+    {
+      "source": "file:efps-backend/src/shared/middleware/authorize.ts",
+      "target": "file:efps-backend/src/shared/types/enums.ts",
+      "type": "imports",
+      "label": "imports RoleType"
+    },
+    {
+      "source": "file:efps-backend/src/shared/middleware/authorize.ts",
+      "target": "file:efps-backend/src/shared/errors/AuthError.ts",
+      "type": "imports",
+      "label": "imports ForbiddenError"
+    },
+    {
+      "source": "file:efps-backend/src/shared/middleware/validate-fps-id.ts",
+      "target": "file:efps-backend/src/shared/errors/ValidationError.ts",
+      "type": "imports",
+      "label": "imports ValidationError"
+    },
+    {
+      "source": "file:efps-backend/src/shared/middleware/idempotency.ts",
+      "target": "file:efps-backend/src/config/redis.ts",
+      "type": "imports",
+      "label": "imports getRedis"
+    },
+    {
+      "source": "file:efps-backend/src/shared/middleware/audit-log.ts",
+      "target": "file:efps-backend/src/config/database.ts",
+      "type": "imports",
+      "label": "imports query"
+    },
+    {
+      "source": "file:efps-backend/src/shared/utils/token.ts",
+      "target": "file:efps-backend/src/config/index.ts",
+      "type": "imports",
+      "label": "imports config"
+    },
+    {
+      "source": "file:efps-backend/src/shared/utils/token.ts",
+      "target": "file:efps-backend/src/shared/types/models.ts",
+      "type": "imports",
+      "label": "imports JwtPayload type"
+    },
+    {
+      "source": "file:efps-backend/src/shared/utils/logger.ts",
+      "target": "file:efps-backend/src/config/index.ts",
+      "type": "imports",
+      "label": "imports config"
+    },
+    {
+      "source": "file:efps-backend/src/shared/utils/encrypt.ts",
+      "target": "file:efps-backend/src/config/index.ts",
+      "type": "imports",
+      "label": "imports config"
+    },
+    {
+      "source": "file:efps-backend/src/shared/utils/pagination.ts",
+      "target": "file:efps-backend/src/config/constants.ts",
+      "type": "imports",
+      "label": "imports PAGINATION_DEFAULTS"
+    },
+    {
+      "source": "file:efps-backend/src/shared/utils/response.ts",
+      "target": "file:efps-backend/src/shared/types/models.ts",
+      "type": "imports",
+      "label": "imports ApiResponse, PaginationMeta"
+    },
+    {
+      "source": "file:efps-backend/src/shared/types/models.ts",
+      "target": "file:efps-backend/src/shared/types/enums.ts",
+      "type": "imports",
+      "label": "imports enum types"
+    },
+    {
+      "source": "file:efps-backend/src/shared/types/fastify.d.ts",
+      "target": "file:efps-backend/src/shared/types/models.ts",
+      "type": "imports",
+      "label": "imports AuthUser"
+    },
+    {
+      "source": "file:efps-backend/src/shared/events/index.ts",
+      "target": "file:efps-backend/src/shared/events/event-bus.ts",
+      "type": "imports",
+      "label": "re-exports eventBus, EventTypes"
+    },
+    {
+      "source": "file:efps-backend/src/shared/events/index.ts",
+      "target": "file:efps-backend/src/shared/events/register-handlers.ts",
+      "type": "imports",
+      "label": "re-exports registerEventHandlers"
+    },
+    {
+      "source": "file:efps-backend/src/shared/sync/system-events.service.ts",
+      "target": "file:efps-backend/src/config/database.ts",
+      "type": "imports",
+      "label": "imports db pool"
+    },
+    {
+      "source": "file:efps-backend/src/shared/sync/quarantine.service.ts",
+      "target": "file:efps-backend/src/config/database.ts",
+      "type": "imports",
+      "label": "imports db pool"
+    },
+    {
+      "source": "symbol:class:AuthError",
+      "target": "symbol:class:AppError",
+      "type": "extends",
+      "label": "extends AppError"
+    },
+    {
+      "source": "symbol:class:ForbiddenError",
+      "target": "symbol:class:AppError",
+      "type": "extends",
+      "label": "extends AppError"
+    },
+    {
+      "source": "symbol:class:SessionNotFoundError",
+      "target": "symbol:class:AppError",
+      "type": "extends",
+      "label": "extends AppError"
+    },
+    {
+      "source": "symbol:class:ValidationError",
+      "target": "symbol:class:AppError",
+      "type": "extends",
+      "label": "extends AppError"
+    },
+    {
+      "source": "file:efps-backend/src/app.ts",
+      "target": "symbol:func:errorHandler",
+      "type": "calls",
+      "label": "registers errorHandler via setErrorHandler"
+    },
+    {
+      "source": "file:efps-backend/src/app.ts",
+      "target": "symbol:func:registerCors",
+      "type": "calls",
+      "label": "registers CORS plugin"
+    },
+    {
+      "source": "file:efps-backend/src/app.ts",
+      "target": "symbol:func:registerHelmet",
+      "type": "calls",
+      "label": "registers Helmet plugin"
+    },
+    {
+      "source": "file:efps-backend/src/app.ts",
+      "target": "symbol:func:registerRateLimit",
+      "type": "calls",
+      "label": "registers RateLimit plugin"
+    },
+    {
+      "source": "file:efps-backend/src/app.ts",
+      "target": "symbol:func:registerSwagger",
+      "type": "calls",
+      "label": "registers Swagger plugin (dev only)"
+    },
+    {
+      "source": "file:efps-backend/src/app.ts",
+      "target": "symbol:func:registerAuthPlugin",
+      "type": "calls",
+      "label": "registers Auth/Cookie plugin"
+    },
+    {
+      "source": "file:efps-backend/src/app.ts",
+      "target": "symbol:func:registerMetrics",
+      "type": "calls",
+      "label": "registers Metrics plugin"
+    },
+    {
+      "source": "file:efps-backend/src/app.ts",
+      "target": "symbol:func:registerMultipart",
+      "type": "calls",
+      "label": "registers Multipart plugin"
+    },
+    {
+      "source": "file:efps-backend/src/app.ts",
+      "target": "symbol:func:registerEventHandlers",
+      "type": "calls",
+      "label": "calls registerEventHandlers"
+    },
+    {
+      "source": "file:efps-backend/src/shared/errors/AuthError.ts",
+      "target": "symbol:const:ERROR_CODES",
+      "type": "references",
+      "label": "references ERROR_CODES for error codes"
+    },
+    {
+      "source": "file:efps-backend/src/config/index.ts",
+      "target": "symbol:const:config",
+      "type": "contains",
+      "label": "exports config"
+    },
+    {
+      "source": "file:efps-backend/src/config/constants.ts",
+      "target": "symbol:const:COMMODITIES",
+      "type": "contains",
+      "label": "exports COMMODITIES"
+    },
+    {
+      "source": "file:efps-backend/src/config/constants.ts",
+      "target": "symbol:const:ERROR_CODES",
+      "type": "contains",
+      "label": "exports ERROR_CODES"
+    },
+    {
+      "source": "file:efps-backend/src/shared/utils/logger.ts",
+      "target": "symbol:const:logger",
+      "type": "contains",
+      "label": "exports logger"
+    },
+    {
+      "source": "file:efps-backend/src/shared/utils/token.ts",
+      "target": "symbol:func:signAccessToken",
+      "type": "contains",
+      "label": "exports signAccessToken"
+    },
+    {
+      "source": "file:efps-backend/src/shared/utils/token.ts",
+      "target": "symbol:func:signRefreshToken",
+      "type": "contains",
+      "label": "exports signRefreshToken"
+    },
+    {
+      "source": "file:efps-backend/src/shared/utils/token.ts",
+      "target": "symbol:func:verifyAccessToken",
+      "type": "contains",
+      "label": "exports verifyAccessToken"
+    },
+    {
+      "source": "file:efps-backend/src/shared/utils/hash.ts",
+      "target": "symbol:func:hashPassword",
+      "type": "contains",
+      "label": "exports hashPassword"
+    },
+    {
+      "source": "file:efps-backend/src/shared/utils/hash.ts",
+      "target": "symbol:func:verifyPassword",
+      "type": "contains",
+      "label": "exports verifyPassword"
+    },
+    {
+      "source": "file:efps-backend/src/shared/utils/encrypt.ts",
+      "target": "symbol:func:encrypt",
+      "type": "contains",
+      "label": "exports encrypt"
+    },
+    {
+      "source": "file:efps-backend/src/shared/utils/circuit-breaker.ts",
+      "target": "symbol:class:CircuitBreaker",
+      "type": "contains",
+      "label": "exports CircuitBreaker"
+    },
+    {
+      "source": "file:efps-backend/src/shared/utils/response.ts",
+      "target": "symbol:func:sendSuccess",
+      "type": "contains",
+      "label": "exports sendSuccess"
+    },
+    {
+      "source": "file:efps-backend/src/shared/utils/pagination.ts",
+      "target": "symbol:func:parsePaginationParams",
+      "type": "contains",
+      "label": "exports parsePaginationParams"
+    },
+    {
+      "source": "file:efps-backend/src/shared/utils/otp.ts",
+      "target": "symbol:func:generateOtp",
+      "type": "contains",
+      "label": "exports generateOtp"
+    },
+    {
+      "source": "file:efps-backend/src/shared/utils/pdf.ts",
+      "target": "symbol:func:htmlToPdf",
+      "type": "contains",
+      "label": "exports htmlToPdf"
+    },
+    {
+      "source": "file:efps-backend/src/shared/errors/AppError.ts",
+      "target": "symbol:class:AppError",
+      "type": "contains",
+      "label": "exports AppError"
+    },
+    {
+      "source": "file:efps-backend/src/shared/errors/AuthError.ts",
+      "target": "symbol:class:AuthError",
+      "type": "contains",
+      "label": "exports AuthError"
+    },
+    {
+      "source": "file:efps-backend/src/shared/errors/AuthError.ts",
+      "target": "symbol:class:ForbiddenError",
+      "type": "contains",
+      "label": "exports ForbiddenError"
+    },
+    {
+      "source": "file:efps-backend/src/shared/errors/AuthError.ts",
+      "target": "symbol:class:SessionNotFoundError",
+      "type": "contains",
+      "label": "exports SessionNotFoundError"
+    },
+    {
+      "source": "file:efps-backend/src/shared/errors/ValidationError.ts",
+      "target": "symbol:class:ValidationError",
+      "type": "contains",
+      "label": "exports ValidationError"
+    },
+    {
+      "source": "file:efps-backend/src/shared/errors/error-handler.ts",
+      "target": "symbol:func:errorHandler",
+      "type": "contains",
+      "label": "exports errorHandler"
+    },
+    {
+      "source": "file:efps-backend/src/shared/middleware/authenticate.ts",
+      "target": "symbol:func:authenticate",
+      "type": "contains",
+      "label": "exports authenticate"
+    },
+    {
+      "source": "file:efps-backend/src/shared/middleware/authorize.ts",
+      "target": "symbol:func:authorize",
+      "type": "contains",
+      "label": "exports authorize"
+    },
+    {
+      "source": "file:efps-backend/src/shared/middleware/authorize.ts",
+      "target": "symbol:func:authorizeSelf",
+      "type": "contains",
+      "label": "exports authorizeSelf"
+    },
+    {
+      "source": "file:efps-backend/src/shared/middleware/idempotency.ts",
+      "target": "symbol:func:idempotencyKey",
+      "type": "contains",
+      "label": "exports idempotencyKey"
+    },
+    {
+      "source": "file:efps-backend/src/shared/middleware/audit-log.ts",
+      "target": "symbol:func:createAuditLog",
+      "type": "contains",
+      "label": "exports createAuditLog"
+    },
+    {
+      "source": "file:efps-backend/src/shared/middleware/validate-fps-id.ts",
+      "target": "symbol:func:validateFpsIdParam",
+      "type": "contains",
+      "label": "exports validateFpsIdParam"
+    },
+    {
+      "source": "file:efps-backend/src/plugins/auth.plugin.ts",
+      "target": "symbol:func:registerAuthPlugin",
+      "type": "contains",
+      "label": "exports registerAuthPlugin"
+    },
+    {
+      "source": "file:efps-backend/src/plugins/cors.plugin.ts",
+      "target": "symbol:func:registerCors",
+      "type": "contains",
+      "label": "exports registerCors"
+    },
+    {
+      "source": "file:efps-backend/src/plugins/helmet.plugin.ts",
+      "target": "symbol:func:registerHelmet",
+      "type": "contains",
+      "label": "exports registerHelmet"
+    },
+    {
+      "source": "file:efps-backend/src/plugins/rate-limit.plugin.ts",
+      "target": "symbol:func:registerRateLimit",
+      "type": "contains",
+      "label": "exports registerRateLimit"
+    },
+    {
+      "source": "file:efps-backend/src/plugins/swagger.plugin.ts",
+      "target": "symbol:func:registerSwagger",
+      "type": "contains",
+      "label": "exports registerSwagger"
+    },
+    {
+      "source": "file:efps-backend/src/plugins/metrics.plugin.ts",
+      "target": "symbol:func:registerMetrics",
+      "type": "contains",
+      "label": "exports registerMetrics"
+    },
+    {
+      "source": "file:efps-backend/src/plugins/metrics.plugin.ts",
+      "target": "symbol:const:httpRequestDuration",
+      "type": "contains",
+      "label": "exports httpRequestDuration"
+    },
+    {
+      "source": "file:efps-backend/src/plugins/metrics.plugin.ts",
+      "target": "symbol:const:httpRequestsTotal",
+      "type": "contains",
+      "label": "exports httpRequestsTotal"
+    },
+    {
+      "source": "file:efps-backend/src/plugins/metrics.plugin.ts",
+      "target": "symbol:const:activeConnections",
+      "type": "contains",
+      "label": "exports activeConnections"
+    },
+    {
+      "source": "file:efps-backend/src/plugins/multipart.plugin.ts",
+      "target": "symbol:func:registerMultipart",
+      "type": "contains",
+      "label": "exports registerMultipart"
+    },
+    {
+      "source": "file:efps-backend/src/config/database.ts",
+      "target": "symbol:func:getReadPool",
+      "type": "contains",
+      "label": "exports getReadPool"
+    },
+    {
+      "source": "file:efps-backend/src/config/database.ts",
+      "target": "symbol:func:query",
+      "type": "contains",
+      "label": "exports query"
+    },
+    {
+      "source": "file:efps-backend/src/config/database.ts",
+      "target": "symbol:func:readQuery",
+      "type": "contains",
+      "label": "exports readQuery"
+    },
+    {
+      "source": "file:efps-backend/src/config/database.ts",
+      "target": "symbol:func:getClient",
+      "type": "contains",
+      "label": "exports getClient"
+    },
+    {
+      "source": "file:efps-backend/src/config/database.ts",
+      "target": "symbol:func:withClient",
+      "type": "contains",
+      "label": "exports withClient"
+    },
+    {
+      "source": "file:efps-backend/src/config/redis.ts",
+      "target": "symbol:func:getRedis",
+      "type": "contains",
+      "label": "exports getRedis"
+    },
+    {
+      "source": "file:efps-backend/src/config/redis.ts",
+      "target": "symbol:func:getBullRedis",
+      "type": "contains",
+      "label": "exports getBullRedis"
+    },
+    {
+      "source": "file:efps-backend/src/config/redis.ts",
+      "target": "symbol:func:closeRedis",
+      "type": "contains",
+      "label": "exports closeRedis"
+    },
+    {
+      "source": "file:efps-backend/src/shared/events/event-bus.ts",
+      "target": "symbol:const:EventTypes",
+      "type": "contains",
+      "label": "exports EventTypes"
+    },
+    {
+      "source": "file:efps-backend/src/shared/events/event-bus.ts",
+      "target": "symbol:class:EventBus",
+      "type": "contains",
+      "label": "exports EventBus"
+    },
+    {
+      "source": "file:efps-backend/src/shared/events/event-bus.ts",
+      "target": "symbol:const:eventBus",
+      "type": "contains",
+      "label": "exports eventBus singleton"
+    },
+    {
+      "source": "file:efps-backend/src/shared/events/register-handlers.ts",
+      "target": "symbol:func:registerEventHandlers",
+      "type": "contains",
+      "label": "exports registerEventHandlers"
+    },
+    {
+      "source": "file:efps-backend/src/shared/types/models.ts",
+      "target": "symbol:interface:Dealer",
+      "type": "contains",
+      "label": "exports Dealer"
+    },
+    {
+      "source": "file:efps-backend/src/shared/types/models.ts",
+      "target": "symbol:interface:Beneficiary",
+      "type": "contains",
+      "label": "exports Beneficiary"
+    },
+    {
+      "source": "file:efps-backend/src/shared/types/models.ts",
+      "target": "symbol:interface:Transaction",
+      "type": "contains",
+      "label": "exports Transaction"
+    },
+    {
+      "source": "file:efps-backend/src/shared/types/models.ts",
+      "target": "symbol:interface:StockAllocation",
+      "type": "contains",
+      "label": "exports StockAllocation"
+    },
+    {
+      "source": "file:efps-backend/src/shared/types/models.ts",
+      "target": "symbol:interface:JwtPayload",
+      "type": "contains",
+      "label": "exports JwtPayload"
+    },
+    {
+      "source": "file:efps-backend/src/shared/types/models.ts",
+      "target": "symbol:interface:AuthUser",
+      "type": "contains",
+      "label": "exports AuthUser"
+    },
+    {
+      "source": "file:efps-backend/src/shared/types/models.ts",
+      "target": "symbol:interface:ApiResponse",
+      "type": "contains",
+      "label": "exports ApiResponse"
+    },
+    {
+      "source": "file:efps-backend/src/shared/types/models.ts",
+      "target": "symbol:interface:ApiError",
+      "type": "contains",
+      "label": "exports ApiError"
+    },
+    {
+      "source": "file:efps-backend/src/shared/types/enums.ts",
+      "target": "symbol:type:RoleType",
+      "type": "contains",
+      "label": "exports RoleType"
+    },
+    {
+      "source": "file:efps-backend/src/shared/types/enums.ts",
+      "target": "symbol:type:CommodityTypeType",
+      "type": "contains",
+      "label": "exports CommodityTypeType"
+    },
+    {
+      "source": "file:efps-backend/src/shared/types/enums.ts",
+      "target": "symbol:type:TransactionModeType",
+      "type": "contains",
+      "label": "exports TransactionModeType"
+    },
+    {
+      "source": "file:efps-backend/src/shared/types/enums.ts",
+      "target": "symbol:const:Role",
+      "type": "contains",
+      "label": "exports Role"
+    },
+    {
+      "source": "file:efps-backend/src/shared/types/enums.ts",
+      "target": "symbol:const:CommodityType",
+      "type": "contains",
+      "label": "exports CommodityType"
+    },
+    {
+      "source": "file:efps-backend/src/app.ts",
+      "target": "symbol:module:config",
+      "type": "depends-on",
+      "label": "uses config module"
+    },
+    {
+      "source": "file:efps-backend/src/app.ts",
+      "target": "symbol:module:plugins",
+      "type": "depends-on",
+      "label": "uses plugins"
+    },
+    {
+      "source": "file:efps-backend/src/app.ts",
+      "target": "symbol:module:shared-errors",
+      "type": "depends-on",
+      "label": "uses shared error handler"
+    },
+    {
+      "source": "file:efps-backend/src/app.ts",
+      "target": "symbol:module:shared-events",
+      "type": "depends-on",
+      "label": "uses shared events"
+    },
+    {
+      "source": "file:efps-backend/src/server.ts",
+      "target": "symbol:module:config",
+      "type": "depends-on",
+      "label": "uses config module"
+    },
+    {
+      "source": "file:efps-backend/src/shared/middleware/authenticate.ts",
+      "target": "symbol:module:shared-utils",
+      "type": "depends-on",
+      "label": "uses token utils"
+    },
+    {
+      "source": "file:efps-backend/src/shared/middleware/authenticate.ts",
+      "target": "symbol:module:shared-errors",
+      "type": "depends-on",
+      "label": "uses auth errors"
+    },
+    {
+      "source": "file:efps-backend/src/shared/errors/error-handler.ts",
+      "target": "symbol:module:shared-utils",
+      "type": "depends-on",
+      "label": "uses logger"
+    },
+    {
+      "source": "file:efps-backend/src/shared/errors/error-handler.ts",
+      "target": "symbol:module:shared-errors",
+      "type": "depends-on",
+      "label": "uses AppError"
+    },
+    {
+      "source": "file:efps-backend/src/config/index.ts",
+      "target": "symbol:const:config",
+      "type": "contains",
+      "label": "exported config object"
+    },
+    {
+      "source": "symbol:func:main",
+      "target": "symbol:func:buildApp",
+      "type": "calls",
+      "label": "invokes buildApp on startup"
+    },
+    {
+      "source": "symbol:func:main",
+      "target": "symbol:func:gracefulShutdown",
+      "type": "calls",
+      "label": "registers gracefulShutdown on process signals"
+    },
+    {
+      "source": "file:efps-backend/src/shared/sync/normalization.service.ts",
+      "target": "symbol:func:normalizeRecord",
+      "type": "contains",
+      "label": "exports normalizeRecord"
+    },
+    {
+      "source": "file:efps-backend/src/shared/sync/validation.service.ts",
+      "target": "symbol:func:validateRecord",
+      "type": "contains",
+      "label": "exports validateRecord"
+    },
+    {
+      "source": "file:efps-backend/src/shared/sync/validation.service.ts",
+      "target": "symbol:func:validateBatch",
+      "type": "contains",
+      "label": "exports validateBatch"
+    },
+    {
+      "source": "file:efps-backend/src/shared/sync/system-events.service.ts",
+      "target": "symbol:func:insertSystemEvent",
+      "type": "contains",
+      "label": "exports insertSystemEvent"
+    },
+    {
+      "source": "file:efps-backend/src/shared/sync/system-events.service.ts",
+      "target": "symbol:func:getRecentEvents",
+      "type": "contains",
+      "label": "exports getRecentEvents"
+    },
+    {
+      "source": "file:efps-backend/src/shared/sync/quarantine.service.ts",
+      "target": "symbol:func:insertQuarantineRecords",
+      "type": "contains",
+      "label": "exports insertQuarantineRecords"
+    },
+    {
+      "source": "file:efps-backend/src/shared/sync/quarantine.service.ts",
+      "target": "symbol:func:getQuarantineSummary",
+      "type": "contains",
+      "label": "exports getQuarantineSummary"
+    },
+    {
+      "source": "symbol:module:shared-sync",
+      "target": "file:efps-backend/src/config/database.ts",
+      "type": "depends-on",
+      "label": "sync services use database"
+    },
+    {
+      "source": "symbol:module:shared-utils",
+      "target": "symbol:module:config",
+      "type": "depends-on",
+      "label": "utils depend on config"
+    },
+    {
+      "source": "symbol:module:shared-errors",
+      "target": "symbol:module:config",
+      "type": "depends-on",
+      "label": "errors reference config constants"
+    },
+    {
+      "source": "symbol:module:shared-middleware",
+      "target": "symbol:module:shared-errors",
+      "type": "depends-on",
+      "label": "middleware uses error classes"
+    },
+    {
+      "source": "symbol:module:shared-middleware",
+      "target": "symbol:module:shared-utils",
+      "type": "depends-on",
+      "label": "middleware uses token utils"
+    },
+    {
+      "source": "symbol:module:shared-middleware",
+      "target": "symbol:module:config",
+      "type": "depends-on",
+      "label": "middleware uses redis config"
+    },
+    {
+      "source": "symbol:module:shared-types",
+      "target": "symbol:module:config",
+      "type": "depends-on",
+      "label": "types reference config constants"
+    },
+    {
+      "source": "symbol:module:plugins",
+      "target": "symbol:module:config",
+      "type": "depends-on",
+      "label": "plugins depend on config"
+    },
+    {
+      "source": "file:efps-backend/src/app.ts",
+      "target": "symbol:module:shared-sync",
+      "type": "depends-on",
+      "label": "app depends on shared-sync (via internal-sync router)"
+    }
+  ]
+}

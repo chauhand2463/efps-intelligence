@@ -1,0 +1,436 @@
+{
+  "batch": 20,
+  "totalFiles": 17,
+  "projectRoot": "E:\\efps",
+  "nodes": [
+    {
+      "id": "efps-frontend-AGENTS.md",
+      "type": "file",
+      "label": "AGENTS.md",
+      "path": "efps-frontend/AGENTS.md",
+      "category": "frontend-config",
+      "summary": "Session summary for 17 Jun 2026 — Phase 3 cleanup: dead code removal, simulated saves → real API calls, alert() → toast(), console.error() → toast+error UI, live data wiring, broken button fixes, React 19 lint fixes, new MDM monthly records endpoint. Both frontend (Next.js) and backend (Fastify) compile cleanly.",
+      "contentType": "markdown",
+      "sizeBytes": 6745,
+      "exists": true,
+      "highlights": [
+        "Dead code removed: page.module.css, decorative header buttons, unused imports, studentsData.mock",
+        "Simulated saves replaced with real API calls across calculator, bank-commission, mdm-record, profile/edit, income-expense",
+        "alert() → toast() in 8 files; console.error() → toast+error UI in 3 files",
+        "Live data wired to operational-dashboard, monthly-sales-report, dashboard, pending-customers, customers, sales, dealers, verify-identity",
+        "New backend endpoint POST/GET /mdm/monthly-records with service, controller, migration",
+        "React 19 lint fixes: ref assignments moved from render body to useEffect",
+        "Build status: both backend and frontend compile cleanly (next build passes, TypeScript clean)",
+        "34 → 14 lint errors remaining (pre-existing any type annotations and fetch-on-mount patterns)"
+      ],
+      "references": [
+        "backend: src/server.ts",
+        "backend: src/modules/mdm/mdm.routes.ts",
+        "backend: src/modules/mdm/mdm.monthly.service.ts",
+        "backend: src/modules/mdm/mdm.monthly.controller.ts",
+        "backend: src/database/migrations/020_add_mdm_monthly_records.sql",
+        "frontend: src/providers.tsx (AuthProvider)",
+        "frontend: src/lib/api-hooks.ts",
+        "frontend: 24 page files under src/app/"
+      ]
+    },
+    {
+      "id": "efps-frontend-CLAUDE.md",
+      "type": "file",
+      "label": "CLAUDE.md",
+      "path": "efps-frontend/CLAUDE.md",
+      "category": "frontend-config",
+      "summary": "Empty file — no Claude-specific instructions for frontend.",
+      "contentType": "markdown",
+      "sizeBytes": 0,
+      "exists": true,
+      "highlights": []
+    },
+    {
+      "id": "efps-backend-AGENTS.md",
+      "type": "file",
+      "label": "AGENTS.md",
+      "path": "efps-backend/AGENTS.md",
+      "category": "backend-config",
+      "summary": "File does not exist.",
+      "contentType": "markdown",
+      "sizeBytes": 0,
+      "exists": false,
+      "highlights": []
+    },
+    {
+      "id": "efps-backend-CLAUDE.md",
+      "type": "file",
+      "label": "CLAUDE.md",
+      "path": "efps-backend/CLAUDE.md",
+      "category": "backend-config",
+      "summary": "File does not exist.",
+      "contentType": "markdown",
+      "sizeBytes": 0,
+      "exists": false,
+      "highlights": []
+    },
+    {
+      "id": "shared-events-index.ts",
+      "type": "file",
+      "label": "events/index.ts",
+      "path": "efps-backend/src/shared/events/index.ts",
+      "category": "backend-shared",
+      "summary": "Barrel export for shared event system — re-exports eventBus, EventTypes, EventType, registerEventHandlers.",
+      "contentType": "typescript",
+      "sizeBytes": 131,
+      "exists": true,
+      "highlights": [
+        "export { eventBus, EventTypes } from './event-bus.js'",
+        "export type { EventType } from './event-bus.js'",
+        "export { registerEventHandlers } from './register-handlers.js'"
+      ],
+      "dependencies": [
+        "./event-bus.js",
+        "./register-handlers.js"
+      ]
+    },
+    {
+      "id": "shared-types-models.ts",
+      "type": "file",
+      "label": "types/models.ts",
+      "path": "efps-backend/src/shared/types/models.ts",
+      "category": "backend-shared",
+      "summary": "Core data model interfaces for the eFPS system: Dealer, Session, OtpRequest, Beneficiary, StockAllocation, Transaction, AuditLog, Notification, PaginationMeta, ApiResponse, ApiError, JwtPayload, AuthUser.",
+      "contentType": "typescript",
+      "sizeBytes": 2977,
+      "exists": true,
+      "highlights": [
+        "Dealer: id, fps_id, area_id, full_name, mobile, address, district, taluka, village, password_hash, role, is_active, is_verified, sync_enabled, last_sync_at, last_login_at",
+        "Session: id, dealer_id, refresh_token_hash, user_agent, ip_address, expires_at",
+        "Beneficiary: ration_card_no, head_of_family, member_count, category (APL/BPL/AAY/PHH)",
+        "StockAllocation: month, commodity, allocated_kg, lifted_kg",
+        "Transaction: beneficiary_id, transaction_date, month, commodity, quantity_kg, price_per_kg, total_amount, mode (pos/manual/otg), biometric_auth",
+        "ApiResponse<T> envelope pattern with success + data + optional PaginationMeta",
+        "ApiError with code, message, field, statusCode",
+        "JwtPayload: sub, role, fps_id"
+      ],
+      "dependencies": [
+        "./enums.js"
+      ]
+    },
+    {
+      "id": "shared-types-enums.ts",
+      "type": "file",
+      "label": "types/enums.ts",
+      "path": "efps-backend/src/shared/types/enums.ts",
+      "category": "backend-shared",
+      "summary": "Enum definitions: Role (dealer/area_officer/admin), AccountStatus, CommodityType (Rice/Wheat/Sugar/Kerosene/Oil/Pulses), BeneficiaryCategory (APL/BPL/AAY/PHH), TransactionMode (pos/manual/otg), NotificationType (info/warning/alert), OtpPurpose (password_reset/verify_mobile/2fa).",
+      "contentType": "typescript",
+      "sizeBytes": 1516,
+      "exists": true,
+      "highlights": [
+        "Role: DEALER, AREA_OFFICER, ADMIN — 3-tier hierarchy",
+        "CommodityType: Rice, Wheat, Sugar, Kerosene, Oil, Pulses — 6 PDS commodities",
+        "BeneficiaryCategory: APL, BPL, AAY, PHH — 4 ration categories",
+        "TransactionMode: pos, manual, otg — 3 transaction modes",
+        "OtpPurpose: password_reset, verify_mobile, 2fa — 3 OTP use cases"
+      ]
+    },
+    {
+      "id": "shared-events-EventTypes.ts",
+      "type": "file",
+      "label": "events/EventTypes.ts",
+      "path": "efps-backend/src/shared/events/EventTypes.ts",
+      "category": "backend-shared",
+      "summary": "File does not exist. Event types likely defined in event-bus.js.",
+      "contentType": "typescript",
+      "sizeBytes": 0,
+      "exists": false,
+      "highlights": []
+    },
+    {
+      "id": "shared-sync-directory",
+      "type": "directory",
+      "label": "shared/sync/",
+      "path": "efps-backend/src/shared/sync/",
+      "category": "backend-shared",
+      "summary": "Data sync pipeline: 4 service files — normalization.service.ts, quarantine.service.ts, system-events.service.ts, validation.service.ts.",
+      "contentType": "directory",
+      "exists": true,
+      "highlights": [
+        "normalization.service.ts — data cleaning (names, mobile, dates, addresses, ration card numbers, numeric values)",
+        "quarantine.service.ts — stores invalid records in sync_quarantine table with error details",
+        "system-events.service.ts — best-effort event logging into system_events table",
+        "validation.service.ts — record validation with rules per type (beneficiary, transaction, stock_allocation, lifting_record)"
+      ]
+    },
+    {
+      "id": "sync-normalization.service.ts",
+      "type": "file",
+      "label": "sync/normalization.service.ts",
+      "path": "efps-backend/src/shared/sync/normalization.service.ts",
+      "category": "backend-shared",
+      "summary": "Record normalization pipeline: title-case names, mobile number normalization (+91 format), date parsing (ISO/flexible), address/ration card cleaning, numeric parsing.",
+      "contentType": "typescript",
+      "sizeBytes": 3130,
+      "exists": true,
+      "highlights": [
+        "toTitleCase: strips non-alpha chars, single spaces, title-cases each word",
+        "normalizeMobile: 10-digit → +91 prefix; handles 91/091 prefixed variants",
+        "normalizeDate: ISO strings AND DD/MM/YYYY or YYYY/MM/DD slash/dot/hyphen formats",
+        "normalizeRecord: dispatches to field-specific normalizers based on key name",
+        "NormalizedFields interface: beneficiary_name, father_name, address, district, taluka, ration_card_no, mobile_no, dates, allocated/lifted/amount"
+      ]
+    },
+    {
+      "id": "sync-quarantine.service.ts",
+      "type": "file",
+      "label": "sync/quarantine.service.ts",
+      "path": "efps-backend/src/shared/sync/quarantine.service.ts",
+      "category": "backend-shared",
+      "summary": "Quarantine storage for failed sync records. insertQuarantineRecords stores into sync_quarantine table with dealer_id, raw_data (JSONB), errors (JSONB), source. getQuarantineSummary aggregates by type and error code.",
+      "contentType": "typescript",
+      "sizeBytes": 1858,
+      "exists": true,
+      "highlights": [
+        "insertQuarantineRecords: bulk INSERT into sync_quarantine with dealer_id, sync_job_id, record_type, raw_data::jsonb, errors::jsonb, source",
+        "getQuarantineSummary: COUNT + JSONB_AGG grouped by record_type and error code, optional dealer_id filter",
+        "QuarantineEntry interface: dealerId, syncJobId, recordType, rawData, errors, source (default 'playwright')",
+        "QuarantineSummary: total count + byType + byReason breakdowns",
+        "Depends on database pool and ValidationError type"
+      ],
+      "dependencies": [
+        "../../config/database.js",
+        "./validation.service"
+      ]
+    },
+    {
+      "id": "sync-system-events.service.ts",
+      "type": "file",
+      "label": "sync/system-events.service.ts",
+      "path": "efps-backend/src/shared/sync/system-events.service.ts",
+      "category": "backend-shared",
+      "summary": "System event logging service. insertSystemEvent inserts into system_events table with type, severity (info/warn/error/critical), source, message, metadata JSONB, trace_id. getRecentEvents fetches with optional severity filter.",
+      "contentType": "typescript",
+      "sizeBytes": 819,
+      "exists": true,
+      "highlights": [
+        "insertSystemEvent: best-effort (try/catch with empty catch), inserts into system_events",
+        "getRecentEvents: ORDER BY created_at DESC, optional severity filter",
+        "SystemEventInput: eventType, severity (info|warn|error|critical), source, message, metadata?, traceId?"
+      ],
+      "dependencies": [
+        "../../config/database.js"
+      ]
+    },
+    {
+      "id": "sync-validation.service.ts",
+      "type": "file",
+      "label": "sync/validation.service.ts",
+      "path": "efps-backend/src/shared/sync/validation.service.ts",
+      "category": "backend-shared",
+      "summary": "Record validation rule engine. 4 record types (beneficiary, transaction, stock_allocation, lifting_record) with rules: required fields, numeric validation, date validation, ration card format, positive quantity (lifted <= allocated). validateRecord returns {valid, errors, warnings}. validateBatch splits into pass/fail arrays.",
+      "contentType": "typescript",
+      "sizeBytes": 4478,
+      "exists": true,
+      "highlights": [
+        "RecordType: beneficiary, transaction, stock_allocation, lifting_record",
+        "Required fields per type defined in requiredFields map",
+        "Rules: makeRequiredRule, makeNumericRule (checks NaN + negative), makeDateRule (valid Date parse), makeRationCardRule (length 4-20, alphanumeric+/), makePositiveQuantityRule (lifted <= allocated → warning not error)",
+        "validateRecord: run all rules, classify LIFTED_EXCEEDS_ALLOCATED as warning",
+        "validateBatch: bulk split into pass (with warnings) and fail (with errors)",
+        "ValidationError: field, message, code"
+      ]
+    },
+    {
+      "id": "server-err.log",
+      "type": "file",
+      "label": "server-err.log",
+      "path": "efps-backend/server-err.log",
+      "category": "backend-log",
+      "summary": "Empty file — no stderr output captured.",
+      "contentType": "log",
+      "sizeBytes": 0,
+      "exists": true,
+      "highlights": []
+    },
+    {
+      "id": "server-out.log",
+      "type": "file",
+      "label": "server-out.log",
+      "path": "efps-backend/server-out.log",
+      "category": "backend-log",
+      "summary": "Empty file — no stdout output captured.",
+      "contentType": "log",
+      "sizeBytes": 0,
+      "exists": true,
+      "highlights": []
+    },
+    {
+      "id": "srv-out.txt",
+      "type": "file",
+      "label": "srv-out.txt",
+      "path": "efps-backend/srv-out.txt",
+      "category": "backend-log",
+      "summary": "Server runtime log. Persistent Redis version error (requires >=5.0, has 3.0.504) repeated ~100 times from BullMQ. Server starts successfully on http://localhost:3000 (IPv6 + IPv4). Auth failing: POST /api/v1/auth/login returns 401 (2 attempts). All /api/v1/hierarchy/* endpoints return 401 (unauthenticated requests).",
+      "contentType": "log",
+      "sizeBytes": 12180,
+      "exists": true,
+      "highlights": [
+        "CRITICAL: Redis version 3.0.504 too old for BullMQ (requires >=5.0) — repeated ~100 times",
+        "Server runs on http://localhost:3000 and http://[::1]:3000",
+        "/health and /ready endpoints return 200 OK",
+        "POST /api/v1/auth/login → 401 (authentication failure)",
+        "GET /api/v1/hierarchy/state/2026-06 → 401",
+        "GET /api/v1/hierarchy/search?q=ahmedabad → 401",
+        "GET /api/v1/hierarchy/months → 401",
+        "POST /api/v1/hierarchy/import/csv → 401",
+        "Response times: health ~4.6ms, login ~2-7ms, hierarchy ~0.6-1ms"
+      ]
+    },
+    {
+      "id": "srv-test.txt",
+      "type": "file",
+      "label": "srv-test.txt",
+      "path": "efps-backend/srv-test.txt",
+      "category": "backend-log",
+      "summary": "Server test log. Same Redis version error repeated. Server failed to start: EADDRINUSE on ::1:3000 — port already in use from previous instance.",
+      "contentType": "log",
+      "sizeBytes": 4172,
+      "exists": true,
+      "highlights": [
+        "Redis version error repeated ~90 times (same 3.0.504 < 5.0.0 issue)",
+        "EADDRINUSE: address already in use ::1:3000 — port conflict on restart",
+        "Failed to start server due to port conflict"
+      ]
+    },
+    {
+      "id": "login-page.png",
+      "type": "file",
+      "label": "login-page.png",
+      "path": "efps-backend/login-page.png",
+      "category": "backend-screenshot",
+      "summary": "Screenshot file exists (~319 KB binary). Login page visual.",
+      "contentType": "image/png",
+      "exists": true
+    },
+    {
+      "id": "login-failed.png",
+      "type": "file",
+      "label": "login-failed.png",
+      "path": "efps-backend/login-failed.png",
+      "category": "backend-screenshot",
+      "summary": "Screenshot file exists (~107 KB binary). Login failed state.",
+      "contentType": "image/png",
+      "exists": true
+    },
+    {
+      "id": "login-stuck.png",
+      "type": "file",
+      "label": "login-stuck.png",
+      "path": "efps-backend/login-stuck.png",
+      "category": "backend-screenshot",
+      "summary": "Screenshot file exists (~72 KB binary). Login stuck state.",
+      "contentType": "image/png",
+      "exists": true
+    },
+    {
+      "id": "second-level-auth-failed.png",
+      "type": "file",
+      "label": "second-level-auth-failed.png",
+      "path": "efps-backend/second-level-auth-failed.png",
+      "category": "backend-screenshot",
+      "summary": "Screenshot file exists (~61 KB binary). 2FA / second-level auth failed state.",
+      "contentType": "image/png",
+      "exists": true
+    }
+  ],
+  "edges": [
+    {
+      "source": "shared-events-index.ts",
+      "target": "shared-events-EventTypes.ts",
+      "relation": "re-exports-from",
+      "detail": "events/index.ts re-exports from ./event-bus.js (EventTypes class exists there, not in separate EventTypes.ts)"
+    },
+    {
+      "source": "shared-types-models.ts",
+      "target": "shared-types-enums.ts",
+      "relation": "imports-from",
+      "detail": "models.ts imports RoleType, CommodityTypeType, BeneficiaryCategoryType, TransactionModeType, NotificationTypeType from ./enums.js"
+    },
+    {
+      "source": "sync-quarantine.service.ts",
+      "target": "sync-validation.service.ts",
+      "relation": "imports-from",
+      "detail": "quarantine.service.ts imports ValidationError type from ./validation.service"
+    },
+    {
+      "source": "sync-quarantine.service.ts",
+      "target": "shared-types-models.ts",
+      "relation": "indirect-reference",
+      "detail": "Uses dealer_id UUID pattern matching Dealer model — stores records linked to dealers"
+    },
+    {
+      "source": "sync-validation.service.ts",
+      "target": "sync-normalization.service.ts",
+      "relation": "pipeline-downstream",
+      "detail": "validation.service.ts validates after normalization would have cleaned data; validateBatch → normalized records then validated"
+    },
+    {
+      "source": "sync-normalization.service.ts",
+      "target": "sync-quarantine.service.ts",
+      "relation": "pipeline-upstream",
+      "detail": "normalization cleans data → validation checks → failed records go to quarantine.service.ts"
+    },
+    {
+      "source": "sync-system-events.service.ts",
+      "target": "shared-types-models.ts",
+      "relation": "indirect-reference",
+      "detail": "Stores system events that may reference dealer_ids matching Dealer model"
+    },
+    {
+      "source": "srv-out.txt",
+      "target": "srv-test.txt",
+      "relation": "related-log",
+      "detail": "Both logs show same Redis version error pattern; srv-out.txt shows successful boot + 401s, srv-test.txt shows EADDRINUSE failure"
+    },
+    {
+      "source": "login-page.png",
+      "target": "login-failed.png",
+      "relation": "visual-sequence",
+      "detail": "Login flow screenshots: login page → login failed state"
+    },
+    {
+      "source": "login-page.png",
+      "target": "login-stuck.png",
+      "relation": "visual-sequence",
+      "detail": "Login flow screenshots: login page → login stuck state"
+    },
+    {
+      "source": "login-failed.png",
+      "target": "second-level-auth-failed.png",
+      "relation": "visual-sequence",
+      "detail": "Two distinct auth failure scenarios: first-level login failure → second-level (2FA) auth failure"
+    },
+    {
+      "source": "srv-out.txt",
+      "target": "login-failed.png",
+      "relation": "corroborates",
+      "detail": "srv-out.txt shows POST /api/v1/auth/login → 401; login-failed.png screenshot visually confirms auth failure UI state"
+    },
+    {
+      "source": "shared-events-index.ts",
+      "target": "shared-sync-directory",
+      "relation": "related-module",
+      "detail": "Both under src/shared/ — events module and sync module are sibling shared subsystems used by workers mentioned in AGENTS.md (efpsSyncWorker, domainEventsWorker)"
+    },
+    {
+      "source": "efps-frontend-AGENTS.md",
+      "target": "shared-types-models.ts",
+      "relation": "references",
+      "detail": "AGENTS.md documents simulated saves → real API calls that post data matching these model interfaces (Dealer, Transaction, StockAllocation, Beneficiary, etc.)"
+    },
+    {
+      "source": "efps-frontend-AGENTS.md",
+      "target": "srv-out.txt",
+      "relation": "references",
+      "detail": "AGENTS.md mentions rate limiting (429) troubleshooting and ::1 allow list; srv-out.txt confirms server running on ::1:3000"
+    }
+  ]
+}

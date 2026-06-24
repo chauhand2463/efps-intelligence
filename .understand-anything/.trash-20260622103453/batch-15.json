@@ -1,0 +1,349 @@
+{
+  "batch": 15,
+  "description": "Sync module — GovtImporterService, Playwright portal-inspection scratch scripts, env configs, sync/integration tests",
+  "nodes": [
+    {
+      "id": "batch-15--govt-importer-service",
+      "type": "service",
+      "label": "GovtImporterService",
+      "file": "efps-backend/src/modules/sync/govt-importer.service.ts",
+      "description": "Imports government beneficiary data from CSV uploads into DB with SHA-256 change detection, per-row change logging, deactivation tracking",
+      "tooltip": "Core service: importBeneficiaries, markDeactivatedBeneficiaries, computeRowHash, mapCategory"
+    },
+    {
+      "id": "batch-15--govt-beneficiary-row",
+      "type": "interface",
+      "label": "GovtBeneficiaryRow",
+      "file": "efps-backend/src/modules/sync/govt-importer.service.ts:4",
+      "description": "Interface for raw government beneficiary row data from CSV (ration card, family, LPG/PNG status, address)",
+      "tooltip": "13 fields: srNo, cardHolderName, hofAsPerNFSA, rationCardNo, cardCategory, familyMember, lpgStatus, pngStatus, address, village"
+    },
+    {
+      "id": "batch-15--import-result",
+      "type": "interface",
+      "label": "ImportResult",
+      "file": "efps-backend/src/modules/sync/govt-importer.service.ts:17",
+      "description": "Result object returned from importBeneficiaries — counts new, updated, unchanged, deleted, errors",
+      "tooltip": "batchId + 6 counters"
+    },
+    {
+      "id": "batch-15--test-argon-cjs",
+      "type": "script",
+      "label": "test-argon.cjs",
+      "file": "efps-backend/test-argon.cjs",
+      "description": "ESM test script (await top-level) verifying argon2id hash for password 'Dealer@123'",
+      "tooltip": "Argon2 verification test — ESM"
+    },
+    {
+      "id": "batch-15--test-argon-js",
+      "type": "script",
+      "label": "test-argon.js",
+      "file": "efps-backend/test-argon.js",
+      "description": "CJS test script verifying argon2id hash for password 'Dealer@123' using .then pattern",
+      "tooltip": "Argon2 verification test — CJS"
+    },
+    {
+      "id": "batch-15--inspect-captcha",
+      "type": "script",
+      "label": "inspect-captcha.js",
+      "file": "efps-backend/scratch/inspect-captcha.js",
+      "description": "Playwright script that navigates to eFPS portal login, screenshots captcha image, runs Tesseract OCR to extract text",
+      "tooltip": "OCR-based captcha solver test — playwright + tesseract.js"
+    },
+    {
+      "id": "batch-15--inspect-ipds",
+      "type": "script",
+      "label": "inspect-ipds.js",
+      "file": "efps-backend/scratch/inspect-ipds.js",
+      "description": "Comprehensive Playwright reconnaissance of IPDS Gujarat Social Audit portal — dumps elements, ASP.NET WebForms state, dropdowns, table structures, login form detection",
+      "tooltip": "IPDS portal inspection — ASP.NET WebForms recon"
+    },
+    {
+      "id": "batch-15--inspect-portal",
+      "type": "script",
+      "label": "inspect-portal.js",
+      "file": "efps-backend/scratch/inspect-portal.js",
+      "description": "Simple Playwright inspection of eFPS login page — dumps form HTML and interactive elements",
+      "tooltip": "eFPS portal login page inspection"
+    },
+    {
+      "id": "batch-15--inspect-post-login",
+      "type": "script",
+      "label": "inspect-post-login.js",
+      "file": "efps-backend/scratch/inspect-post-login.js",
+      "description": "Full post-login Playwright inspection — logs into eFPS via OCR captcha, then inspects beneficiaries, transactions, stock, dashboard pages with element/table/ASP.NET state dumps",
+      "tooltip": "Post-login eFPS portal inspection — screenshots + element dump"
+    },
+    {
+      "id": "batch-15--env-example",
+      "type": "config",
+      "label": ".env.example",
+      "file": "efps-backend/.env.example",
+      "description": "Environment variable template with placeholder values for all config sections: app, DB, Redis, JWT, encryption, sync, OTP/SMS, security, R2 storage, monitoring",
+      "tooltip": "Template env file — all sections with comments"
+    },
+    {
+      "id": "batch-15--env-test",
+      "type": "config",
+      "label": ".env.test",
+      "file": "efps-backend/.env.test",
+      "description": "Test environment overrides — port 0, test DB on port 5433, mock SMS provider, silent logging",
+      "tooltip": "Test env — NODE_ENV=test, mock provider, LOG_LEVEL=silent"
+    },
+    {
+      "id": "batch-15--env-dev",
+      "type": "config",
+      "label": ".env (dev)",
+      "file": "efps-backend/.env",
+      "description": "Active development environment — port 3000, postgres on 5434, msg91 SMS, MOCK_GOVT_PORTAL=true",
+      "tooltip": "Dev env — active configuration"
+    },
+    {
+      "id": "batch-15--test-setup",
+      "type": "test-config",
+      "label": "test setup.ts",
+      "file": "efps-backend/tests/fixtures/setup.ts",
+      "description": "Test bootstrap — loads .env.test via dotenv, suppresses Redis version < 6.2.0 warnings",
+      "tooltip": "Vitest setup — env loading + warning suppression"
+    },
+    {
+      "id": "batch-15--test-factories",
+      "type": "test-utility",
+      "label": "test factories.ts",
+      "file": "efps-backend/tests/fixtures/factories.ts",
+      "description": "Test data factories: createTestDealer (argon2 hash), createTestBeneficiary, createTestTransaction",
+      "tooltip": "Factory functions for test data generation"
+    },
+    {
+      "id": "batch-15--integration-sync-test",
+      "type": "test",
+      "label": "sync.test.ts (integration)",
+      "file": "efps-backend/tests/integration/sync.test.ts",
+      "description": "Integration tests for dealer sync endpoints — trigger sync, status, bank-info CRUD, auth enforcement. Mocks BullMQ workers.",
+      "tooltip": "Sync API integration tests — 5 test cases"
+    },
+    {
+      "id": "batch-15--integration-internal-sync-test",
+      "type": "test",
+      "label": "internal-sync.test.ts (integration)",
+      "file": "efps-backend/tests/integration/internal-sync.test.ts",
+      "description": "Integration tests for internal sync API — payload validation, auth rejection, quarantine invalid records, valid processing, idempotent upsert, stock allocation. Extensive inline migration setup.",
+      "tooltip": "Internal sync API integration — 7 test cases"
+    },
+    {
+      "id": "batch-15--unit-sync-captcha-test",
+      "type": "test",
+      "label": "efps-sync-captcha.test.ts (unit)",
+      "file": "efps-backend/tests/unit/efps-sync-captcha.test.ts",
+      "description": "Unit tests for eFPS sync worker module structure and processSyncPayload with valid/invalid beneficiary records. Full dependency mocking.",
+      "tooltip": "Sync worker unit tests — module exports + payload processing"
+    },
+    {
+      "id": "batch-15--unit-sync-mappings-test",
+      "type": "test",
+      "label": "efps-sync-mappings.test.ts (unit)",
+      "file": "efps-backend/tests/unit/efps-sync-mappings.test.ts",
+      "description": "Unit tests for sync pipeline processing — beneficiary, transaction, stock_allocation record types, mixed payloads, validation/quarantine, schema validation with Zod",
+      "tooltip": "Sync pipeline unit tests — 8 test cases covering all record types"
+    },
+    {
+      "id": "batch-15--sync-quarantine-table",
+      "type": "database-table",
+      "label": "sync_quarantine",
+      "description": "Table for quarantined invalid sync records (dealer_id, record_type, raw_data, errors, source, reviewed_at lifecycle)",
+      "tooltip": "Quarantine table — referenced in internal-sync.test.ts setup"
+    },
+    {
+      "id": "batch-15--system-events-table",
+      "type": "database-table",
+      "label": "system_events",
+      "description": "Table for system-level events logged during sync operations (event_type, severity, source, trace_id)",
+      "tooltip": "System events table — referenced in internal-sync.test.ts setup"
+    },
+    {
+      "id": "batch-15--argon2",
+      "type": "library",
+      "label": "argon2",
+      "description": "Argon2 password hashing library used in test-argon scripts, sync test setup, and factories.ts for hash verification",
+      "tooltip": "Argon2id — dealer password hash"
+    },
+    {
+      "id": "batch-15--playwright",
+      "type": "library",
+      "label": "Playwright",
+      "description": "Browser automation library used in scratch scripts (inspect-captcha, inspect-ipds, inspect-portal, inspect-post-login) for eFPS/IPDS portal crawling",
+      "tooltip": "Playwright chromium — portal scraping"
+    },
+    {
+      "id": "batch-15--tesseract-js",
+      "type": "library",
+      "label": "Tesseract.js",
+      "description": "OCR library used in inspect-captcha and inspect-post-login for solving eFPS portal captcha images",
+      "tooltip": "Tesseract.js — captcha solving"
+    }
+  ],
+  "edges": [
+    {
+      "from": "batch-15--govt-importer-service",
+      "to": "batch-15--govt-beneficiary-row",
+      "relation": "defines",
+      "label": "processes"
+    },
+    {
+      "from": "batch-15--govt-importer-service",
+      "to": "batch-15--import-result",
+      "relation": "returns",
+      "label": "returns ImportResult"
+    },
+    {
+      "from": "batch-15--govt-importer-service",
+      "to": "batch-15--argon2",
+      "relation": "related",
+      "label": "same auth dependency ecosystem"
+    },
+    {
+      "from": "batch-15--test-argon-cjs",
+      "to": "batch-15--argon2",
+      "relation": "uses",
+      "label": "argon2.verify"
+    },
+    {
+      "from": "batch-15--test-argon-js",
+      "to": "batch-15--argon2",
+      "relation": "uses",
+      "label": "argon2.verify"
+    },
+    {
+      "from": "batch-15--inspect-captcha",
+      "to": "batch-15--playwright",
+      "relation": "uses",
+      "label": "chromium.launch"
+    },
+    {
+      "from": "batch-15--inspect-captcha",
+      "to": "batch-15--tesseract-js",
+      "relation": "uses",
+      "label": "createWorker('eng')"
+    },
+    {
+      "from": "batch-15--inspect-ipds",
+      "to": "batch-15--playwright",
+      "relation": "uses",
+      "label": "chromium + page.evaluate"
+    },
+    {
+      "from": "batch-15--inspect-ipds",
+      "to": "batch-15--tesseract-js",
+      "relation": "related",
+      "label": "same tooling family"
+    },
+    {
+      "from": "batch-15--inspect-portal",
+      "to": "batch-15--playwright",
+      "relation": "uses",
+      "label": "chromium + page.screenshot"
+    },
+    {
+      "from": "batch-15--inspect-post-login",
+      "to": "batch-15--playwright",
+      "relation": "uses",
+      "label": "browser context + page automation"
+    },
+    {
+      "from": "batch-15--inspect-post-login",
+      "to": "batch-15--tesseract-js",
+      "relation": "uses",
+      "label": "captcha solving in login()"
+    },
+    {
+      "from": "batch-15--inspect-post-login",
+      "to": "batch-15--inspect-captcha",
+      "relation": "extends",
+      "label": "reuses captcha technique with full login flow"
+    },
+    {
+      "from": "batch-15--inspect-ipds",
+      "to": "batch-15--inspect-portal",
+      "relation": "related",
+      "label": "parallel portal inspection scripts"
+    },
+    {
+      "from": "batch-15--env-example",
+      "to": "batch-15--env-dev",
+      "relation": "template-for",
+      "label": ".env.example is template for .env"
+    },
+    {
+      "from": "batch-15--env-test",
+      "to": "batch-15--env-example",
+      "relation": "derived-from",
+      "label": ".env.test uses same structure with overrides"
+    },
+    {
+      "from": "batch-15--test-setup",
+      "to": "batch-15--env-test",
+      "relation": "loads",
+      "label": "dotenv.config(.env.test)"
+    },
+    {
+      "from": "batch-15--test-factories",
+      "to": "batch-15--argon2",
+      "relation": "uses",
+      "label": "argon2.hash for test passwords"
+    },
+    {
+      "from": "batch-15--integration-sync-test",
+      "to": "batch-15--test-setup",
+      "relation": "depends-on",
+      "label": "vitest auto-loads setup.ts"
+    },
+    {
+      "from": "batch-15--integration-sync-test",
+      "to": "batch-15--test-factories",
+      "relation": "related",
+      "label": "same test fixture ecosystem"
+    },
+    {
+      "from": "batch-15--integration-internal-sync-test",
+      "to": "batch-15--test-setup",
+      "relation": "depends-on",
+      "label": "vitest auto-loads setup.ts"
+    },
+    {
+      "from": "batch-15--integration-internal-sync-test",
+      "to": "batch-15--sync-quarantine-table",
+      "relation": "creates",
+      "label": "schema migration in beforeAll"
+    },
+    {
+      "from": "batch-15--integration-internal-sync-test",
+      "to": "batch-15--system-events-table",
+      "relation": "creates",
+      "label": "schema migration in beforeAll"
+    },
+    {
+      "from": "batch-15--unit-sync-captcha-test",
+      "to": "batch-15--test-setup",
+      "relation": "depends-on",
+      "label": "vitest auto-loads setup.ts"
+    },
+    {
+      "from": "batch-15--unit-sync-mappings-test",
+      "to": "batch-15--test-setup",
+      "relation": "depends-on",
+      "label": "vitest auto-loads setup.ts"
+    },
+    {
+      "from": "batch-15--inspect-captcha",
+      "to": "batch-15--inspect-post-login",
+      "relation": "precursor",
+      "label": "captcha solver tested before full login flow"
+    },
+    {
+      "from": "batch-15--test-argon-cjs",
+      "to": "batch-15--test-argon-js",
+      "relation": "related",
+      "label": "same test — different module systems"
+    }
+  ]
+}

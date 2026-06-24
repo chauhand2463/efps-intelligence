@@ -1,0 +1,469 @@
+﻿{
+    "description":  "SQL migrations analysis and shared directory structure",
+    "batch":  16,
+    "total":  23,
+    "nodes":  [
+                  {
+                      "label":  "001_init_tables.sql",
+                      "path":  "efps-backend/src/database/migrations/001_init_tables.sql",
+                      "summary":  "Core tables: dealers, beneficiaries, stock_allocations, transactions. Foundation for FPS shop owners, ration card holders, stock allocation tracking, and ration distribution transactions.",
+                      "id":  "migration-001",
+                      "type":  "file"
+                  },
+                  {
+                      "label":  "002_add_sessions.sql",
+                      "path":  "efps-backend/src/database/migrations/002_add_sessions.sql",
+                      "summary":  "Adds sessions table for dealer auth sessions with refresh token hashing, user-agent, IP tracking, and expiry.",
+                      "id":  "migration-002",
+                      "type":  "file"
+                  },
+                  {
+                      "label":  "003_add_otp.sql",
+                      "path":  "efps-backend/src/database/migrations/003_add_otp.sql",
+                      "summary":  "Adds otp_requests table for OTP-based authentication with mobile, OTP hash, purpose, attempt tracking and expiry.",
+                      "id":  "migration-003",
+                      "type":  "file"
+                  },
+                  {
+                      "label":  "004_add_audit_log.sql",
+                      "path":  "efps-backend/src/database/migrations/004_add_audit_log.sql",
+                      "summary":  "Adds audit_logs table (BIGSERIAL PK) for tracking dealer actions with old/new JSONB data snapshots, IP, user-agent.",
+                      "id":  "migration-004",
+                      "type":  "file"
+                  },
+                  {
+                      "label":  "005_add_notifications.sql",
+                      "path":  "efps-backend/src/database/migrations/005_add_notifications.sql",
+                      "summary":  "Adds notifications table for in-app dealer notifications with title, body, type, read status.",
+                      "id":  "migration-005",
+                      "type":  "file"
+                  },
+                  {
+                      "label":  "006_inventory_movements.sql",
+                      "path":  "efps-backend/src/database/migrations/006_inventory_movements.sql",
+                      "summary":  "Adds inventory_movements table tracking stock changes by movement type (receipt/sale/damage) per commodity.",
+                      "id":  "migration-006",
+                      "type":  "file"
+                  },
+                  {
+                      "label":  "007_add_commissions.sql",
+                      "path":  "efps-backend/src/database/migrations/007_add_commissions.sql",
+                      "summary":  "Adds commission_rates (per-commodity rate table), commissions (monthly commission calc per dealer), bank_settlements (payment tracking with TDS).",
+                      "id":  "migration-007",
+                      "type":  "file"
+                  },
+                  {
+                      "label":  "008_add_finance.sql",
+                      "path":  "efps-backend/src/database/migrations/008_add_finance.sql",
+                      "summary":  "Adds income_entries and expense_entries tables for dealer financial tracking (Component 16).",
+                      "id":  "migration-008",
+                      "type":  "file"
+                  },
+                  {
+                      "label":  "009_add_ads.sql",
+                      "path":  "efps-backend/src/database/migrations/009_add_ads.sql",
+                      "summary":  "Adds dealer_ads table for dealer promotion/announcement engine with scheduling and active status.",
+                      "id":  "migration-009",
+                      "type":  "file"
+                  },
+                  {
+                      "label":  "010_add_mdm.sql",
+                      "path":  "efps-backend/src/database/migrations/010_add_mdm.sql",
+                      "summary":  "Adds schools and mdm_distributions tables for MDM/ICDS school nutrition reporting (Component 12).",
+                      "id":  "migration-010",
+                      "type":  "file"
+                  },
+                  {
+                      "label":  "011_add_sync_logs.sql",
+                      "path":  "efps-backend/src/database/migrations/011_add_sync_logs.sql",
+                      "summary":  "Adds sync_logs (govt sync tracking with direction/status/payload) and dealer_bank_info tables.",
+                      "id":  "migration-011",
+                      "type":  "file"
+                  },
+                  {
+                      "label":  "012_add_social_audit.sql",
+                      "path":  "efps-backend/src/database/migrations/012_add_social_audit.sql",
+                      "summary":  "Adds audit_findings table for compliance/fraud detection with severity levels and evidence JSONB.",
+                      "id":  "migration-012",
+                      "type":  "file"
+                  },
+                  {
+                      "label":  "013_add_missing_tables.sql",
+                      "path":  "efps-backend/src/database/migrations/013_add_missing_tables.sql",
+                      "summary":  "Adds lifting_records, policy_schemes, icds_codes, social_audit_meetings, gujarat_directory tables.",
+                      "id":  "migration-013",
+                      "type":  "file"
+                  },
+                  {
+                      "label":  "014_add_views.sql",
+                      "path":  "efps-backend/src/database/migrations/014_add_views.sql",
+                      "summary":  "Creates 8 analytical views: vw_dealer_stock_summary, vw_pending_beneficiaries, vw_commodity_sales_trend, vw_commission_finance_summary, vw_lifting_stock_mapping, vw_sync_status, vw_audit_findings_summary, vw_monthly_report, vw_directory_stats.",
+                      "id":  "migration-014",
+                      "type":  "file"
+                  },
+                  {
+                      "label":  "015_add_govt_sync_enhancements.sql",
+                      "path":  "efps-backend/src/database/migrations/015_add_govt_sync_enhancements.sql",
+                      "summary":  "Extends beneficiaries with govt fields (aadhaar, address, NFSA category, sync metadata). Adds govt_beneficiary_imports, govt_change_log, sync_scheduler_config, sync_import_batches tables.",
+                      "id":  "migration-015",
+                      "type":  "file"
+                  },
+                  {
+                      "label":  "016_add_gujarat_hierarchy.sql",
+                      "path":  "efps-backend/src/database/migrations/016_add_gujarat_hierarchy.sql",
+                      "summary":  "Adds ltree extension and gujarat_region_hierarchy (state→district→taluka→ward→fps_area), gujarat_aggregate_stats (monthly NFSA/non-NFSA stats), gujarat_csv_imports. Links dealers/beneficiaries to regions. Creates vw_gujarat_hierarchy_rollup recursive view and grand-total trigger.",
+                      "id":  "migration-016",
+                      "type":  "file"
+                  },
+                  {
+                      "label":  "017_add_dealer_credentials.sql",
+                      "path":  "efps-backend/src/database/migrations/017_add_dealer_credentials.sql",
+                      "summary":  "Adds dealer_credentials (encrypted govt portal creds with AES-256-GCM), dealer_bank_info, sync_scheduler_config, sync_import_batches, govt_beneficiary_imports, govt_change_log. Adds sync_enabled/last_sync_at to dealers.",
+                      "id":  "migration-017",
+                      "type":  "file"
+                  },
+                  {
+                      "label":  "018_add_sync_jobs.sql",
+                      "path":  "efps-backend/src/database/migrations/018_add_sync_jobs.sql",
+                      "summary":  "Adds sync_jobs table for tracking scheduled/manual sync runs per dealer with status and records_synced.",
+                      "id":  "migration-018",
+                      "type":  "file"
+                  },
+                  {
+                      "label":  "019_add_composite_indexes.sql",
+                      "path":  "efps-backend/src/database/migrations/019_add_composite_indexes.sql",
+                      "summary":  "Adds composite indexes on (dealer_id, month, commodity) for stock_allocations and transactions. Drops redundant old indexes.",
+                      "id":  "migration-019",
+                      "type":  "file"
+                  },
+                  {
+                      "label":  "020_add_mdm_monthly_records.sql",
+                      "path":  "efps-backend/src/database/migrations/020_add_mdm_monthly_records.sql",
+                      "summary":  "Adds mdm_monthly_records table with JSONB records for monthly MDM data aggregation per dealer.",
+                      "id":  "migration-020",
+                      "type":  "file"
+                  },
+                  {
+                      "label":  "021_add_dealer_credential_iv_password.sql",
+                      "path":  "efps-backend/src/database/migrations/021_add_dealer_credential_iv_password.sql",
+                      "summary":  "Adds iv_efps_password and auth_tag_efps_password columns to dealer_credentials for per-field AES-256-GCM IV storage.",
+                      "id":  "migration-021",
+                      "type":  "file"
+                  },
+                  {
+                      "label":  "022_add_sync_scheduler_source_url.sql",
+                      "path":  "efps-backend/src/database/migrations/022_add_sync_scheduler_source_url.sql",
+                      "summary":  "Adds source_url column to sync_scheduler_config for government CSV download URL.",
+                      "id":  "migration-022",
+                      "type":  "file"
+                  },
+                  {
+                      "label":  "023_add_tds_rates.sql",
+                      "path":  "efps-backend/src/database/migrations/023_add_tds_rates.sql",
+                      "summary":  "Adds tds_rates table (per-commodity, time-variant TDS percentages) replacing hardcoded 10%. Seeds defaults for Rice/Wheat/Sugar/Kerosene/Oil/Pulses.",
+                      "id":  "migration-023",
+                      "type":  "file"
+                  },
+                  {
+                      "label":  "024_add_on_delete_cascade.sql",
+                      "path":  "efps-backend/src/database/migrations/024_add_on_delete_cascade.sql",
+                      "summary":  "Adds ON DELETE CASCADE to all dealer_id foreign keys across 14 tables. Adds ON DELETE SET NULL for transactions.beneficiary_id.",
+                      "id":  "migration-024",
+                      "type":  "file"
+                  },
+                  {
+                      "label":  "025_add_updated_at_trigger.sql",
+                      "path":  "efps-backend/src/database/migrations/025_add_updated_at_trigger.sql",
+                      "summary":  "Creates update_updated_at_column() trigger function. Auto-applies BEFORE UPDATE triggers to all public tables with updated_at column.",
+                      "id":  "migration-025",
+                      "type":  "file"
+                  },
+                  {
+                      "label":  "026_enterprise_sync_infrastructure.sql",
+                      "path":  "efps-backend/src/database/migrations/026_enterprise_sync_infrastructure.sql",
+                      "summary":  "Enterprise sync: enhances sync_jobs (priority, mode, trace_id, quarantine), adds sync_quarantine, system_events, service_tokens tables. Adds columns to sync_scheduler_config. Adds source_synced_at/sync_job_id/version to 4 core tables.",
+                      "id":  "migration-026",
+                      "type":  "file"
+                  },
+                  {
+                      "label":  "027_auth_refresh_optimization.sql",
+                      "path":  "efps-backend/src/database/migrations/027_auth_refresh_optimization.sql",
+                      "summary":  "Adds indexes on sessions for refresh_token_hash and expires_at for faster token lookup and cleanup.",
+                      "id":  "migration-027",
+                      "type":  "file"
+                  },
+                  {
+                      "label":  "028_add_commission_payments.sql",
+                      "path":  "efps-backend/src/database/migrations/028_add_commission_payments.sql",
+                      "summary":  "Adds amount_paid and deposit_date columns to commissions for actual bank payment recording.",
+                      "id":  "migration-028",
+                      "type":  "file"
+                  },
+                  {
+                      "label":  "029_add_sync_columns.sql",
+                      "path":  "efps-backend/src/database/migrations/029_add_sync_columns.sql",
+                      "summary":  "Adds sync columns to beneficiaries (external_id, beneficiary_name, father_name, etc.), transactions (transaction_hash, ration_card_no, etc.), stock_allocations (allocated_quantity, lifted_quantity, etc.), lifting_records (allocated_quantity, lifted_quantity, etc.) with unique constraints.",
+                      "id":  "migration-029",
+                      "type":  "file"
+                  },
+                  {
+                      "label":  "030_create_stock_entry_system.sql",
+                      "path":  "efps-backend/src/database/migrations/030_create_stock_entry_system.sql",
+                      "summary":  "Adds stock_entries (govt/received/damaged quantities with generated columns) and allocations (beneficiary-level allocation tracking with generated remaining_quantity) tables.",
+                      "id":  "migration-030",
+                      "type":  "file"
+                  },
+                  {
+                      "label":  "031_enterprise_erp_redesign.sql",
+                      "path":  "efps-backend/src/database/migrations/031_enterprise_erp_redesign.sql",
+                      "summary":  "Enterprise ERP redesign: Adds transaction_source enum (EXCEL_SYNC/MANUAL_CBDC/OFFLINE), inventory_department enum (REGULAR_FPS/MDM/ICDS). Creates items, stock_ledger, stock_ledger_movements, transaction_line_items, financial_ledger tables. Adds 3 triggers for auto-posting. Creates vw_stock_ledger_rolling and vw_financial_summary views. Migrates existing inventory_movements data.",
+                      "id":  "migration-031",
+                      "type":  "file"
+                  },
+                  {
+                      "label":  "AppError.ts",
+                      "path":  "efps-backend/src/shared/errors/AppError.ts",
+                      "summary":  "Base application error class",
+                      "id":  "shared-errors-01",
+                      "type":  "file"
+                  },
+                  {
+                      "label":  "AuthError.ts",
+                      "path":  "efps-backend/src/shared/errors/AuthError.ts",
+                      "summary":  "Authentication error class",
+                      "id":  "shared-errors-02",
+                      "type":  "file"
+                  },
+                  {
+                      "label":  "error-handler.ts",
+                      "path":  "efps-backend/src/shared/errors/error-handler.ts",
+                      "summary":  "Centralized error handler middleware",
+                      "id":  "shared-errors-03",
+                      "type":  "file"
+                  },
+                  {
+                      "label":  "ValidationError.ts",
+                      "path":  "efps-backend/src/shared/errors/ValidationError.ts",
+                      "summary":  "Validation error class",
+                      "id":  "shared-errors-04",
+                      "type":  "file"
+                  },
+                  {
+                      "label":  "event-bus.ts",
+                      "path":  "efps-backend/src/shared/events/event-bus.ts",
+                      "summary":  "Event bus implementation for domain events",
+                      "id":  "shared-events-01",
+                      "type":  "file"
+                  },
+                  {
+                      "label":  "index.ts",
+                      "path":  "efps-backend/src/shared/events/index.ts",
+                      "summary":  "Events barrel export",
+                      "id":  "shared-events-02",
+                      "type":  "file"
+                  },
+                  {
+                      "label":  "register-handlers.ts",
+                      "path":  "efps-backend/src/shared/events/register-handlers.ts",
+                      "summary":  "Event handler registration",
+                      "id":  "shared-events-03",
+                      "type":  "file"
+                  },
+                  {
+                      "label":  "audit-log.ts",
+                      "path":  "efps-backend/src/shared/middleware/audit-log.ts",
+                      "summary":  "Audit logging middleware",
+                      "id":  "shared-middleware-01",
+                      "type":  "file"
+                  },
+                  {
+                      "label":  "authenticate.ts",
+                      "path":  "efps-backend/src/shared/middleware/authenticate.ts",
+                      "summary":  "Authentication middleware",
+                      "id":  "shared-middleware-02",
+                      "type":  "file"
+                  },
+                  {
+                      "label":  "authorize.ts",
+                      "path":  "efps-backend/src/shared/middleware/authorize.ts",
+                      "summary":  "Authorization middleware",
+                      "id":  "shared-middleware-03",
+                      "type":  "file"
+                  },
+                  {
+                      "label":  "idempotency.ts",
+                      "path":  "efps-backend/src/shared/middleware/idempotency.ts",
+                      "summary":  "Idempotency middleware",
+                      "id":  "shared-middleware-04",
+                      "type":  "file"
+                  },
+                  {
+                      "label":  "validate-fps-id.ts",
+                      "path":  "efps-backend/src/shared/middleware/validate-fps-id.ts",
+                      "summary":  "FPS ID validation middleware",
+                      "id":  "shared-middleware-05",
+                      "type":  "file"
+                  },
+                  {
+                      "label":  "normalization.service.ts",
+                      "path":  "efps-backend/src/shared/sync/normalization.service.ts",
+                      "summary":  "Sync data normalization service",
+                      "id":  "shared-sync-01",
+                      "type":  "file"
+                  },
+                  {
+                      "label":  "quarantine.service.ts",
+                      "path":  "efps-backend/src/shared/sync/quarantine.service.ts",
+                      "summary":  "Sync quarantine service for rejected/invalid records",
+                      "id":  "shared-sync-02",
+                      "type":  "file"
+                  },
+                  {
+                      "label":  "system-events.service.ts",
+                      "path":  "efps-backend/src/shared/sync/system-events.service.ts",
+                      "summary":  "System events service for observability",
+                      "id":  "shared-sync-03",
+                      "type":  "file"
+                  },
+                  {
+                      "label":  "validation.service.ts",
+                      "path":  "efps-backend/src/shared/sync/validation.service.ts",
+                      "summary":  "Sync validation service",
+                      "id":  "shared-sync-04",
+                      "type":  "file"
+                  },
+                  {
+                      "label":  "enums.ts",
+                      "path":  "efps-backend/src/shared/types/enums.ts",
+                      "summary":  "TypeScript enums definitions",
+                      "id":  "shared-types-01",
+                      "type":  "file"
+                  },
+                  {
+                      "label":  "fastify.d.ts",
+                      "path":  "efps-backend/src/shared/types/fastify.d.ts",
+                      "summary":  "Fastify type declarations",
+                      "id":  "shared-types-02",
+                      "type":  "file"
+                  },
+                  {
+                      "label":  "models.ts",
+                      "path":  "efps-backend/src/shared/types/models.ts",
+                      "summary":  "TypeScript model interfaces",
+                      "id":  "shared-types-03",
+                      "type":  "file"
+                  },
+                  {
+                      "label":  "circuit-breaker.ts",
+                      "path":  "efps-backend/src/shared/utils/circuit-breaker.ts",
+                      "summary":  "Circuit breaker utility for resilient external calls",
+                      "id":  "shared-utils-01",
+                      "type":  "file"
+                  },
+                  {
+                      "label":  "encrypt.ts",
+                      "path":  "efps-backend/src/shared/utils/encrypt.ts",
+                      "summary":  "AES-256-GCM encryption utility",
+                      "id":  "shared-utils-02",
+                      "type":  "file"
+                  },
+                  {
+                      "label":  "hash.ts",
+                      "path":  "efps-backend/src/shared/utils/hash.ts",
+                      "summary":  "Hashing utility",
+                      "id":  "shared-utils-03",
+                      "type":  "file"
+                  },
+                  {
+                      "label":  "logger.ts",
+                      "path":  "efps-backend/src/shared/utils/logger.ts",
+                      "summary":  "Logger utility",
+                      "id":  "shared-utils-04",
+                      "type":  "file"
+                  },
+                  {
+                      "label":  "otp.ts",
+                      "path":  "efps-backend/src/shared/utils/otp.ts",
+                      "summary":  "OTP generation/verification utility",
+                      "id":  "shared-utils-05",
+                      "type":  "file"
+                  },
+                  {
+                      "label":  "pagination.ts",
+                      "path":  "efps-backend/src/shared/utils/pagination.ts",
+                      "summary":  "Pagination utility",
+                      "id":  "shared-utils-06",
+                      "type":  "file"
+                  },
+                  {
+                      "label":  "pdf.ts",
+                      "path":  "efps-backend/src/shared/utils/pdf.ts",
+                      "summary":  "PDF generation utility",
+                      "id":  "shared-utils-07",
+                      "type":  "file"
+                  },
+                  {
+                      "label":  "response.ts",
+                      "path":  "efps-backend/src/shared/utils/response.ts",
+                      "summary":  "Response formatting utility",
+                      "id":  "shared-utils-08",
+                      "type":  "file"
+                  },
+                  {
+                      "label":  "token.ts",
+                      "path":  "efps-backend/src/shared/utils/token.ts",
+                      "summary":  "JWT token utility",
+                      "id":  "shared-utils-09",
+                      "type":  "file"
+                  },
+                  {
+                      "label":  "complete-seed.mjs",
+                      "path":  "efps-backend/scripts/complete-seed.mjs",
+                      "summary":  "Complete database seed script",
+                      "id":  "script-01",
+                      "type":  "file"
+                  },
+                  {
+                      "label":  "generate-openapi.ts",
+                      "path":  "efps-backend/scripts/generate-openapi.ts",
+                      "summary":  "OpenAPI spec generation script",
+                      "id":  "script-02",
+                      "type":  "file"
+                  },
+                  {
+                      "label":  "import-gujarat-csv.ts",
+                      "path":  "efps-backend/scripts/import-gujarat-csv.ts",
+                      "summary":  "Gujarat PDS CSV data import script",
+                      "id":  "script-03",
+                      "type":  "file"
+                  },
+                  {
+                      "label":  "list_tables.mjs",
+                      "path":  "efps-backend/scripts/list_tables.mjs",
+                      "summary":  "List database tables script",
+                      "id":  "script-04",
+                      "type":  "file"
+                  },
+                  {
+                      "label":  "migrate.ts",
+                      "path":  "efps-backend/scripts/migrate.ts",
+                      "summary":  "Database migration runner script",
+                      "id":  "script-05",
+                      "type":  "file"
+                  },
+                  {
+                      "label":  "seed.ts",
+                      "path":  "efps-backend/scripts/seed.ts",
+                      "summary":  "Database seed script",
+                      "id":  "script-06",
+                      "type":  "file"
+                  },
+                  {
+                      "label":  "upgrade-redis.ps1",
+                      "path":  "efps-backend/scripts/upgrade-redis.ps1",
+                      "summary":  "Redis upgrade PowerShell script",
+                      "id":  "script-07",
+                      "type":  "file"
+                  }
+              ]
+}

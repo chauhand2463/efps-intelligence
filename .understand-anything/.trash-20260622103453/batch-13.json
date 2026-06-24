@@ -1,0 +1,238 @@
+{
+  "batch": 13,
+  "description": "efps-backend PM2 config + dev script",
+  "nodes": [
+    {
+      "id": "batch-13--ecosystem-config",
+      "type": "config",
+      "label": "ecosystem.config.cjs",
+      "file": "efps-backend/ecosystem.config.cjs",
+      "description": "PM2 ecosystem configuration for production deployment of efps-backend",
+      "tooltip": "PM2 config — cluster mode, NODE_ENV=production, wait_ready pattern"
+    },
+    {
+      "id": "batch-13--dev-ps1",
+      "type": "script",
+      "label": "dev.ps1",
+      "file": "efps-backend/dev.ps1",
+      "description": "PowerShell development server launcher — kills old process, optionally rebuilds, starts server, polls /health",
+      "tooltip": "Dev server script — start/restart with health-poll, hot-reload via tsx"
+    },
+    {
+      "id": "batch-13--pm2",
+      "type": "process-manager",
+      "label": "PM2",
+      "description": "PM2 process manager used for production deployment (cluster mode)",
+      "tooltip": "Process manager: ecosystem.config.cjs"
+    },
+    {
+      "id": "batch-13--dist-server",
+      "type": "entrypoint",
+      "label": "dist/src/server.js",
+      "file": "efps-backend/dist/src/server.js",
+      "description": "Compiled production server entry point referenced by PM2 config and dev.ps1 (-Prod flag)",
+      "tooltip": "Production compiled JS entry point"
+    },
+    {
+      "id": "batch-13--src-server",
+      "type": "entrypoint",
+      "label": "src/server.ts",
+      "file": "efps-backend/src/server.ts",
+      "description": "TypeScript source server entry point used in development mode via tsx",
+      "tooltip": "Development TS entry point"
+    },
+    {
+      "id": "batch-13--tsc",
+      "type": "tool",
+      "label": "tsc.cmd",
+      "description": "TypeScript compiler (tsc.cmd) invoked by dev.ps1 -Rebuild flag",
+      "tooltip": "TypeScript compiler"
+    },
+    {
+      "id": "batch-13--tsx",
+      "type": "tool",
+      "label": "tsx.cmd",
+      "description": "TypeScript execution tool (tsx.cmd) used by dev.ps1 for hot-reload dev mode",
+      "tooltip": "TSX runner for dev hot-reload"
+    },
+    {
+      "id": "batch-13--health-endpoint",
+      "type": "endpoint",
+      "label": "/health",
+      "description": "Health-check endpoint polled by dev.ps1 on loop until server is ready",
+      "tooltip": "GET /health — readiness probe"
+    },
+    {
+      "id": "batch-13--port-3000",
+      "type": "port",
+      "label": "Port 3000",
+      "description": "Default port used by dev.ps1 for the efps-backend server",
+      "tooltip": "Server port"
+    },
+    {
+      "id": "batch-13--pid-file",
+      "type": "runtime-artifact",
+      "label": ".server.pid",
+      "description": "PID file at efps-backend/.server.pid used by dev.ps1 to track and kill server process",
+      "tooltip": "PID tracking file"
+    },
+    {
+      "id": "batch-13--node-env-production",
+      "type": "env-config",
+      "label": "NODE_ENV=production",
+      "description": "Environment variable set in PM2 ecosystem.config.cjs for production mode",
+      "tooltip": "Environment config: NODE_ENV=production"
+    },
+    {
+      "id": "batch-13--wait-ready",
+      "type": "pattern",
+      "label": "wait_ready pattern",
+      "description": "PM2 wait_ready + listen_timeout pattern used in ecosystem.config.cjs for graceful startup signaling",
+      "tooltip": "PM2 graceful startup pattern"
+    },
+    {
+      "id": "batch-13--cluster-mode",
+      "type": "pattern",
+      "label": "Cluster mode",
+      "description": "PM2 cluster execution mode with max instances (-1 = CPU count)",
+      "tooltip": "PM2 cluster mode"
+    },
+    {
+      "id": "batch-13--hot-reload",
+      "type": "concept",
+      "label": "Hot-reload",
+      "description": "Development hot-reload capability via tsx, advertised by dev.ps1 in non-Prod mode",
+      "tooltip": "Hot-reload with tsx"
+    },
+    {
+      "id": "batch-13--production-deployment",
+      "type": "concept",
+      "label": "Production deployment",
+      "description": "Production deployment pathway via PM2 ecosystem.config.cjs",
+      "tooltip": "Production deployment"
+    },
+    {
+      "id": "batch-13--development-server",
+      "type": "concept",
+      "label": "Development server",
+      "description": "Development server lifecycle managed by dev.ps1",
+      "tooltip": "Dev server workflow"
+    }
+  ],
+  "edges": [
+    {
+      "from": "batch-13--ecosystem-config",
+      "to": "batch-13--pm2",
+      "relation": "consumes",
+      "label": "configured for"
+    },
+    {
+      "from": "batch-13--ecosystem-config",
+      "to": "batch-13--dist-server",
+      "relation": "references",
+      "label": "runs"
+    },
+    {
+      "from": "batch-13--ecosystem-config",
+      "to": "batch-13--cluster-mode",
+      "relation": "configures",
+      "label": "enables"
+    },
+    {
+      "from": "batch-13--ecosystem-config",
+      "to": "batch-13--wait-ready",
+      "relation": "configures",
+      "label": "enables"
+    },
+    {
+      "from": "batch-13--ecosystem-config",
+      "to": "batch-13--node-env-production",
+      "relation": "sets",
+      "label": "sets"
+    },
+    {
+      "from": "batch-13--ecosystem-config",
+      "to": "batch-13--production-deployment",
+      "relation": "belongs-to",
+      "label": "enables"
+    },
+    {
+      "from": "batch-13--dev-ps1",
+      "to": "batch-13--tsc",
+      "relation": "invokes",
+      "label": "calls on -Rebuild"
+    },
+    {
+      "from": "batch-13--dev-ps1",
+      "to": "batch-13--tsx",
+      "relation": "invokes",
+      "label": "uses in dev mode"
+    },
+    {
+      "from": "batch-13--dev-ps1",
+      "to": "batch-13--dist-server",
+      "relation": "invokes",
+      "label": "starts with -Prod"
+    },
+    {
+      "from": "batch-13--dev-ps1",
+      "to": "batch-13--src-server",
+      "relation": "invokes",
+      "label": "starts in dev mode"
+    },
+    {
+      "from": "batch-13--dev-ps1",
+      "to": "batch-13--health-endpoint",
+      "relation": "polls",
+      "label": "polls until ready"
+    },
+    {
+      "from": "batch-13--dev-ps1",
+      "to": "batch-13--port-3000",
+      "relation": "uses",
+      "label": "listens on"
+    },
+    {
+      "from": "batch-13--dev-ps1",
+      "to": "batch-13--pid-file",
+      "relation": "manages",
+      "label": "writes / reads / kills by"
+    },
+    {
+      "from": "batch-13--dev-ps1",
+      "to": "batch-13--hot-reload",
+      "relation": "advertises",
+      "label": "advertises hot-reload"
+    },
+    {
+      "from": "batch-13--dev-ps1",
+      "to": "batch-13--development-server",
+      "relation": "belongs-to",
+      "label": "enables"
+    },
+    {
+      "from": "batch-13--dist-server",
+      "to": "batch-13--src-server",
+      "relation": "compiled-from",
+      "label": "compiled from"
+    },
+    {
+      "from": "batch-13--tsc",
+      "to": "batch-13--tsx",
+      "relation": "related",
+      "label": "same tool family (ts-* tools)"
+    },
+    {
+      "from": "batch-13--production-deployment",
+      "to": "batch-13--development-server",
+      "relation": "contrasts-with",
+      "label": "alternative modes"
+    },
+    {
+      "from": "batch-13--ecosystem-config",
+      "to": "batch-13--dev-ps1",
+      "relation": "complements",
+      "label": "production vs dev config"
+    }
+  ]
+}

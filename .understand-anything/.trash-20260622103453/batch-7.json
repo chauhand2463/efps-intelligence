@@ -1,0 +1,789 @@
+{
+  "nodes": [
+    {
+      "id": "module:dealer",
+      "type": "module",
+      "label": "Dealer",
+      "module": "dealer",
+      "description": "Dealer registration, authentication, session management, and stats",
+      "filePath": "efps-backend/src/modules/dealer"
+    },
+    {
+      "id": "file:dealer:routes",
+      "type": "file",
+      "label": "dealer.routes.ts",
+      "module": "dealer",
+      "filePath": "efps-backend/src/modules/dealer/dealer.routes.ts",
+      "description": "Fastify route definitions for dealer endpoints",
+      "exports": ["dealerRoutes"],
+      "imports": [
+        "fastify:FastifyInstance",
+        "../../shared/middleware/authenticate:authenticate",
+        "../../shared/middleware/authorize:authorizeSelf",
+        "../../shared/middleware/validate-fps-id:validateFpsIdParam",
+        "./dealer.controller:registerHandler,getDealerHandler,updateDealerHandler,getStatsHandler,getSessionsHandler,revokeSessionHandler,lookupFpsIdHandler,heartbeatHandler"
+      ]
+    },
+    {
+      "id": "file:dealer:service",
+      "type": "file",
+      "label": "dealer.service.ts",
+      "module": "dealer",
+      "filePath": "efps-backend/src/modules/dealer/dealer.service.ts",
+      "description": "Dealer service — register, getById, update, getStats, sessions, heartbeat, FPS lookup",
+      "exports": ["DealerService", "dealerService"],
+      "imports": [
+        "../../config/database:query",
+        "../../config/redis:getRedis",
+        "../../shared/utils/hash:hashPassword",
+        "../../shared/utils/encrypt:encryptMany",
+        "../../shared/errors/AppError:AppError",
+        "../../config/constants:ERROR_CODES",
+        "../../jobs/sync/efps-sync.worker:enqueueEfpsSync",
+        "./dealer.schema:RegisterDealerInput,UpdateDealerInput",
+        "../../shared/types/models:Dealer"
+      ]
+    },
+    {
+      "id": "module:finance",
+      "type": "module",
+      "label": "Finance",
+      "module": "finance",
+      "description": "Dealer income, expense, and profit-loss tracking",
+      "filePath": "efps-backend/src/modules/finance"
+    },
+    {
+      "id": "file:finance:controller",
+      "type": "file",
+      "label": "finance.controller.ts",
+      "module": "finance",
+      "filePath": "efps-backend/src/modules/finance/finance.controller.ts",
+      "description": "Request handlers for income/expense CRUD and profit-loss report",
+      "exports": ["addIncomeHandler","addExpenseHandler","listIncomeHandler","listExpensesHandler","getProfitLossHandler","deleteIncomeHandler","deleteExpenseHandler"],
+      "imports": [
+        "fastify:FastifyRequest,FastifyReply",
+        "./finance.service:financeService",
+        "./finance.schema:incomeSchema,expenseSchema,financeQuerySchema",
+        "../../shared/utils/response:sendSuccess,sendCreated,sendNoContent"
+      ]
+    },
+    {
+      "id": "file:finance:routes",
+      "type": "file",
+      "label": "finance.routes.ts",
+      "module": "finance",
+      "filePath": "efps-backend/src/modules/finance/finance.routes.ts",
+      "description": "Fastify route definitions for finance endpoints (all require auth)",
+      "exports": ["financeRoutes"],
+      "imports": [
+        "fastify:FastifyInstance",
+        "../../shared/middleware/authenticate:authenticate",
+        "./finance.controller:addIncomeHandler,addExpenseHandler,listIncomeHandler,listExpensesHandler,getProfitLossHandler,deleteIncomeHandler,deleteExpenseHandler"
+      ]
+    },
+    {
+      "id": "file:finance:service",
+      "type": "file",
+      "label": "finance.service.ts",
+      "module": "finance",
+      "filePath": "efps-backend/src/modules/finance/finance.service.ts",
+      "description": "Finance service — add/list/remove income & expense, profit-loss calculation with commission",
+      "exports": ["FinanceService", "financeService"],
+      "imports": [
+        "../../config/database:query",
+        "../../shared/errors/AppError:AppError",
+        "../../config/constants:ERROR_CODES",
+        "../../shared/utils/pagination:parsePaginationParams,buildPaginationMeta",
+        "./finance.schema:IncomeInput,ExpenseInput,FinanceQueryInput"
+      ]
+    },
+    {
+      "id": "module:hierarchy",
+      "type": "module",
+      "label": "Hierarchy",
+      "module": "hierarchy",
+      "description": "Gujarat region hierarchy — state/district/taluka/ward tree with aggregate stats",
+      "filePath": "efps-backend/src/modules/hierarchy"
+    },
+    {
+      "id": "file:hierarchy:controller",
+      "type": "file",
+      "label": "hierarchy.controller.ts",
+      "module": "hierarchy",
+      "filePath": "efps-backend/src/modules/hierarchy/hierarchy.controller.ts",
+      "description": "Request handlers for hierarchy tree, search, CSV import, change history",
+      "exports": ["getStateHandler","getChildrenHandler","getRegionHandler","getFpsHandler","getBreadcrumbHandler","importCsvHandler","searchRegionsHandler","getMonthsHandler","getChangeHistoryHandler"],
+      "imports": [
+        "fastify:FastifyRequest,FastifyReply",
+        "zod:z",
+        "./hierarchy.service:hierarchyService",
+        "./hierarchy.schema:paginationSchema,regionParamsSchema,monthParamSchema,importCsvSchema",
+        "../../shared/utils/response:sendSuccess,sendCreated"
+      ]
+    },
+    {
+      "id": "file:hierarchy:routes",
+      "type": "file",
+      "label": "hierarchy.routes.ts",
+      "module": "hierarchy",
+      "filePath": "efps-backend/src/modules/hierarchy/hierarchy.routes.ts",
+      "description": "Fastify route definitions for hierarchy tree browsing and CSV import",
+      "exports": ["hierarchyRoutes"],
+      "imports": [
+        "fastify:FastifyInstance",
+        "../../shared/middleware/authenticate:authenticate",
+        "../../shared/middleware/authorize:authorize",
+        "../../shared/types/enums:Role",
+        "./hierarchy.controller:getStateHandler,getChildrenHandler,getRegionHandler,getFpsHandler,getBreadcrumbHandler,importCsvHandler,searchRegionsHandler,getMonthsHandler,getChangeHistoryHandler"
+      ]
+    },
+    {
+      "id": "file:hierarchy:service",
+      "type": "file",
+      "label": "hierarchy.service.ts",
+      "module": "hierarchy",
+      "filePath": "efps-backend/src/modules/hierarchy/hierarchy.service.ts",
+      "description": "Hierarchy service — region tree, aggregate stats, CSV import, breadcrumb, search, change history with Redis caching",
+      "exports": ["HierarchyService", "hierarchyService"],
+      "imports": [
+        "../../config/database:query",
+        "../../config/redis:getRedis",
+        "./hierarchy.schema:ImportCsvRow"
+      ]
+    },
+    {
+      "id": "module:lifting",
+      "type": "module",
+      "label": "Lifting",
+      "module": "lifting",
+      "description": "Stock lifting (receipt) entries, inventory movements, allocation history for dealers",
+      "filePath": "efps-backend/src/modules/lifting"
+    },
+    {
+      "id": "file:lifting:controller",
+      "type": "file",
+      "label": "lifting.controller.ts",
+      "module": "lifting",
+      "filePath": "efps-backend/src/modules/lifting/lifting.controller.ts",
+      "description": "Request handlers for create/list lifting entries and history view",
+      "exports": ["createLiftingHandler","listLiftingHandler","getLiftingHistoryHandler"],
+      "imports": [
+        "fastify:FastifyRequest,FastifyReply",
+        "./lifting.service:liftingService",
+        "./lifting.schema:createLiftingSchema,listLiftingSchema",
+        "../../shared/utils/response:sendSuccess,sendCreated"
+      ]
+    },
+    {
+      "id": "file:lifting:routes",
+      "type": "file",
+      "label": "lifting.routes.ts",
+      "module": "lifting",
+      "filePath": "efps-backend/src/modules/lifting/lifting.routes.ts",
+      "description": "Fastify route definitions for lifting endpoints (3 routes, all require auth)",
+      "exports": ["liftingRoutes"],
+      "imports": [
+        "fastify:FastifyInstance",
+        "../../shared/middleware/authenticate:authenticate",
+        "./lifting.controller:createLiftingHandler,listLiftingHandler,getLiftingHistoryHandler"
+      ]
+    },
+    {
+      "id": "file:lifting:service",
+      "type": "file",
+      "label": "lifting.service.ts",
+      "module": "lifting",
+      "filePath": "efps-backend/src/modules/lifting/lifting.service.ts",
+      "description": "Lifting service — create stock allocation + inventory movement, list with pagination, history",
+      "exports": ["LiftingService", "liftingService"],
+      "imports": [
+        "../../config/database:query",
+        "../../shared/utils/pagination:parsePaginationParams,buildPaginationMeta",
+        "../../shared/events/index:eventBus,EventTypes",
+        "./lifting.schema:CreateLiftingInput,ListLiftingInput"
+      ]
+    },
+    {
+      "id": "module:mdm",
+      "type": "module",
+      "label": "MDM",
+      "module": "mdm",
+      "description": "Master Data Management — policy schemes, ICDS codes, monthly records",
+      "filePath": "efps-backend/src/modules/mdm"
+    },
+    {
+      "id": "file:mdm:controller",
+      "type": "file",
+      "label": "mdm.controller.ts",
+      "module": "mdm",
+      "filePath": "efps-backend/src/modules/mdm/mdm.controller.ts",
+      "description": "Request handlers for schemes and ICDS codes CRUD",
+      "exports": ["createSchemeHandler","listSchemesHandler","getSchemeHandler","updateSchemeHandler","deleteSchemeHandler","createIcdsCodeHandler","listIcdsCodesHandler","getIcdsCodeHandler","deleteIcdsCodeHandler"],
+      "imports": [
+        "fastify:FastifyRequest,FastifyReply",
+        "./mdm.service:mdmService",
+        "./mdm.schema:createSchemeSchema,updateSchemeSchema,listSchemesSchema,createIcdsCodeSchema,listIcdsCodesSchema",
+        "../../shared/utils/response:sendSuccess,sendCreated,sendNoContent"
+      ]
+    },
+    {
+      "id": "file:mdm:routes",
+      "type": "file",
+      "label": "mdm.routes.ts",
+      "module": "mdm",
+      "filePath": "efps-backend/src/modules/mdm/mdm.routes.ts",
+      "description": "Fastify route definitions for MDM — schemes, ICDS codes, monthly records (admin vs auth guards)",
+      "exports": ["mdmRoutes"],
+      "imports": [
+        "fastify:FastifyInstance",
+        "../../shared/middleware/authenticate:authenticate",
+        "../../shared/middleware/authorize:authorize",
+        "./mdm.controller:createSchemeHandler,listSchemesHandler,getSchemeHandler,updateSchemeHandler,deleteSchemeHandler,createIcdsCodeHandler,listIcdsCodesHandler,getIcdsCodeHandler,deleteIcdsCodeHandler",
+        "./mdm.monthly.controller:saveMonthlyRecordsHandler,getMonthlyRecordsHandler"
+      ]
+    },
+    {
+      "id": "file:mdm:service",
+      "type": "file",
+      "label": "mdm.service.ts",
+      "module": "mdm",
+      "filePath": "efps-backend/src/modules/mdm/mdm.service.ts",
+      "description": "MDM service — CRUD for policy_schemes and icds_codes tables",
+      "exports": ["MdmService", "mdmService"],
+      "imports": [
+        "../../config/database:query",
+        "../../shared/errors/AppError:AppError",
+        "../../config/constants:ERROR_CODES",
+        "../../shared/utils/pagination:parsePaginationParams,buildPaginationMeta",
+        "./mdm.schema:CreateSchemeInput,UpdateSchemeInput,ListSchemesInput,CreateIcdsCodeInput,ListIcdsCodesInput"
+      ]
+    },
+    {
+      "id": "file:mdm:monthly-controller",
+      "type": "file",
+      "label": "mdm.monthly.controller.ts",
+      "module": "mdm",
+      "filePath": "efps-backend/src/modules/mdm/mdm.monthly.controller.ts",
+      "description": "Request handlers for monthly MDM records (save + get)",
+      "exports": ["saveMonthlyRecordsHandler","getMonthlyRecordsHandler"],
+      "imports": [
+        "fastify:FastifyRequest,FastifyReply",
+        "./mdm.monthly.service:mdmMonthlyService",
+        "./mdm.schema:saveMonthlyRecordSchema,getMonthlyRecordSchema"
+      ]
+    },
+    {
+      "id": "file:mdm:monthly-service",
+      "type": "file",
+      "label": "mdm.monthly.service.ts",
+      "module": "mdm",
+      "filePath": "efps-backend/src/modules/mdm/mdm.monthly.service.ts",
+      "description": "Monthly records service — upsert and fetch JSONB records per dealer/month/year",
+      "exports": ["MdmMonthlyService", "mdmMonthlyService"],
+      "imports": [
+        "../../config/database:query"
+      ]
+    },
+    {
+      "id": "module:notification",
+      "type": "module",
+      "label": "Notification",
+      "module": "notification",
+      "description": "In-app dealer notifications — list, mark read, delete",
+      "filePath": "efps-backend/src/modules/notification"
+    },
+    {
+      "id": "file:notification:controller",
+      "type": "file",
+      "label": "notification.controller.ts",
+      "module": "notification",
+      "filePath": "efps-backend/src/modules/notification/notification.controller.ts",
+      "description": "Request handlers for notification list, mark read, mark all read, delete",
+      "exports": ["listNotificationsHandler","markAsReadHandler","markAllAsReadHandler","deleteNotificationHandler"],
+      "imports": [
+        "fastify:FastifyRequest,FastifyReply",
+        "./notification.service:notificationService",
+        "./notification.schema:listNotificationsSchema",
+        "../../shared/utils/response:sendSuccess,sendNoContent"
+      ]
+    },
+    {
+      "id": "shared:util:response",
+      "type": "shared",
+      "label": "response.ts",
+      "module": "shared",
+      "description": "Standardized HTTP response helpers (sendSuccess, sendCreated, sendNoContent)",
+      "filePath": "efps-backend/src/shared/utils/response.ts"
+    },
+    {
+      "id": "shared:util:pagination",
+      "type": "shared",
+      "label": "pagination.ts",
+      "module": "shared",
+      "description": "Pagination utilities (parsePaginationParams, buildPaginationMeta)",
+      "filePath": "efps-backend/src/shared/utils/pagination.ts"
+    },
+    {
+      "id": "shared:events:index",
+      "type": "shared",
+      "label": "events/index.ts",
+      "module": "shared",
+      "description": "Event bus for domain events (LIFTING_CREATED etc.)",
+      "filePath": "efps-backend/src/shared/events/index.ts"
+    },
+    {
+      "id": "shared:middleware:authenticate",
+      "type": "shared",
+      "label": "authenticate.ts",
+      "module": "shared",
+      "description": "JWT authentication middleware",
+      "filePath": "efps-backend/src/shared/middleware/authenticate.ts"
+    },
+    {
+      "id": "shared:middleware:authorize",
+      "type": "shared",
+      "label": "authorize.ts",
+      "module": "shared",
+      "description": "Role-based authorization middleware (authorize, authorizeSelf)",
+      "filePath": "efps-backend/src/shared/middleware/authorize.ts"
+    },
+    {
+      "id": "shared:types:enums",
+      "type": "shared",
+      "label": "enums.ts",
+      "module": "shared",
+      "description": "Shared enums (Role.ADMIN etc.)",
+      "filePath": "efps-backend/src/shared/types/enums.ts"
+    },
+    {
+      "id": "shared:errors:AppError",
+      "type": "shared",
+      "label": "AppError.ts",
+      "module": "shared",
+      "description": "Custom application error class",
+      "filePath": "efps-backend/src/shared/errors/AppError.ts"
+    },
+    {
+      "id": "config:database",
+      "type": "config",
+      "label": "database.ts",
+      "module": "config",
+      "description": "PostgreSQL database pool/query function",
+      "filePath": "efps-backend/src/config/database.ts"
+    },
+    {
+      "id": "config:redis",
+      "type": "config",
+      "label": "redis.ts",
+      "module": "config",
+      "description": "Redis client factory (getRedis)",
+      "filePath": "efps-backend/src/config/redis.ts"
+    },
+    {
+      "id": "config:constants",
+      "type": "config",
+      "label": "constants.ts",
+      "module": "config",
+      "description": "Error codes and shared constants",
+      "filePath": "efps-backend/src/config/constants.ts"
+    }
+  ],
+  "edges": [
+    {
+      "source": "file:dealer:routes",
+      "target": "file:dealer:service",
+      "type": "delegates_to",
+      "label": "routes use controller which uses service"
+    },
+    {
+      "source": "file:dealer:routes",
+      "target": "shared:middleware:authenticate",
+      "type": "imports",
+      "label": "uses authenticate middleware"
+    },
+    {
+      "source": "file:dealer:routes",
+      "target": "shared:middleware:authorize",
+      "type": "imports",
+      "label": "uses authorizeSelf middleware"
+    },
+    {
+      "source": "file:dealer:service",
+      "target": "config:database",
+      "type": "imports",
+      "label": "uses database query"
+    },
+    {
+      "source": "file:dealer:service",
+      "target": "config:redis",
+      "type": "imports",
+      "label": "uses Redis for online tracking"
+    },
+    {
+      "source": "file:dealer:service",
+      "target": "shared:errors:AppError",
+      "type": "imports",
+      "label": "throws AppError"
+    },
+    {
+      "source": "file:dealer:service",
+      "target": "config:constants",
+      "type": "imports",
+      "label": "uses ERROR_CODES"
+    },
+    {
+      "source": "file:dealer:routes",
+      "target": "module:dealer",
+      "type": "part_of",
+      "label": "belongs to dealer module"
+    },
+    {
+      "source": "file:dealer:service",
+      "target": "module:dealer",
+      "type": "part_of",
+      "label": "belongs to dealer module"
+    },
+    {
+      "source": "file:finance:controller",
+      "target": "file:finance:service",
+      "type": "imports",
+      "label": "uses financeService"
+    },
+    {
+      "source": "file:finance:routes",
+      "target": "file:finance:controller",
+      "type": "imports",
+      "label": "registers controller handlers"
+    },
+    {
+      "source": "file:finance:routes",
+      "target": "shared:middleware:authenticate",
+      "type": "imports",
+      "label": "uses authenticate middleware"
+    },
+    {
+      "source": "file:finance:service",
+      "target": "config:database",
+      "type": "imports",
+      "label": "uses database query"
+    },
+    {
+      "source": "file:finance:service",
+      "target": "shared:errors:AppError",
+      "type": "imports",
+      "label": "throws AppError"
+    },
+    {
+      "source": "file:finance:service",
+      "target": "config:constants",
+      "type": "imports",
+      "label": "uses ERROR_CODES"
+    },
+    {
+      "source": "file:finance:service",
+      "target": "shared:util:pagination",
+      "type": "imports",
+      "label": "uses pagination utils"
+    },
+    {
+      "source": "file:finance:controller",
+      "target": "shared:util:response",
+      "type": "imports",
+      "label": "uses response helpers"
+    },
+    {
+      "source": "file:finance:controller",
+      "target": "module:finance",
+      "type": "part_of",
+      "label": "belongs to finance module"
+    },
+    {
+      "source": "file:finance:routes",
+      "target": "module:finance",
+      "type": "part_of",
+      "label": "belongs to finance module"
+    },
+    {
+      "source": "file:finance:service",
+      "target": "module:finance",
+      "type": "part_of",
+      "label": "belongs to finance module"
+    },
+    {
+      "source": "file:hierarchy:controller",
+      "target": "file:hierarchy:service",
+      "type": "imports",
+      "label": "uses hierarchyService"
+    },
+    {
+      "source": "file:hierarchy:routes",
+      "target": "file:hierarchy:controller",
+      "type": "imports",
+      "label": "registers controller handlers"
+    },
+    {
+      "source": "file:hierarchy:routes",
+      "target": "shared:middleware:authenticate",
+      "type": "imports",
+      "label": "uses authenticate middleware"
+    },
+    {
+      "source": "file:hierarchy:routes",
+      "target": "shared:middleware:authorize",
+      "type": "imports",
+      "label": "uses authorize middleware"
+    },
+    {
+      "source": "file:hierarchy:routes",
+      "target": "shared:types:enums",
+      "type": "imports",
+      "label": "uses Role enum"
+    },
+    {
+      "source": "file:hierarchy:service",
+      "target": "config:database",
+      "type": "imports",
+      "label": "uses database query"
+    },
+    {
+      "source": "file:hierarchy:service",
+      "target": "config:redis",
+      "type": "imports",
+      "label": "uses Redis for hierarchy caching"
+    },
+    {
+      "source": "file:hierarchy:controller",
+      "target": "shared:util:response",
+      "type": "imports",
+      "label": "uses response helpers"
+    },
+    {
+      "source": "file:hierarchy:controller",
+      "target": "module:hierarchy",
+      "type": "part_of",
+      "label": "belongs to hierarchy module"
+    },
+    {
+      "source": "file:hierarchy:routes",
+      "target": "module:hierarchy",
+      "type": "part_of",
+      "label": "belongs to hierarchy module"
+    },
+    {
+      "source": "file:hierarchy:service",
+      "target": "module:hierarchy",
+      "type": "part_of",
+      "label": "belongs to hierarchy module"
+    },
+    {
+      "source": "file:lifting:controller",
+      "target": "file:lifting:service",
+      "type": "imports",
+      "label": "uses liftingService"
+    },
+    {
+      "source": "file:lifting:routes",
+      "target": "file:lifting:controller",
+      "type": "imports",
+      "label": "registers controller handlers"
+    },
+    {
+      "source": "file:lifting:routes",
+      "target": "shared:middleware:authenticate",
+      "type": "imports",
+      "label": "uses authenticate middleware"
+    },
+    {
+      "source": "file:lifting:service",
+      "target": "config:database",
+      "type": "imports",
+      "label": "uses database query"
+    },
+    {
+      "source": "file:lifting:service",
+      "target": "shared:util:pagination",
+      "type": "imports",
+      "label": "uses pagination utils"
+    },
+    {
+      "source": "file:lifting:service",
+      "target": "shared:events:index",
+      "type": "imports",
+      "label": "emits LIFTING_CREATED event"
+    },
+    {
+      "source": "file:lifting:controller",
+      "target": "shared:util:response",
+      "type": "imports",
+      "label": "uses response helpers"
+    },
+    {
+      "source": "file:lifting:controller",
+      "target": "module:lifting",
+      "type": "part_of",
+      "label": "belongs to lifting module"
+    },
+    {
+      "source": "file:lifting:routes",
+      "target": "module:lifting",
+      "type": "part_of",
+      "label": "belongs to lifting module"
+    },
+    {
+      "source": "file:lifting:service",
+      "target": "module:lifting",
+      "type": "part_of",
+      "label": "belongs to lifting module"
+    },
+    {
+      "source": "file:mdm:controller",
+      "target": "file:mdm:service",
+      "type": "imports",
+      "label": "uses mdmService"
+    },
+    {
+      "source": "file:mdm:routes",
+      "target": "file:mdm:controller",
+      "type": "imports",
+      "label": "registers scheme/ICDS handlers"
+    },
+    {
+      "source": "file:mdm:routes",
+      "target": "file:mdm:monthly-controller",
+      "type": "imports",
+      "label": "registers monthly record handlers"
+    },
+    {
+      "source": "file:mdm:routes",
+      "target": "shared:middleware:authenticate",
+      "type": "imports",
+      "label": "uses authenticate middleware"
+    },
+    {
+      "source": "file:mdm:routes",
+      "target": "shared:middleware:authorize",
+      "type": "imports",
+      "label": "uses authorize middleware"
+    },
+    {
+      "source": "file:mdm:service",
+      "target": "config:database",
+      "type": "imports",
+      "label": "uses database query"
+    },
+    {
+      "source": "file:mdm:service",
+      "target": "shared:errors:AppError",
+      "type": "imports",
+      "label": "throws AppError"
+    },
+    {
+      "source": "file:mdm:service",
+      "target": "config:constants",
+      "type": "imports",
+      "label": "uses ERROR_CODES"
+    },
+    {
+      "source": "file:mdm:service",
+      "target": "shared:util:pagination",
+      "type": "imports",
+      "label": "uses pagination utils"
+    },
+    {
+      "source": "file:mdm:controller",
+      "target": "shared:util:response",
+      "type": "imports",
+      "label": "uses response helpers"
+    },
+    {
+      "source": "file:mdm:monthly-controller",
+      "target": "file:mdm:monthly-service",
+      "type": "imports",
+      "label": "uses mdmMonthlyService"
+    },
+    {
+      "source": "file:mdm:monthly-service",
+      "target": "config:database",
+      "type": "imports",
+      "label": "uses database query"
+    },
+    {
+      "source": "file:mdm:monthly-controller",
+      "target": "file:mdm:controller",
+      "type": "related",
+      "label": "sibling files under mdm module"
+    },
+    {
+      "source": "file:mdm:controller",
+      "target": "module:mdm",
+      "type": "part_of",
+      "label": "belongs to mdm module"
+    },
+    {
+      "source": "file:mdm:routes",
+      "target": "module:mdm",
+      "type": "part_of",
+      "label": "belongs to mdm module"
+    },
+    {
+      "source": "file:mdm:service",
+      "target": "module:mdm",
+      "type": "part_of",
+      "label": "belongs to mdm module"
+    },
+    {
+      "source": "file:mdm:monthly-controller",
+      "target": "module:mdm",
+      "type": "part_of",
+      "label": "belongs to mdm module"
+    },
+    {
+      "source": "file:mdm:monthly-service",
+      "target": "module:mdm",
+      "type": "part_of",
+      "label": "belongs to mdm module"
+    },
+    {
+      "source": "file:notification:controller",
+      "target": "shared:util:response",
+      "type": "imports",
+      "label": "uses response helpers"
+    },
+    {
+      "source": "file:notification:controller",
+      "target": "module:notification",
+      "type": "part_of",
+      "label": "belongs to notification module"
+    },
+    {
+      "source": "file:dealer:service",
+      "target": "file:dealer:routes",
+      "type": "related",
+      "label": "same module — routes → service via controller"
+    },
+    {
+      "source": "file:finance:controller",
+      "target": "file:finance:routes",
+      "type": "related",
+      "label": "same module — routes register controller handlers"
+    },
+    {
+      "source": "file:hierarchy:controller",
+      "target": "file:hierarchy:routes",
+      "type": "related",
+      "label": "same module — routes register controller handlers"
+    },
+    {
+      "source": "file:lifting:controller",
+      "target": "file:lifting:routes",
+      "type": "related",
+      "label": "same module — routes register controller handlers"
+    },
+    {
+      "source": "file:mdm:controller",
+      "target": "file:mdm:monthly-controller",
+      "type": "related",
+      "label": "routes imports both controllers"
+    }
+  ]
+}

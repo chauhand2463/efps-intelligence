@@ -1,0 +1,161 @@
+{
+  "_meta": {
+    "batch": "22/23",
+    "description": "Backend test infrastructure, seeds, Docker config, and module coverage audit",
+    "generatedAt": "2026-06-22T00:00:00.000Z"
+  },
+  "scannedPaths": {
+    "efps-backend/tests/": {
+      "exists": true,
+      "subdirs": ["fixtures", "integration", "unit"]
+    },
+    "efps-backend/src/database/seeds/": {
+      "exists": true,
+      "empty": true
+    },
+    "efps-backend/docker/": {
+      "exists": true,
+      "files": [
+        "docker-compose.yml",
+        "Dockerfile",
+        "Dockerfile.dev",
+        "Dockerfile.worker"
+      ]
+    },
+    "efps-backend/src/modules/": {
+      "exists": true,
+      "moduleCount": 21,
+      "modules": [
+        "admin", "ads", "audit", "auth", "beneficiary", "commission",
+        "dashboard", "dealer", "directory", "enterprise-sync", "finance",
+        "hierarchy", "internal-sync", "lifting", "mdm", "notification",
+        "report", "stock-entry", "stock", "sync", "transaction"
+      ],
+      "icdsModuleExists": false
+    },
+    ".understand-anything/.understandignore": {
+      "exists": true,
+      "status": "placeholder — all patterns commented out"
+    },
+    ".understand-anything/config.json": {
+      "exists": true,
+      "content": {"outputLanguage": "en"}
+    }
+  },
+  "testDetails": {
+    "fixtures": {
+      "setup.ts": "Loads .env.test, suppresses Redis version warning",
+      "factories.ts": "Creates test objects: createTestDealer (argon2id hashed), createTestBeneficiary, createTestTransaction"
+    },
+    "integration": [
+      "audit.test.ts",
+      "auth.test.ts",
+      "commission.test.ts",
+      "finance.test.ts",
+      "internal-sync.test.ts",
+      "sync.test.ts",
+      "transaction.test.ts"
+    ],
+    "unit": [
+      "circuit-breaker.test.ts",
+      "efps-sync-captcha.test.ts",
+      "efps-sync-mappings.test.ts",
+      "encrypt.test.ts",
+      "hash.test.ts",
+      "otp.test.ts",
+      "pagination.test.ts"
+    ]
+  },
+  "dockerDetails": {
+    "Dockerfile": {
+      "type": "production",
+      "base": "node:22-alpine",
+      "strategy": "multi-stage (builder + runner)",
+      "user": "efps (uid 1001)",
+      "port": 3000,
+      "cmd": "node dist/src/server.js"
+    },
+    "Dockerfile.dev": {
+      "type": "development",
+      "base": "node:22-alpine",
+      "tools": ["tsx", "nodemon"],
+      "cmd": "nodemon --exec tsx src/server.ts --watch src"
+    },
+    "Dockerfile.worker": {
+      "type": "worker/automation",
+      "base": "mcr.microsoft.com/playwright:v1.52.0-jammy",
+      "strategy": "multi-stage (builder node:22-bookworm → runner playwright-jammy)",
+      "deps": ["playwright chromium", "npm ci --only=production"],
+      "user": "appuser",
+      "cmd": "node dist/src/jobs/sync/efps-sync.worker.js",
+      "memLimit": "2048MB (NODE_OPTIONS --max-old-space-size=2048)"
+    },
+    "docker-compose.yml": {
+      "services": ["app", "db (postgres:16-alpine)", "redis (redis:7-alpine)"],
+      "devVolumes": ["..:/app", "/app/node_modules (anonymous)"],
+      "envSource": "inline (Dockerfile.dev context)"
+    }
+  },
+  "moduleStructurePattern": {
+    "observedIn": "mdm",
+    "files": [
+      "{module}.controller.ts",
+      "{module}.routes.ts",
+      "{module}.service.ts",
+      "{module}.schema.ts"
+    ],
+    "variants": {
+      "mdm": "+ mdm.monthly.controller.ts, mdm.monthly.service.ts (sub-resource)"
+    }
+  },
+  "conceptNodes": [
+    {
+      "id": "concept-batch22-test-architecture",
+      "type": "concept",
+      "label": "Test Architecture — Fixture Factory + Unit/Integration Split",
+      "description": "Tests follow a fixture-factory pattern (argon2id password hashing for dealers, factory functions for beneficiaries/transactions) with a clear split between unit tests (7 files: circuit-breaker, encrypt, hash, otp, pagination, sync helpers) and integration tests (7 files: audit, auth, commission, finance, internal-sync, sync, transaction). Setup suppresses Redis version warnings.",
+      "tags": ["testing", "jest", "fixtures", "argon2"],
+      "strength": 0.85
+    },
+    {
+      "id": "concept-batch22-module-architecture",
+      "type": "concept",
+      "label": "Module Architecture — 21 Business Domains, Consistent Layering",
+      "description": "The backend is organized into 21 modules under src/modules/. Each module follows a consistent pattern: controller, routes, service, and schema files. Some modules extend with sub-resources (e.g., mdm.monthly.*). No 'icds' module exists — this is a notable gap if ICDS integration is expected.",
+      "tags": ["architecture", "modular", "controllers", "services", "routes"],
+      "strength": 0.9
+    },
+    {
+      "id": "concept-batch22-docker-infrastructure",
+      "type": "concept",
+      "label": "Docker Infrastructure — 3-Profile Setup (Dev, Prod, Worker)",
+      "description": "Three Dockerfiles serve distinct purposes: (1) Dockerfile — multi-stage production build on node:22-alpine with unprivileged 'efps' user, (2) Dockerfile.dev — hot-reload dev with tsx/nodemon, (3) Dockerfile.worker — Playwright-based automation worker on jammy with chromium, separate build stage on bookworm. docker-compose.yml wires app + postgres:16-alpine + redis:7-alpine with health checks and dev volume mounting.",
+      "tags": ["docker", "devops", "ci-cd", "playwright", "infrastructure"],
+      "strength": 0.8
+    },
+    {
+      "id": "concept-batch22-seed-strategy",
+      "type": "concept",
+      "label": "Seed Strategy — Empty Seeds Directory",
+      "description": "The seeds directory at efps-backend/src/database/seeds/ is empty. This suggests seeding is handled externally (migration-based, API-driven setup, or script-based) rather than through committed seed files.",
+      "tags": ["database", "seeding", "migrations"],
+      "strength": 0.5
+    },
+    {
+      "id": "concept-batch22-missing-icds-domain",
+      "type": "concept",
+      "label": "Missing Domain — ICDS Module Not Found",
+      "description": "The ICDS (Integrated Child Development Services) domain module does not exist under src/modules/. If ICDS integration is part of the eFPS domain model, this module would need to be created, following the established controller/routes/service/schema pattern.",
+      "tags": ["gap-analysis", "domain-model", "feature"],
+      "strength": 0.7
+    },
+    {
+      "id": "concept-batch22-exclude-config",
+      "type": "concept",
+      "label": "Analysis Exclusions — Unconfigured",
+      "description": "The .understandignore file exists but contains only commented-out patterns. No test files or directories are currently excluded from analysis. The config.json sets outputLanguage to 'en' with no other overrides.",
+      "tags": ["configuration", "analysis"],
+      "strength": 0.3
+    }
+  ]
+}

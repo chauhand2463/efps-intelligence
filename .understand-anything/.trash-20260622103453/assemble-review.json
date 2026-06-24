@@ -1,0 +1,22 @@
+{
+  "reviewComplete": true,
+  "issues": [],
+  "warnings": [
+    "321 nodes use compound file: prefix (e.g., file:handler:, file:mig-, file:symbol:const:) instead of dedicated semantic prefixes — these originate from unknown node types that were mapped to file: during assembly",
+    "345 nodes (47%) missing 'name' field — mostly file-type nodes without derived human-readable names",
+    "525 nodes (71%) missing 'summary' field — majority of nodes lack descriptions",
+    "546 nodes (74%) missing 'tags' field — majority of nodes lack categorization tags",
+    "567 edges (68%) missing 'weight' property — all recovered import-map edges lack weights",
+    "469 edges (56%) missing 'label' property — many edges lack human-readable labels",
+    "4 type/ID-prefix mismatches: config:database:query (type=function), class:...utility (type=utility-class), function:AuthProvider (type=component), module:fastify (type=external-package)",
+    "Edge count discrepancy: merge report claims 717 edges, actual JSON has 833 (116 from importMap recovery not reflected in report)"
+  ],
+  "suggestedActions": [
+    "Re-run the understand pipeline with proper semantic prefixes (handler:, migration:, interface:, constant:, variable:, script:, etc.) instead of folding unknown types under file:",
+    "Add name derivation logic for file-type nodes to generate human-readable names from file paths",
+    "Populate summary and tags fields for all nodes — currently ~70%+ are missing these metadata fields",
+    "Add default weight values (e.g., 0.7) and label derivation for recovered import-map edges",
+    "Fix the 4 type/ID-prefix mismatches by correcting either the node type or the ID prefix",
+    "Update the merge script to report the final edge count after importMap recovery instead of the pre-recovery count"
+  ]
+}

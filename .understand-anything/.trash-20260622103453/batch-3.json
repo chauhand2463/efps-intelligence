@@ -1,0 +1,1259 @@
+{
+  "batch": 3,
+  "totalFiles": 23,
+  "projectRoot": "E:\\efps",
+  "generatedAt": "2026-06-22T10:04:00.000Z",
+  "nodes": [
+    {
+      "id": "file:efps-frontend\\src\\lib\\auth-context.tsx",
+      "type": "file",
+      "name": "auth-context.tsx",
+      "file": "efps-frontend\\src\\lib\\auth-context.tsx",
+      "properties": {
+        "language": "typescript",
+        "lines": 82,
+        "size": 2202,
+        "summary": "React auth provider and hook. Manages AuthState with login/logout via API. Restores session on mount via GET /auth/me. Login posts to POST /auth/login. Logout posts POST /auth/logout then redirects to /login.",
+        "notes": "Actual path is src/lib/auth-context.tsx (not src/contexts/auth-context.tsx as listed)"
+      }
+    },
+    {
+      "id": "file:efps-frontend\\src\\contexts\\index.ts",
+      "type": "file",
+      "name": "index.ts",
+      "file": "efps-frontend\\src\\contexts\\index.ts",
+      "properties": {
+        "language": "typescript",
+        "lines": 0,
+        "size": 0,
+        "summary": "NOT FOUND — The src/contexts/ directory does not exist in this project."
+      }
+    },
+    {
+      "id": "file:efps-frontend\\src\\lib\\api-client.ts",
+      "type": "file",
+      "name": "api-client.ts",
+      "file": "efps-frontend\\src\\lib\\api-client.ts",
+      "properties": {
+        "language": "typescript",
+        "lines": 0,
+        "size": 0,
+        "summary": "NOT FOUND — No file named api-client.ts exists in the project. Axios client is configured inline in api.ts as apiClient."
+      }
+    },
+    {
+      "id": "file:efps-frontend\\src\\lib\\api-hooks.ts",
+      "type": "file",
+      "name": "api-hooks.ts",
+      "file": "efps-frontend\\src\\lib\\api-hooks.ts",
+      "properties": {
+        "language": "typescript",
+        "lines": 222,
+        "size": 7000,
+        "summary": "React Query hooks wrapping the API layer. Houses 12 use* hooks for domain entities: Beneficiaries, Transactions, Stock, Notifications, Finance, Commission, Lifting, Dashboard, Profile, Ads, Sync. Includes generic usePaginatedList helper. Imports api object from ./api."
+      }
+    },
+    {
+      "id": "file:efps-frontend\\src\\lib\\api.ts",
+      "type": "file",
+      "name": "api.ts",
+      "file": "efps-frontend\\src\\lib\\api.ts",
+      "properties": {
+        "language": "typescript",
+        "lines": 159,
+        "size": 5100,
+        "summary": "Axios API client with auto token refresh (401 queue), request IDs, and envelope unwrapping. Exports api object with get/post/put/patch/delete methods and ApiRequestError class."
+      }
+    },
+    {
+      "id": "file:efps-frontend\\src\\lib\\constants.ts",
+      "type": "file",
+      "name": "constants.ts",
+      "file": "efps-frontend\\src\\lib\\constants.ts",
+      "properties": {
+        "language": "typescript",
+        "lines": 0,
+        "size": 0,
+        "summary": "NOT FOUND — No file named constants.ts exists in the project. Constants (COMMODITIES, Role, etc.) are defined inline in types.ts."
+      }
+    },
+    {
+      "id": "file:efps-frontend\\src\\lib\\types.ts",
+      "type": "file",
+      "name": "types.ts",
+      "file": "efps-frontend\\src\\lib\\types.ts",
+      "properties": {
+        "language": "typescript",
+        "lines": 398,
+        "size": 12200,
+        "summary": "Source-of-truth TypeScript type definitions mirroring the Fastify backend DTOs. Enums (Role, CommodityType, BeneficiaryCategory, etc.), API envelope (ApiResponse, ApiError, PaginationMeta), and domain interfaces (DealerDto, Beneficiary, Transaction, StockAllocation, Finance*, Commission, Lifting, DashboardSummary, MasterDashboard, Ad, Sync*)."
+      }
+    },
+    {
+      "id": "file:efps-frontend\\src\\lib\\utils.ts",
+      "type": "file",
+      "name": "utils.ts",
+      "file": "efps-frontend\\src\\lib\\utils.ts",
+      "properties": {
+        "language": "typescript",
+        "lines": 11,
+        "size": 320,
+        "summary": "Utility functions. Exports monthToApi() which converts a month name (e.g. 'March') and year into YYYY-MM-01 date string."
+      }
+    },
+    {
+      "id": "file:efps-frontend\\src\\app\\providers.tsx",
+      "type": "file",
+      "name": "providers.tsx",
+      "file": "efps-frontend\\src\\app\\providers.tsx",
+      "properties": {
+        "language": "typescript",
+        "lines": 24,
+        "size": 650,
+        "summary": "Root React providers wrapper. Creates QueryClient (30s stale, 5m gc, retry=1 for queries) and wraps children in QueryClientProvider > AuthProvider. Includes Toaster (react-hot-toast) positioned top-right.",
+        "notes": "Actual path is src/app/providers.tsx (not src/providers.tsx as listed)"
+      }
+    },
+    {
+      "id": "file:efps-frontend\\AGENTS.md",
+      "type": "file",
+      "name": "AGENTS.md",
+      "file": "efps-frontend\\AGENTS.md",
+      "properties": {
+        "language": "markdown",
+        "lines": 132,
+        "size": 6800,
+        "summary": "AI agent instructions for the Next.js project. Contains nextjs-agent-rules (warns of breaking API changes, directs to node_modules/next/dist/docs/) and session-summary documenting Phase 3 cleanup: dead code removal, simulated->real API wiring, alert()->toast migration, React 19 lint fixes, live data wiring across 20+ frontend pages."
+      }
+    },
+    {
+      "id": "file:efps-frontend\\CLAUDE.md",
+      "type": "file",
+      "name": "CLAUDE.md",
+      "file": "efps-frontend\\CLAUDE.md",
+      "properties": {
+        "language": "markdown",
+        "lines": 0,
+        "size": 0,
+        "summary": "Empty Claude configuration file."
+      }
+    },
+    {
+      "id": "file:efps-frontend\\eslint.config.mjs",
+      "type": "file",
+      "name": "eslint.config.mjs",
+      "file": "efps-frontend\\eslint.config.mjs",
+      "properties": {
+        "language": "javascript",
+        "lines": 18,
+        "size": 400,
+        "summary": "ESLint flat config using eslint-config-next (core-web-vitals + typescript presets). Ignores .next, out, build, next-env.d.ts."
+      }
+    },
+    {
+      "id": "file:efps-frontend\\next.config.ts",
+      "type": "file",
+      "name": "next.config.ts",
+      "file": "efps-frontend\\next.config.ts",
+      "properties": {
+        "language": "typescript",
+        "lines": 7,
+        "size": 130,
+        "summary": "Next.js configuration (empty — default config with no custom options)."
+      }
+    },
+    {
+      "id": "file:efps-frontend\\public\\file.svg",
+      "type": "file",
+      "name": "file.svg",
+      "file": "efps-frontend\\public\\file.svg",
+      "properties": {
+        "language": "svg",
+        "lines": 1,
+        "size": 352,
+        "summary": "SVG icon — file document glyph."
+      }
+    },
+    {
+      "id": "file:efps-frontend\\public\\globe.svg",
+      "type": "file",
+      "name": "globe.svg",
+      "file": "efps-frontend\\public\\globe.svg",
+      "properties": {
+        "language": "svg",
+        "lines": 1,
+        "size": 1003,
+        "summary": "SVG icon — globe/world glyph."
+      }
+    },
+    {
+      "id": "file:efps-frontend\\public\\next.svg",
+      "type": "file",
+      "name": "next.svg",
+      "file": "efps-frontend\\public\\next.svg",
+      "properties": {
+        "language": "svg",
+        "lines": 1,
+        "size": 1199,
+        "summary": "SVG — Next.js logotype."
+      }
+    },
+    {
+      "id": "file:efps-frontend\\public\\vercel.svg",
+      "type": "file",
+      "name": "vercel.svg",
+      "file": "efps-frontend\\public\\vercel.svg",
+      "properties": {
+        "language": "svg",
+        "lines": 1,
+        "size": 101,
+        "summary": "SVG — Vercel logotype (triangle)."
+      }
+    },
+    {
+      "id": "file:efps-frontend\\public\\window.svg",
+      "type": "file",
+      "name": "window.svg",
+      "file": "efps-frontend\\public\\window.svg",
+      "properties": {
+        "language": "svg",
+        "lines": 1,
+        "size": 471,
+        "summary": "SVG icon — window/app glyph."
+      }
+    },
+    {
+      "id": "file:efps-frontend\\README.md",
+      "type": "file",
+      "name": "README.md",
+      "file": "efps-frontend\\README.md",
+      "properties": {
+        "language": "markdown",
+        "lines": 1,
+        "size": 0,
+        "summary": "Empty README placeholder."
+      }
+    },
+    {
+      "id": "file:efps-frontend\\tsconfig.json",
+      "type": "file",
+      "name": "tsconfig.json",
+      "file": "efps-frontend\\tsconfig.json",
+      "properties": {
+        "language": "json",
+        "lines": 34,
+        "size": 580,
+        "summary": "TypeScript config targeting ES2017, bundler module resolution, react-jsx, strict mode. Path alias @/* -> ./src/*. Includes Next.js type plugin."
+      }
+    },
+    {
+      "id": "file:efps-frontend\\next-env.d.ts",
+      "type": "file",
+      "name": "next-env.d.ts",
+      "file": "efps-frontend\\next-env.d.ts",
+      "properties": {
+        "language": "typescript",
+        "lines": 6,
+        "size": 200,
+        "summary": "Next.js ambient type declarations. References Next.js types, image types, and generated routes.d.ts.",
+        "notes": "Auto-generated by Next.js, should not be edited."
+      }
+    },
+    {
+      "id": "file:efps-frontend\\.env.example",
+      "type": "file",
+      "name": ".env.example",
+      "file": "efps-frontend\\.env.example",
+      "properties": {
+        "language": "config",
+        "lines": 2,
+        "size": 60,
+        "summary": "Environment variable template: NEXT_PUBLIC_API_URL=http://localhost:3000/api/v1"
+      }
+    },
+    {
+      "id": "file:efps-frontend\\.env",
+      "type": "file",
+      "name": ".env",
+      "file": "efps-frontend\\.env",
+      "properties": {
+        "language": "config",
+        "lines": 0,
+        "size": 0,
+        "summary": "Empty .env file (exists but blank)."
+      }
+    },
+    {
+      "id": "file:efps-frontend\\.gitignore",
+      "type": "file",
+      "name": ".gitignore",
+      "file": "efps-frontend\\.gitignore",
+      "properties": {
+        "language": "config",
+        "lines": 41,
+        "size": 550,
+        "summary": "Git ignore rules: node_modules, .next, out, build, .env*, .vercel, *.tsbuildinfo, next-env.d.ts."
+      }
+    },
+    {
+      "id": "file:efps-frontend\\package.json",
+      "type": "file",
+      "name": "package.json",
+      "file": "efps-frontend\\package.json",
+      "properties": {
+        "language": "json",
+        "lines": 30,
+        "size": 610,
+        "summary": "Project manifest: Next.js 16.2.9, React 19.2.4, @tanstack/react-query ^5.101.0, axios ^1.18.0, react-hot-toast ^2.6.0, xlsx ^0.18.5, zod ^4.4.3. Dev: eslint ^9, eslint-config-next 16.2.9, TypeScript ^5."
+      }
+    },
+    {
+      "id": "file:efps-frontend\\src\\app\\favicon.ico",
+      "type": "file",
+      "name": "favicon.ico",
+      "file": "efps-frontend\\src\\app\\favicon.ico",
+      "properties": {
+        "language": "binary",
+        "lines": 0,
+        "size": 0,
+        "summary": "Binary asset — favicon.ico for the Next.js app."
+      }
+    },
+    {
+      "id": "func:efps-frontend\\src\\lib\\auth-context.tsx:AuthProvider",
+      "type": "component",
+      "name": "AuthProvider",
+      "file": "efps-frontend\\src\\lib\\auth-context.tsx",
+      "properties": {
+        "kind": "exported function component",
+        "lineStart": 21,
+        "lineEnd": 76,
+        "summary": "React context provider. Initializes AuthState, restores session via GET /auth/me on mount, provides login (POST /auth/login) and logout (POST /auth/logout + redirect)."
+      }
+    },
+    {
+      "id": "func:efps-frontend\\src\\lib\\auth-context.tsx:useAuth",
+      "type": "function",
+      "name": "useAuth",
+      "file": "efps-frontend\\src\\lib\\auth-context.tsx",
+      "properties": {
+        "kind": "exported hook",
+        "lineStart": 78,
+        "lineEnd": 82,
+        "summary": "Consumes AuthContext, throws if used outside AuthProvider."
+      }
+    },
+    {
+      "id": "iface:efps-frontend\\src\\lib\\auth-context.tsx:AuthState",
+      "type": "interface",
+      "name": "AuthState",
+      "file": "efps-frontend\\src\\lib\\auth-context.tsx",
+      "properties": {
+        "lineStart": 7,
+        "lineEnd": 12,
+        "summary": "Fields: user (AuthUser|null), dealer (DealerDto|null), isLoading, isInitialized."
+      }
+    },
+    {
+      "id": "iface:efps-frontend\\src\\lib\\auth-context.tsx:AuthContextType",
+      "type": "interface",
+      "name": "AuthContextType",
+      "file": "efps-frontend\\src\\lib\\auth-context.tsx",
+      "properties": {
+        "lineStart": 14,
+        "lineEnd": 17,
+        "summary": "Extends AuthState with login() and logout() methods."
+      }
+    },
+    {
+      "id": "func:efps-frontend\\src\\lib\\api-hooks.ts:usePaginatedList",
+      "type": "function",
+      "name": "usePaginatedList",
+      "file": "efps-frontend\\src\\lib\\api-hooks.ts",
+      "properties": {
+        "kind": "exported generic hook",
+        "lineStart": 17,
+        "lineEnd": 38,
+        "summary": "Generic paginated list hook. Uses React Query with stale data, exposes data, meta, loading, reload, loadPage."
+      }
+    },
+    {
+      "id": "func:efps-frontend\\src\\lib\\api-hooks.ts:useBeneficiaries",
+      "type": "function",
+      "name": "useBeneficiaries",
+      "file": "efps-frontend\\src\\lib\\api-hooks.ts",
+      "properties": {
+        "kind": "exported hook",
+        "lineStart": 41,
+        "lineEnd": 59,
+        "summary": "CRUD hooks for /beneficiaries. List, search, create, update, remove. Uses usePaginatedList for list."
+      }
+    },
+    {
+      "id": "func:efps-frontend\\src\\lib\\api-hooks.ts:useTransactions",
+      "type": "function",
+      "name": "useTransactions",
+      "file": "efps-frontend\\src\\lib\\api-hooks.ts",
+      "properties": {
+        "kind": "exported hook",
+        "lineStart": 62,
+        "lineEnd": 82,
+        "summary": "Hooks for /transactions. List (with month/commodity filters), create, getSummary, getPending, remove."
+      }
+    },
+    {
+      "id": "func:efps-frontend\\src\\lib\\api-hooks.ts:useStock",
+      "type": "function",
+      "name": "useStock",
+      "file": "efps-frontend\\src\\lib\\api-hooks.ts",
+      "properties": {
+        "kind": "exported hook",
+        "lineStart": 85,
+        "lineEnd": 95,
+        "summary": "Hooks for /stock. getCurrent (all allocations), getHistory (paginated with filters)."
+      }
+    },
+    {
+      "id": "func:efps-frontend\\src\\lib\\api-hooks.ts:useNotifications",
+      "type": "function",
+      "name": "useNotifications",
+      "file": "efps-frontend\\src\\lib\\api-hooks.ts",
+      "properties": {
+        "kind": "exported hook",
+        "lineStart": 98,
+        "lineEnd": 108,
+        "summary": "Hooks for /notifications. Paginated list (uses usePaginatedList), markRead, markAllRead, remove."
+      }
+    },
+    {
+      "id": "func:efps-frontend\\src\\lib\\api-hooks.ts:useFinance",
+      "type": "function",
+      "name": "useFinance",
+      "file": "efps-frontend\\src\\lib\\api-hooks.ts",
+      "properties": {
+        "kind": "exported hook",
+        "lineStart": 111,
+        "lineEnd": 139,
+        "summary": "Hooks for /finance. addIncome, addExpense, listIncome, listExpenses, getProfitLoss, deleteIncome, deleteExpense."
+      }
+    },
+    {
+      "id": "func:efps-frontend\\src\\lib\\api-hooks.ts:useCommission",
+      "type": "function",
+      "name": "useCommission",
+      "file": "efps-frontend\\src\\lib\\api-hooks.ts",
+      "properties": {
+        "kind": "exported hook",
+        "lineStart": 142,
+        "lineEnd": 156,
+        "summary": "Hooks for /commission. getRates, calculate (by month), list (paginated with month filter)."
+      }
+    },
+    {
+      "id": "func:efps-frontend\\src\\lib\\api-hooks.ts:useLifting",
+      "type": "function",
+      "name": "useLifting",
+      "file": "efps-frontend\\src\\lib\\api-hooks.ts",
+      "properties": {
+        "kind": "exported hook",
+        "lineStart": 159,
+        "lineEnd": 170,
+        "summary": "Hooks for /lifting. create (POST /lifting), list (paginated with month filter)."
+      }
+    },
+    {
+      "id": "func:efps-frontend\\src\\lib\\api-hooks.ts:useDashboard",
+      "type": "function",
+      "name": "useDashboard",
+      "file": "efps-frontend\\src\\lib\\api-hooks.ts",
+      "properties": {
+        "kind": "exported hook",
+        "lineStart": 173,
+        "lineEnd": 176,
+        "summary": "Hook for /dashboard/summary. Returns single getSummary method."
+      }
+    },
+    {
+      "id": "func:efps-frontend\\src\\lib\\api-hooks.ts:useProfile",
+      "type": "function",
+      "name": "useProfile",
+      "file": "efps-frontend\\src\\lib\\api-hooks.ts",
+      "properties": {
+        "kind": "exported hook",
+        "lineStart": 179,
+        "lineEnd": 184,
+        "summary": "Hooks for /dealers/:id. get (GET), update (PATCH), getStats."
+      }
+    },
+    {
+      "id": "func:efps-frontend\\src\\lib\\api-hooks.ts:useAds",
+      "type": "function",
+      "name": "useAds",
+      "file": "efps-frontend\\src\\lib\\api-hooks.ts",
+      "properties": {
+        "kind": "exported hook",
+        "lineStart": 187,
+        "lineEnd": 192,
+        "summary": "Hook for /ads. Paginated list using usePaginatedList."
+      }
+    },
+    {
+      "id": "func:efps-frontend\\src\\lib\\api-hooks.ts:useSync",
+      "type": "function",
+      "name": "useSync",
+      "file": "efps-frontend\\src\\lib\\api-hooks.ts",
+      "properties": {
+        "kind": "exported hook",
+        "lineStart": 197,
+        "lineEnd": 222,
+        "summary": "Hooks for /sync endpoints. Bank info, self sync trigger/status/dashboard, priority sync, CSV import (hofAsPerNFSA, rationCardNo etc.), credentials management."
+      }
+    },
+    {
+      "id": "class:efps-frontend\\src\\lib\\api.ts:ApiRequestError",
+      "type": "class",
+      "name": "ApiRequestError",
+      "file": "efps-frontend\\src\\lib\\api.ts",
+      "properties": {
+        "kind": "exported class",
+        "lineStart": 6,
+        "lineEnd": 16,
+        "summary": "Custom error class with statusCode, code, message, optional field. Extends Error."
+      }
+    },
+    {
+      "id": "func:efps-frontend\\src\\lib\\api.ts:generateRequestId",
+      "type": "function",
+      "name": "generateRequestId",
+      "file": "efps-frontend\\src\\lib\\api.ts",
+      "properties": {
+        "kind": "private function",
+        "lineStart": 18,
+        "lineEnd": 20,
+        "summary": "Generates random 8-char request ID for X-Request-Id header."
+      }
+    },
+    {
+      "id": "var:efps-frontend\\src\\lib\\api.ts:refreshPromise",
+      "type": "variable",
+      "name": "refreshPromise",
+      "file": "efps-frontend\\src\\lib\\api.ts",
+      "properties": {
+        "kind": "module-level variable",
+        "lineStart": 22,
+        "lineEnd": 22,
+        "summary": "Singleton promise for in-flight token refresh. Prevents concurrent refresh calls."
+      }
+    },
+    {
+      "id": "var:efps-frontend\\src\\lib\\api.ts:pendingRequests",
+      "type": "variable",
+      "name": "pendingRequests",
+      "file": "efps-frontend\\src\\lib\\api.ts",
+      "properties": {
+        "kind": "module-level variable",
+        "lineStart": 23,
+        "lineEnd": 27,
+        "summary": "Queue of requests waiting for token refresh to complete."
+      }
+    },
+    {
+      "id": "var:efps-frontend\\src\\lib\\api.ts:apiClient",
+      "type": "variable",
+      "name": "apiClient",
+      "file": "efps-frontend\\src\\lib\\api.ts",
+      "properties": {
+        "kind": "module-level AxiosInstance",
+        "lineStart": 29,
+        "lineEnd": 34,
+        "summary": "Axios instance with baseURL from NEXT_PUBLIC_API_URL env var, withCredentials, JSON content type, 15s timeout. Interceptors add X-Request-Id and handle 401 token refresh queue."
+      }
+    },
+    {
+      "id": "func:efps-frontend\\src\\lib\\api.ts:request",
+      "type": "function",
+      "name": "request",
+      "file": "efps-frontend\\src\\lib\\api.ts",
+      "properties": {
+        "kind": "private async function",
+        "lineStart": 95,
+        "lineEnd": 146,
+        "summary": "Generic request function. If rawResponse=true returns response.data directly. Otherwise unwraps ApiResponse envelope, throws ApiRequestError on !success. Handles AxiosError => ApiRequestError and network errors."
+      }
+    },
+    {
+      "id": "var:efps-frontend\\src\\lib\\api.ts:api",
+      "type": "variable",
+      "name": "api",
+      "file": "efps-frontend\\src\\lib\\api.ts",
+      "properties": {
+        "kind": "exported const object",
+        "lineStart": 148,
+        "lineEnd": 159,
+        "summary": "Exported API facade with methods: get, post, put, patch, delete. Each delegates to request() with the appropriate HTTP verb."
+      }
+    },
+    {
+      "id": "iface:efps-frontend\\src\\lib\\types.ts:ApiResponse",
+      "type": "interface",
+      "name": "ApiResponse",
+      "file": "efps-frontend\\src\\lib\\types.ts",
+      "properties": {
+        "lineStart": 21,
+        "lineEnd": 25,
+        "summary": "Generic API response envelope: success, data, optional meta (PaginationMeta)."
+      }
+    },
+    {
+      "id": "iface:efps-frontend\\src\\lib\\types.ts:PaginationMeta",
+      "type": "interface",
+      "name": "PaginationMeta",
+      "file": "efps-frontend\\src\\lib\\types.ts",
+      "properties": {
+        "lineStart": 27,
+        "lineEnd": 32,
+        "summary": "Pagination metadata: page, limit, total, cursor."
+      }
+    },
+    {
+      "id": "iface:efps-frontend\\src\\lib\\types.ts:ApiError",
+      "type": "interface",
+      "name": "ApiError",
+      "file": "efps-frontend\\src\\lib\\types.ts",
+      "properties": {
+        "lineStart": 34,
+        "lineEnd": 42,
+        "summary": "Error response shape: success=false, error with code, message, optional field, statusCode."
+      }
+    },
+    {
+      "id": "iface:efps-frontend\\src\\lib\\types.ts:LoginResponse",
+      "type": "interface",
+      "name": "LoginResponse",
+      "file": "efps-frontend\\src\\lib\\types.ts",
+      "properties": {
+        "lineStart": 45,
+        "lineEnd": 47,
+        "summary": "Login response: { dealer: DealerDto }."
+      }
+    },
+    {
+      "id": "iface:efps-frontend\\src\\lib\\types.ts:DealerDto",
+      "type": "interface",
+      "name": "DealerDto",
+      "file": "efps-frontend\\src\\lib\\types.ts",
+      "properties": {
+        "lineStart": 53,
+        "lineEnd": 68,
+        "summary": "Dealer data transfer object: id, fps_id, full_name, mobile, role, is_active, is_verified, district, taluka, village, address, area_id, last_login_at, created_at."
+      }
+    },
+    {
+      "id": "iface:efps-frontend\\src\\lib\\types.ts:AuthUser",
+      "type": "interface",
+      "name": "AuthUser",
+      "file": "efps-frontend\\src\\lib\\types.ts",
+      "properties": {
+        "lineStart": 70,
+        "lineEnd": 74,
+        "summary": "Auth user shape: id, role, fps_id."
+      }
+    },
+    {
+      "id": "iface:efps-frontend\\src\\lib\\types.ts:Beneficiary",
+      "type": "interface",
+      "name": "Beneficiary",
+      "file": "efps-frontend\\src\\lib\\types.ts",
+      "properties": {
+        "lineStart": 101,
+        "lineEnd": 112,
+        "summary": "Beneficiary: id, dealer_id, ration_card_no, head_of_family, mobile, member_count, category, is_active, timestamps."
+      }
+    },
+    {
+      "id": "iface:efps-frontend\\src\\lib\\types.ts:Transaction",
+      "type": "interface",
+      "name": "Transaction",
+      "file": "efps-frontend\\src\\lib\\types.ts",
+      "properties": {
+        "lineStart": 132,
+        "lineEnd": 146,
+        "summary": "Transaction: id, dealer_id, beneficiary_id, date, month, commodity, quantity_kg, price_per_kg, total_amount, mode (pos/manual/otg), biometric_auth, remarks."
+      }
+    },
+    {
+      "id": "iface:efps-frontend\\src\\lib\\types.ts:StockAllocation",
+      "type": "interface",
+      "name": "StockAllocation",
+      "file": "efps-frontend\\src\\lib\\types.ts",
+      "properties": {
+        "lineStart": 162,
+        "lineEnd": 172,
+        "summary": "Stock allocation: id, dealer_id, month, commodity, allocated_kg, lifted_kg, remaining_kg, timestamps."
+      }
+    },
+    {
+      "id": "iface:efps-frontend\\src\\lib\\types.ts:DashboardSummary",
+      "type": "interface",
+      "name": "DashboardSummary",
+      "file": "efps-frontend\\src\\lib\\types.ts",
+      "properties": {
+        "lineStart": 279,
+        "lineEnd": 290,
+        "summary": "Dashboard summary: today/month transactions/quantity, total beneficiaries, allocated/lifted kg, pending deliveries, low stock alerts, monthly_sales array."
+      }
+    },
+    {
+      "id": "iface:efps-frontend\\src\\lib\\types.ts:MasterDashboard",
+      "type": "interface",
+      "name": "MasterDashboard",
+      "file": "efps-frontend\\src\\lib\\types.ts",
+      "properties": {
+        "lineStart": 292,
+        "lineEnd": 332,
+        "summary": "Comprehensive master dashboard DTO with kpis, distributionProgress, stockByCommodity, beneficiarySummary, distributionHistory, financialSummary, monthlySales, systemHealth."
+      }
+    },
+    {
+      "id": "iface:efps-frontend\\src\\lib\\types.ts:SyncJob",
+      "type": "interface",
+      "name": "SyncJob",
+      "file": "efps-frontend\\src\\lib\\types.ts",
+      "properties": {
+        "lineStart": 355,
+        "lineEnd": 372,
+        "summary": "Sync job record: id, dealer_id, status, records_synced, processed_count, quarantined_count, error_message, error_detail, priority, sync_mode, worker_version, website_version, trace_id, timestamps."
+      }
+    },
+    {
+      "id": "var:efps-frontend\\src\\lib\\types.ts:Role",
+      "type": "variable",
+      "name": "Role",
+      "file": "efps-frontend\\src\\lib\\types.ts",
+      "properties": {
+        "kind": "exported const enum",
+        "lineStart": 4,
+        "lineEnd": 4,
+        "summary": "Role enum: DEALER='dealer', AREA_OFFICER='area_officer', ADMIN='admin'."
+      }
+    },
+    {
+      "id": "var:efps-frontend\\src\\lib\\types.ts:CommodityType",
+      "type": "variable",
+      "name": "CommodityType",
+      "file": "efps-frontend\\src\\lib\\types.ts",
+      "properties": {
+        "kind": "exported const enum",
+        "lineStart": 7,
+        "lineEnd": 7,
+        "summary": "CommodityType: RICE, WHEAT, SUGAR, KEROSENE, OIL, PULSES."
+      }
+    },
+    {
+      "id": "var:efps-frontend\\src\\lib\\types.ts:COMMODITIES",
+      "type": "variable",
+      "name": "COMMODITIES",
+      "file": "efps-frontend\\src\\lib\\types.ts",
+      "properties": {
+        "kind": "exported const array",
+        "lineStart": 9,
+        "lineEnd": 9,
+        "summary": "Array of all commodity type strings."
+      }
+    },
+    {
+      "id": "func:efps-frontend\\src\\lib\\utils.ts:monthToApi",
+      "type": "function",
+      "name": "monthToApi",
+      "file": "efps-frontend\\src\\lib\\utils.ts",
+      "properties": {
+        "kind": "exported function",
+        "lineStart": 7,
+        "lineEnd": 10,
+        "summary": "Converts month name (e.g. 'March') and year to YYYY-MM-01 format."
+      }
+    },
+    {
+      "id": "comp:efps-frontend\\src\\app\\providers.tsx:Providers",
+      "type": "component",
+      "name": "Providers",
+      "file": "efps-frontend\\src\\app\\providers.tsx",
+      "properties": {
+        "kind": "exported React component",
+        "lineStart": 8,
+        "lineEnd": 24,
+        "summary": "Root providers: QueryClientProvider (30s stale, 5m gc, retry=1) > AuthProvider. Renders Toaster (react-hot-toast, top-right, 4s duration)."
+      }
+    },
+    {
+      "id": "comp:efps-frontend\\src\\lib\\auth-guard.tsx:RequireAuth",
+      "type": "component",
+      "name": "RequireAuth",
+      "file": "efps-frontend\\src\\lib\\auth-guard.tsx",
+      "properties": {
+        "kind": "exported React component",
+        "lineStart": 9,
+        "lineEnd": 38,
+        "summary": "Route guard: redirects unauthenticated users to /login, unauthorized role users to /dashboard. Shows LoadingScreen while initializing."
+      }
+    },
+    {
+      "id": "config:efps-frontend\\eslint.config.mjs:eslint",
+      "type": "config",
+      "name": "eslint config",
+      "file": "efps-frontend\\eslint.config.mjs",
+      "properties": {
+        "tool": "ESLint",
+        "summary": "Flat config using eslint-config-next core-web-vitals + typescript presets."
+      }
+    },
+    {
+      "id": "config:efps-frontend\\tsconfig.json:tsconfig",
+      "type": "config",
+      "name": "TypeScript config",
+      "file": "efps-frontend\\tsconfig.json",
+      "properties": {
+        "tool": "TypeScript",
+        "summary": "ES2017 target, bundler module resolution, strict, react-jsx, @/* path alias."
+      }
+    },
+    {
+      "id": "config:efps-frontend\\package.json:manifest",
+      "type": "config",
+      "name": "package manifest",
+      "file": "efps-frontend\\package.json",
+      "properties": {
+        "tool": "npm",
+        "summary": "Project manifest with dependencies, devDependencies, scripts (dev, build, start, lint)."
+      }
+    },
+    {
+      "id": "config:efps-frontend\\.gitignore:gitignore",
+      "type": "config",
+      "name": ".gitignore",
+      "file": "efps-frontend\\.gitignore",
+      "properties": {
+        "tool": "git",
+        "summary": "Ignore rules for node_modules, .next, build artifacts, env files."
+      }
+    },
+    {
+      "id": "docs:efps-frontend\\AGENTS.md:session-summary",
+      "type": "docs",
+      "name": "Session Summary",
+      "file": "efps-frontend\\AGENTS.md",
+      "properties": {
+        "summary": "Detailed Phase 3 cleanup documentation: dead code removal, simulated->real API wiring, alert()->toast migration, React 19 lint fixes.",
+        "date": "17 Jun 2026"
+      }
+    }
+  ],
+  "edges": [
+    {
+      "source": "file:efps-frontend\\src\\lib\\auth-context.tsx",
+      "target": "file:efps-frontend\\src\\lib\\types.ts",
+      "type": "imports",
+      "properties": {
+        "importedSymbols": ["DealerDto", "AuthUser"],
+        "lineNumber": 4
+      }
+    },
+    {
+      "source": "file:efps-frontend\\src\\lib\\auth-context.tsx",
+      "target": "file:efps-frontend\\src\\lib\\api.ts",
+      "type": "imports",
+      "properties": {
+        "importedSymbols": ["api"],
+        "lineNumber": 5
+      }
+    },
+    {
+      "source": "file:efps-frontend\\src\\lib\\auth-context.tsx",
+      "target": "iface:efps-frontend\\src\\lib\\auth-context.tsx:AuthState",
+      "type": "contains"
+    },
+    {
+      "source": "file:efps-frontend\\src\\lib\\auth-context.tsx",
+      "target": "iface:efps-frontend\\src\\lib\\auth-context.tsx:AuthContextType",
+      "type": "contains"
+    },
+    {
+      "source": "file:efps-frontend\\src\\lib\\auth-context.tsx",
+      "target": "func:efps-frontend\\src\\lib\\auth-context.tsx:AuthProvider",
+      "type": "contains"
+    },
+    {
+      "source": "file:efps-frontend\\src\\lib\\auth-context.tsx",
+      "target": "func:efps-frontend\\src\\lib\\auth-context.tsx:useAuth",
+      "type": "contains"
+    },
+    {
+      "source": "file:efps-frontend\\src\\lib\\api-hooks.ts",
+      "target": "file:efps-frontend\\src\\lib\\api.ts",
+      "type": "imports",
+      "properties": {
+        "importedSymbols": ["api"],
+        "lineNumber": 2
+      }
+    },
+    {
+      "source": "file:efps-frontend\\src\\lib\\api-hooks.ts",
+      "target": "file:efps-frontend\\src\\lib\\types.ts",
+      "type": "imports",
+      "properties": {
+        "importedSymbols": ["ApiResponse", "PaginationMeta", "Beneficiary", "CreateBeneficiaryInput", "UpdateBeneficiaryInput", "Transaction", "CreateTransactionInput", "StockAllocation", "Notification", "IncomeEntry", "ExpenseEntry", "CreateIncomeInput", "CreateExpenseInput", "ProfitLoss", "CommissionRate", "Commission", "LiftingEntry", "CreateLiftingInput", "DashboardSummary", "Ad", "DealerDto", "UpdateDealerInput", "SyncJob", "SyncDashboardData", "ImportResult", "QuarantineSummary"],
+        "lineNumber": "3-14"
+      }
+    },
+    {
+      "source": "file:efps-frontend\\src\\lib\\api-hooks.ts",
+      "target": "func:efps-frontend\\src\\lib\\api-hooks.ts:usePaginatedList",
+      "type": "contains"
+    },
+    {
+      "source": "file:efps-frontend\\src\\lib\\api-hooks.ts",
+      "target": "func:efps-frontend\\src\\lib\\api-hooks.ts:useBeneficiaries",
+      "type": "contains"
+    },
+    {
+      "source": "file:efps-frontend\\src\\lib\\api-hooks.ts",
+      "target": "func:efps-frontend\\src\\lib\\api-hooks.ts:useTransactions",
+      "type": "contains"
+    },
+    {
+      "source": "file:efps-frontend\\src\\lib\\api-hooks.ts",
+      "target": "func:efps-frontend\\src\\lib\\api-hooks.ts:useStock",
+      "type": "contains"
+    },
+    {
+      "source": "file:efps-frontend\\src\\lib\\api-hooks.ts",
+      "target": "func:efps-frontend\\src\\lib\\api-hooks.ts:useNotifications",
+      "type": "contains"
+    },
+    {
+      "source": "file:efps-frontend\\src\\lib\\api-hooks.ts",
+      "target": "func:efps-frontend\\src\\lib\\api-hooks.ts:useFinance",
+      "type": "contains"
+    },
+    {
+      "source": "file:efps-frontend\\src\\lib\\api-hooks.ts",
+      "target": "func:efps-frontend\\src\\lib\\api-hooks.ts:useCommission",
+      "type": "contains"
+    },
+    {
+      "source": "file:efps-frontend\\src\\lib\\api-hooks.ts",
+      "target": "func:efps-frontend\\src\\lib\\api-hooks.ts:useLifting",
+      "type": "contains"
+    },
+    {
+      "source": "file:efps-frontend\\src\\lib\\api-hooks.ts",
+      "target": "func:efps-frontend\\src\\lib\\api-hooks.ts:useDashboard",
+      "type": "contains"
+    },
+    {
+      "source": "file:efps-frontend\\src\\lib\\api-hooks.ts",
+      "target": "func:efps-frontend\\src\\lib\\api-hooks.ts:useProfile",
+      "type": "contains"
+    },
+    {
+      "source": "file:efps-frontend\\src\\lib\\api-hooks.ts",
+      "target": "func:efps-frontend\\src\\lib\\api-hooks.ts:useAds",
+      "type": "contains"
+    },
+    {
+      "source": "file:efps-frontend\\src\\lib\\api-hooks.ts",
+      "target": "func:efps-frontend\\src\\lib\\api-hooks.ts:useSync",
+      "type": "contains"
+    },
+    {
+      "source": "file:efps-frontend\\src\\lib\\api.ts",
+      "target": "file:efps-frontend\\src\\lib\\types.ts",
+      "type": "imports",
+      "properties": {
+        "importedSymbols": ["ApiResponse", "ApiError"],
+        "lineNumber": 2
+      }
+    },
+    {
+      "source": "file:efps-frontend\\src\\lib\\api.ts",
+      "target": "class:efps-frontend\\src\\lib\\api.ts:ApiRequestError",
+      "type": "contains"
+    },
+    {
+      "source": "file:efps-frontend\\src\\lib\\api.ts",
+      "target": "func:efps-frontend\\src\\lib\\api.ts:generateRequestId",
+      "type": "contains"
+    },
+    {
+      "source": "file:efps-frontend\\src\\lib\\api.ts",
+      "target": "var:efps-frontend\\src\\lib\\api.ts:refreshPromise",
+      "type": "contains"
+    },
+    {
+      "source": "file:efps-frontend\\src\\lib\\api.ts",
+      "target": "var:efps-frontend\\src\\lib\\api.ts:pendingRequests",
+      "type": "contains"
+    },
+    {
+      "source": "file:efps-frontend\\src\\lib\\api.ts",
+      "target": "var:efps-frontend\\src\\lib\\api.ts:apiClient",
+      "type": "contains"
+    },
+    {
+      "source": "file:efps-frontend\\src\\lib\\api.ts",
+      "target": "func:efps-frontend\\src\\lib\\api.ts:request",
+      "type": "contains"
+    },
+    {
+      "source": "file:efps-frontend\\src\\lib\\api.ts",
+      "target": "var:efps-frontend\\src\\lib\\api.ts:api",
+      "type": "contains"
+    },
+    {
+      "source": "file:efps-frontend\\src\\lib\\types.ts",
+      "target": "var:efps-frontend\\src\\lib\\types.ts:Role",
+      "type": "contains"
+    },
+    {
+      "source": "file:efps-frontend\\src\\lib\\types.ts",
+      "target": "var:efps-frontend\\src\\lib\\types.ts:CommodityType",
+      "type": "contains"
+    },
+    {
+      "source": "file:efps-frontend\\src\\lib\\types.ts",
+      "target": "var:efps-frontend\\src\\lib\\types.ts:COMMODITIES",
+      "type": "contains"
+    },
+    {
+      "source": "file:efps-frontend\\src\\lib\\types.ts",
+      "target": "iface:efps-frontend\\src\\lib\\types.ts:ApiResponse",
+      "type": "contains"
+    },
+    {
+      "source": "file:efps-frontend\\src\\lib\\types.ts",
+      "target": "iface:efps-frontend\\src\\lib\\types.ts:PaginationMeta",
+      "type": "contains"
+    },
+    {
+      "source": "file:efps-frontend\\src\\lib\\types.ts",
+      "target": "iface:efps-frontend\\src\\lib\\types.ts:ApiError",
+      "type": "contains"
+    },
+    {
+      "source": "file:efps-frontend\\src\\lib\\types.ts",
+      "target": "iface:efps-frontend\\src\\lib\\types.ts:LoginResponse",
+      "type": "contains"
+    },
+    {
+      "source": "file:efps-frontend\\src\\lib\\types.ts",
+      "target": "iface:efps-frontend\\src\\lib\\types.ts:DealerDto",
+      "type": "contains"
+    },
+    {
+      "source": "file:efps-frontend\\src\\lib\\types.ts",
+      "target": "iface:efps-frontend\\src\\lib\\types.ts:AuthUser",
+      "type": "contains"
+    },
+    {
+      "source": "file:efps-frontend\\src\\lib\\types.ts",
+      "target": "iface:efps-frontend\\src\\lib\\types.ts:Beneficiary",
+      "type": "contains"
+    },
+    {
+      "source": "file:efps-frontend\\src\\lib\\types.ts",
+      "target": "iface:efps-frontend\\src\\lib\\types.ts:Transaction",
+      "type": "contains"
+    },
+    {
+      "source": "file:efps-frontend\\src\\lib\\types.ts",
+      "target": "iface:efps-frontend\\src\\lib\\types.ts:StockAllocation",
+      "type": "contains"
+    },
+    {
+      "source": "file:efps-frontend\\src\\lib\\types.ts",
+      "target": "iface:efps-frontend\\src\\lib\\types.ts:DashboardSummary",
+      "type": "contains"
+    },
+    {
+      "source": "file:efps-frontend\\src\\lib\\types.ts",
+      "target": "iface:efps-frontend\\src\\lib\\types.ts:MasterDashboard",
+      "type": "contains"
+    },
+    {
+      "source": "file:efps-frontend\\src\\lib\\types.ts",
+      "target": "iface:efps-frontend\\src\\lib\\types.ts:SyncJob",
+      "type": "contains"
+    },
+    {
+      "source": "file:efps-frontend\\src\\lib\\utils.ts",
+      "target": "func:efps-frontend\\src\\lib\\utils.ts:monthToApi",
+      "type": "contains"
+    },
+    {
+      "source": "file:efps-frontend\\src\\app\\providers.tsx",
+      "target": "file:efps-frontend\\src\\lib\\auth-context.tsx",
+      "type": "imports",
+      "properties": {
+        "importedSymbols": ["AuthProvider"],
+        "lineNumber": 6
+      }
+    },
+    {
+      "source": "file:efps-frontend\\src\\app\\providers.tsx",
+      "target": "comp:efps-frontend\\src\\app\\providers.tsx:Providers",
+      "type": "contains"
+    },
+    {
+      "source": "file:efps-frontend\\src\\app\\providers.tsx",
+      "target": "func:efps-frontend\\src\\lib\\auth-context.tsx:AuthProvider",
+      "type": "composes",
+      "properties": {
+        "description": "Providers renders AuthProvider as child"
+      }
+    },
+    {
+      "source": "comp:efps-frontend\\src\\app\\providers.tsx:Providers",
+      "target": "func:efps-frontend\\src\\lib\\auth-context.tsx:AuthProvider",
+      "type": "composes"
+    },
+    {
+      "source": "file:efps-frontend\\src\\lib\\auth-guard.tsx",
+      "target": "file:efps-frontend\\src\\lib\\auth-context.tsx",
+      "type": "imports",
+      "properties": {
+        "importedSymbols": ["useAuth"],
+        "lineNumber": 5
+      }
+    },
+    {
+      "source": "file:efps-frontend\\src\\lib\\auth-guard.tsx",
+      "target": "file:efps-frontend\\src\\lib\\types.ts",
+      "type": "imports",
+      "properties": {
+        "importedSymbols": ["RoleType"],
+        "lineNumber": 7
+      }
+    },
+    {
+      "source": "file:efps-frontend\\src\\lib\\auth-guard.tsx",
+      "target": "comp:efps-frontend\\src\\lib\\auth-guard.tsx:RequireAuth",
+      "type": "contains"
+    },
+    {
+      "source": "iface:efps-frontend\\src\\lib\\auth-context.tsx:AuthUser",
+      "target": "iface:efps-frontend\\src\\lib\\types.ts:AuthUser",
+      "type": "defines"
+    },
+    {
+      "source": "iface:efps-frontend\\src\\lib\\auth-context.tsx:DealerDto",
+      "target": "iface:efps-frontend\\src\\lib\\types.ts:DealerDto",
+      "type": "defines"
+    },
+    {
+      "source": "func:efps-frontend\\src\\lib\\api-hooks.ts:usePaginatedList",
+      "target": "var:efps-frontend\\src\\lib\\api.ts:api",
+      "type": "uses"
+    },
+    {
+      "source": "func:efps-frontend\\src\\lib\\api-hooks.ts:useBeneficiaries",
+      "target": "func:efps-frontend\\src\\lib\\api-hooks.ts:usePaginatedList",
+      "type": "uses"
+    },
+    {
+      "source": "func:efps-frontend\\src\\lib\\api-hooks.ts:useNotifications",
+      "target": "func:efps-frontend\\src\\lib\\api-hooks.ts:usePaginatedList",
+      "type": "uses"
+    },
+    {
+      "source": "func:efps-frontend\\src\\lib\\api-hooks.ts:useAds",
+      "target": "func:efps-frontend\\src\\lib\\api-hooks.ts:usePaginatedList",
+      "type": "uses"
+    },
+    {
+      "source": "config:efps-frontend\\tsconfig.json:tsconfig",
+      "target": "file:efps-frontend\\src\\lib\\api-hooks.ts",
+      "type": "configures"
+    },
+    {
+      "source": "config:efps-frontend\\tsconfig.json:tsconfig",
+      "target": "file:efps-frontend\\src\\lib\\api.ts",
+      "type": "configures"
+    },
+    {
+      "source": "config:efps-frontend\\tsconfig.json:tsconfig",
+      "target": "file:efps-frontend\\src\\lib\\types.ts",
+      "type": "configures"
+    },
+    {
+      "source": "config:efps-frontend\\tsconfig.json:tsconfig",
+      "target": "file:efps-frontend\\src\\lib\\auth-context.tsx",
+      "type": "configures"
+    },
+    {
+      "source": "config:efps-frontend\\tsconfig.json:tsconfig",
+      "target": "file:efps-frontend\\src\\lib\\utils.ts",
+      "type": "configures"
+    },
+    {
+      "source": "config:efps-frontend\\tsconfig.json:tsconfig",
+      "target": "file:efps-frontend\\src\\app\\providers.tsx",
+      "type": "configures"
+    },
+    {
+      "source": "config:efps-frontend\\tsconfig.json:tsconfig",
+      "target": "file:efps-frontend\\src\\lib\\auth-guard.tsx",
+      "type": "configures"
+    },
+    {
+      "source": "config:efps-frontend\\eslint.config.mjs:eslint",
+      "target": "file:efps-frontend\\src\\lib\\auth-context.tsx",
+      "type": "configures"
+    },
+    {
+      "source": "config:efps-frontend\\eslint.config.mjs:eslint",
+      "target": "file:efps-frontend\\src\\lib\\api-hooks.ts",
+      "type": "configures"
+    },
+    {
+      "source": "config:efps-frontend\\eslint.config.mjs:eslint",
+      "target": "file:efps-frontend\\src\\lib\\api.ts",
+      "type": "configures"
+    },
+    {
+      "source": "config:efps-frontend\\eslint.config.mjs:eslint",
+      "target": "file:efps-frontend\\src\\lib\\types.ts",
+      "type": "configures"
+    },
+    {
+      "source": "config:efps-frontend\\eslint.config.mjs:eslint",
+      "target": "file:efps-frontend\\src\\lib\\utils.ts",
+      "type": "configures"
+    },
+    {
+      "source": "config:efps-frontend\\eslint.config.mjs:eslint",
+      "target": "file:efps-frontend\\src\\app\\providers.tsx",
+      "type": "configures"
+    },
+    {
+      "source": "config:efps-frontend\\eslint.config.mjs:eslint",
+      "target": "file:efps-frontend\\src\\lib\\auth-guard.tsx",
+      "type": "configures"
+    },
+    {
+      "source": "docs:efps-frontend\\AGENTS.md:session-summary",
+      "target": "file:efps-frontend\\src\\lib\\api-hooks.ts",
+      "type": "documents",
+      "properties": {
+        "description": "Session summary documents fixes applied to api-hooks.ts"
+      }
+    },
+    {
+      "source": "docs:efps-frontend\\AGENTS.md:session-summary",
+      "target": "file:efps-frontend\\src\\app\\providers.tsx",
+      "type": "documents",
+      "properties": {
+        "description": "Session summary documents AuthProvider fix in providers.tsx"
+      }
+    }
+  ]
+}

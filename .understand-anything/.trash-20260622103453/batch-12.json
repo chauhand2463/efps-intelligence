@@ -1,0 +1,86 @@
+{
+  "batch": 12,
+  "label": "efps-backend config files",
+  "files": [
+    "efps-backend/eslint.config.js",
+    "efps-backend/tsconfig.json",
+    "efps-backend/vitest.config.ts"
+  ],
+  "nodes": [
+    {
+      "id": "config:efps-backend/eslint.config.js",
+      "type": "config",
+      "label": "ESLint config",
+      "file": "efps-backend/eslint.config.js",
+      "properties": {
+        "tool": "ESLint",
+        "format": "Flat config (typescript-eslint)",
+        "target": "src/**/*.ts",
+        "ignores": ["dist/", "node_modules/", "tests/"],
+        "extends": ["tseslint.configs.recommended"],
+        "rules": {
+          "@typescript-eslint/no-explicit-any": "warn",
+          "@typescript-eslint/no-unused-vars": "warn",
+          "no-console": "warn",
+          "prefer-const": "error"
+        }
+      }
+    },
+    {
+      "id": "config:efps-backend/tsconfig.json",
+      "type": "config",
+      "label": "TypeScript config",
+      "file": "efps-backend/tsconfig.json",
+      "properties": {
+        "tool": "TypeScript",
+        "target": "ES2022",
+        "module": "ESNext",
+        "moduleResolution": "bundler",
+        "strict": true,
+        "declaration": true,
+        "sourceMap": true,
+        "include": ["src/**/*", "scripts/**/*", "tests/**/*"],
+        "exclude": ["node_modules", "dist"],
+        "outputDir": "dist"
+      }
+    },
+    {
+      "id": "config:efps-backend/vitest.config.ts",
+      "type": "config",
+      "label": "Vitest config",
+      "file": "efps-backend/vitest.config.ts",
+      "properties": {
+        "tool": "Vitest",
+        "globals": true,
+        "environment": "node",
+        "testInclude": ["tests/**/*.test.ts"],
+        "coverage": {
+          "provider": "v8",
+          "include": ["src/modules/**/*.service.ts", "src/shared/utils/**/*.ts"],
+          "thresholds": { "branches": 80, "functions": 80, "lines": 80, "statements": 80 }
+        },
+        "setupFiles": ["tests/fixtures/setup.ts"]
+      }
+    }
+  ],
+  "edges": [
+    {
+      "source": "config:efps-backend/vitest.config.ts",
+      "target": "config:efps-backend/tsconfig.json",
+      "relation": "uses_compiler_config",
+      "description": "Vitest resolves TypeScript via tsconfig compiler options (target, module, strict)"
+    },
+    {
+      "source": "config:efps-backend/eslint.config.js",
+      "target": "config:efps-backend/tsconfig.json",
+      "relation": "uses_compiler_config",
+      "description": "typescript-eslint uses tsconfig for type-aware lint rules"
+    },
+    {
+      "source": "config:efps-backend/vitest.config.ts",
+      "target": "config:efps-backend/eslint.config.js",
+      "relation": "complementary_coverage",
+      "description": "Eslint ignores tests/ while vitest includes tests/ — complementary over test directory"
+    }
+  ]
+}

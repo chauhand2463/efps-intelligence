@@ -1,0 +1,607 @@
+{
+  "batch": 14,
+  "description": "Root-level docs, configs, and backend scripts",
+  "nodes": [
+    {
+      "id": "batch-14--readme-md",
+      "type": "document",
+      "label": "README.md",
+      "file": "README.md",
+      "description": "Project main README — architecture diagram, stack summary, API overview, deployment tiers, project layout",
+      "tooltip": "132 lines — project overview, setup instructions, 18 backend modules, 6 workers"
+    },
+    {
+      "id": "batch-14--components-md",
+      "type": "document",
+      "label": "components.md",
+      "file": "components.md",
+      "description": "Component architecture — 17 components across 4 tiers (Operational Core, Derived Intelligence, Master & Compliance, Infrastructure) with database connection map",
+      "tooltip": "407 lines — tiered component breakdown, DB connection map, phase build order"
+    },
+    {
+      "id": "batch-14--data-flow-md",
+      "type": "document",
+      "label": "data_flow.md",
+      "file": "data_flow.md",
+      "description": "Full PRD — 17 functional modules, stakeholder map, user roles, core DB entities, NFRs, success metrics, product roadmap (Phase 1–5)",
+      "tooltip": "670 lines — PRD covering Auth, Dealer, Beneficiary, Stock, Transactions, Sync, Reports, Audit, AI"
+    },
+    {
+      "id": "batch-14--full-stack-md",
+      "type": "document",
+      "label": "full_stack.md",
+      "file": "full_stack.md",
+      "description": "Engineering agent system prompt — production-first principles, forbidden anti-patterns, frontend/backend/database excellence standards, feature completion policy",
+      "tooltip": "358 lines — coding standards & templates for autonomous engineering agent"
+    },
+    {
+      "id": "batch-14--full-stack-design-md",
+      "type": "document",
+      "label": "full_stack_design.md",
+      "file": "full_stack_design.md",
+      "description": "UI/UX design agent prompt — premium design philosophy, visual hierarchy, layout, typography, color system, component design, motion, a11y, quality checklist",
+      "tooltip": "443 lines — premium frontend design standards for agent-driven development"
+    },
+    {
+      "id": "batch-14--efps-backend-prd-md",
+      "type": "document",
+      "label": "efps_backend_prd.md",
+      "file": "efps_backend_prd.md",
+      "description": "Backend system design & PRD — existing site problems, tech stack decisions, complete folder structure, full DB schema (8 tables), API spec (30+ endpoints), auth/security design, scalability tiers, RBAC, CI/CD, monitoring",
+      "tooltip": "802 lines — authoritative backend design document with schema, API contracts, deployment tiers"
+    },
+    {
+      "id": "batch-14--solution-md",
+      "type": "document",
+      "label": "solution.md",
+      "file": "solution.md",
+      "description": "Complete system design & implementation guide — data sourcing strategy (Playwright sync worker with dealer consent), AES-256-GCM credential security, full architecture, migrations, RBAC, background jobs, CI/CD",
+      "tooltip": "1067+ lines — comprehensive guide with Playwright sync implementation, encryption code, credential security"
+    },
+    {
+      "id": "batch-14--runbook-md",
+      "type": "document",
+      "label": "RUNBOOK.md",
+      "file": "RUNBOOK.md",
+      "description": "Operations runbook — prerequisites, quick start (Docker & Windows), env vars, test accounts, key commands, architecture summary, API docs link, troubleshooting table",
+      "tooltip": "179 lines — setup guide, Docker/native workflow, 10 troubleshooting entries"
+    },
+    {
+      "id": "batch-14--skills-lock-json",
+      "type": "config",
+      "label": "skills-lock.json",
+      "file": "skills-lock.json",
+      "description": "Skills lockfile — pinned 22 agent skills from fabriciosa/w/taste-skill and educlopez/ui-craft with SHA-256 hashes",
+      "tooltip": "149 lines — version 1 lockfile, 22 skills, GitHub sources with computed hashes"
+    },
+    {
+      "id": "batch-14--delete-file",
+      "type": "data",
+      "label": "delete",
+      "file": "delete",
+      "description": "Single-line placeholder file containing text 'Redis'",
+      "tooltip": "1 line — likely a note/reminder file"
+    },
+    {
+      "id": "batch-14--cookies-txt",
+      "type": "data",
+      "label": "cookies.txt",
+      "file": "cookies.txt",
+      "description": "Empty Netscape HTTP Cookie File — header only, no cookie data",
+      "tooltip": "4 lines — libcurl cookie jar template, no actual cookies"
+    },
+    {
+      "id": "batch-14--cookies2-txt",
+      "type": "data",
+      "label": "cookies2.txt",
+      "file": "cookies2.txt",
+      "description": "Sample cookie data — contains JWT access_token and refresh_token for dealer ID 6fdfc74a, expires 2026-07",
+      "tooltip": "6 lines — captured HttpOnly cookie pair with real JWT tokens"
+    },
+    {
+      "id": "batch-14--env",
+      "type": "config",
+      "label": ".env",
+      "file": "efps-backend/.env",
+      "description": "Active backend env config — DATABASE_URL points to localhost:5434/efps_dev, Redis localhost:6379, JWT secrets, AES encryption key, MSG91, CORS for localhost:3001",
+      "tooltip": "50 lines — development environment with MOCK_GOVT_PORTAL=true, START_SYNC_WORKER=false"
+    },
+    {
+      "id": "batch-14--env-example",
+      "type": "config",
+      "label": ".env.example",
+      "file": "efps-backend/.env.example",
+      "description": "Environment template — mirror of .env with defaults, DATABASE_URL points to localhost:5432 (non-Docker default)",
+      "tooltip": "50 lines — template differs from .env only in PG port (5432 vs 5434)"
+    },
+    {
+      "id": "batch-14--gitignore",
+      "type": "config",
+      "label": ".gitignore",
+      "file": "efps-backend/.gitignore",
+      "description": "Git ignore rules — node_modules, dist, .env, .env.local, *.log, coverage, openapi.json, .env.test",
+      "tooltip": "12 lines — standard Node.js ignores plus project-specific patterns"
+    },
+    {
+      "id": "batch-14--docker-entrypoint-sh",
+      "type": "script",
+      "label": "docker-entrypoint.sh",
+      "file": "efps-backend/docker-entrypoint.sh",
+      "description": "Docker entrypoint script — runs migrations (dist/scripts/migrate.js), seeds in non-production, starts app via exec",
+      "tooltip": "13 lines — runs migrate then seed (dev only) then exec CMD"
+    },
+    {
+      "id": "batch-14--migrate-ts",
+      "type": "script",
+      "label": "migrate.ts",
+      "file": "efps-backend/scripts/migrate.ts",
+      "description": "SQL migration runner — creates _migrations tracking table, reads src/database/migrations/*.sql, applies pending migrations transactionally, skips already-executed",
+      "tooltip": "74 lines — pg Pool, transactional migration with tracking table"
+    },
+    {
+      "id": "batch-14--migrate-ts-function-migrate",
+      "type": "function",
+      "label": "migrate()",
+      "file": "efps-backend/scripts/migrate.ts",
+      "description": "Async main function — connects to DB, iterates sorted .sql files, executes each in a transaction with _migrations insert",
+      "tooltip": "Exported async function — entry point, calls process.exit on failure"
+    },
+    {
+      "id": "batch-14--seed-ts",
+      "type": "script",
+      "label": "seed.ts",
+      "file": "efps-backend/scripts/seed.ts",
+      "description": "Database seeder — creates admin (00000001), area officer (00000002), 5 dealers (10000001–10000005) with Argon2id hashed passwords, stock allocations, 10 beneficiaries each, commission rates, schools, directory entries, policy schemes, bank info, Gujarat state region hierarchy",
+      "tooltip": "226 lines — full seed with 7 data categories, upsert patterns"
+    },
+    {
+      "id": "batch-14--seed-ts-function-seed",
+      "type": "function",
+      "label": "seed()",
+      "file": "efps-backend/scripts/seed.ts",
+      "description": "Async seed function — inserts dealers, stock allocations, beneficiaries, commission rates, schools, directory entries, policies, bank info, Gujarat state region (ltree path)",
+      "tooltip": "Exported async function — comprehensive seed data factory"
+    },
+    {
+      "id": "batch-14--generate-openapi-ts",
+      "type": "script",
+      "label": "generate-openapi.ts",
+      "file": "efps-backend/scripts/generate-openapi.ts",
+      "description": "OpenAPI spec generator — builds Fastify app, calls app.swagger(), writes openapi.json to cwd",
+      "tooltip": "22 lines — exports Swagger/OpenAPI spec for frontend codegen"
+    },
+    {
+      "id": "batch-14--generate-openapi-ts-function-generateOpenApi",
+      "type": "function",
+      "label": "generateOpenApi()",
+      "file": "efps-backend/scripts/generate-openapi.ts",
+      "description": "Async function — instantiates app, calls ready() then swagger(), writes JSON output",
+      "tooltip": "Exported async function — single-purpose OpenAPI exporter"
+    },
+    {
+      "id": "batch-14--import-gujarat-csv-ts",
+      "type": "script",
+      "label": "import-gujarat-csv.ts",
+      "file": "efps-backend/scripts/import-gujarat-csv.ts",
+      "description": "Gujarat region CSV/TSV importer — parses tab-separated government census data, inserts/updates gujarat_region_hierarchy and gujarat_aggregate_stats tables at district/taluka/ward levels with NFSA category breakdowns",
+      "tooltip": "287 lines — imports government demographic data into region hierarchy with aggregate stats"
+    },
+    {
+      "id": "batch-14--import-gujarat-csv-ts-function-tabToCsv",
+      "type": "function",
+      "label": "tabToCsv()",
+      "file": "efps-backend/scripts/import-gujarat-csv.ts",
+      "description": "Converts TSV (tab-separated) text to CSV format, properly quoting fields with commas or quotes",
+      "tooltip": "Local helper — transforms government TSV exports to parseable CSV"
+    },
+    {
+      "id": "batch-14--import-gujarat-csv-ts-function-importLevel",
+      "type": "function",
+      "label": "importLevel()",
+      "file": "efps-backend/scripts/import-gujarat-csv.ts",
+      "description": "Async — reads file, parses CSV/TSV, finds/inserts regions into ltree hierarchy, upserts aggregate stats (NFSA categories, card counts, beneficiary counts) per region per month",
+      "tooltip": "Async function — core import logic with region hierarchy management"
+    },
+    {
+      "id": "batch-14--import-gujarat-csv-ts-function-main",
+      "type": "function",
+      "label": "main()",
+      "file": "efps-backend/scripts/import-gujarat-csv.ts",
+      "description": "CLI entry point — parses args (filePath, level, month, parentName), validates file, calls importLevel",
+      "tooltip": "Async CLI handler — usage: npx tsx scripts/import-gujarat-csv.ts <file> [level] [month] [parentName]"
+    },
+    {
+      "id": "batch-14--complete-seed-mjs",
+      "type": "script",
+      "label": "complete-seed.mjs",
+      "file": "efps-backend/scripts/complete-seed.mjs",
+      "description": "Supplemental seed — inserts commission rates (Rice 2.50, Wheat 2.00, etc.) and gujarat_directory entries (District Collector, ICDS, MDM, Food & Civil Supplies)",
+      "tooltip": "27 lines — top-level ESM script, no exported functions"
+    },
+    {
+      "id": "batch-14--list-tables-mjs",
+      "type": "script",
+      "label": "list_tables.mjs",
+      "file": "efps-backend/scripts/list_tables.mjs",
+      "description": "Utility script — queries information_schema.tables for all public tables, prints each table_name to console",
+      "tooltip": "5 lines — simple DB introspection script"
+    },
+    {
+      "id": "batch-14--eFPS-Intelligence-project",
+      "type": "concept",
+      "label": "eFPS Intelligence",
+      "description": "Fair Price Shop management platform for Gujarat's PDS — replaces slow government portal with modern secure system",
+      "tooltip": "Core project: Fastify + PostgreSQL + Redis + Playwright, 18 modules, 6 workers"
+    },
+    {
+      "id": "batch-14--Fastify-API",
+      "type": "concept",
+      "label": "Fastify API",
+      "description": "Node.js Fastify 5 backend — 18 feature modules, JWT auth, Zod validation, rate limiting, Swagger docs",
+      "tooltip": "API at /api/v1 with consistent {success, data, error} envelope"
+    },
+    {
+      "id": "batch-14--PostgreSQL-16",
+      "type": "concept",
+      "label": "PostgreSQL 16",
+      "description": "Primary database — ACID-compliant, table partitioning by month, full-text search, ltree hierarchy",
+      "tooltip": "8+ tables: dealers, beneficiaries, transactions, audit_logs, stock_allocations, sessions, etc."
+    },
+    {
+      "id": "batch-14--Redis-7",
+      "type": "concept",
+      "label": "Redis 7",
+      "description": "Cache & queue backend — session store, rate limiting, BullMQ queues, online dealer tracking",
+      "tooltip": "Multi-purpose: sessions, rate limits, BullMQ, dealer online status"
+    },
+    {
+      "id": "batch-14--Playwright-Sync",
+      "type": "concept",
+      "label": "Playwright Gov Sync",
+      "description": "Headless Chromium browser worker — logs into government eFPS portal as dealer, scrapes beneficiary/transaction/stock data, upserts to PostgreSQL",
+      "tooltip": "BullMQ worker in separate Docker container, AES-256-GCM encrypted credentials"
+    },
+    {
+      "id": "batch-14--BullMQ-Workers",
+      "type": "concept",
+      "label": "BullMQ Workers",
+      "description": "6 background workers — govt sync, sync scheduler, SMS OTP, audit flush, daily report, session cleanup",
+      "tooltip": "Redis-backed job queues with retry, dead-letter, exponential backoff"
+    },
+    {
+      "id": "batch-14--AES-256-GCM",
+      "type": "concept",
+      "label": "AES-256-GCM Encryption",
+      "description": "Encryption scheme for dealer government credentials — GCM mode provides authenticated encryption, key stored in secrets manager (KMS/Doppler/Vault)",
+      "tooltip": "isolated dealer_credentials table, sync-worker-only access, quarterly key rotation"
+    },
+    {
+      "id": "batch-14--RBAC",
+      "type": "concept",
+      "label": "RBAC",
+      "description": "Role-based access control — dealer (own data), area_officer (read-only district view), admin (full access)",
+      "tooltip": "authenticate.ts JWT guard + authorize.ts role check middleware"
+    },
+    {
+      "id": "batch-14--Gujarat-Region-Hierarchy",
+      "type": "concept",
+      "label": "Gujarat Region Hierarchy",
+      "description": "ltree-based region hierarchy — state → district → taluka → ward with aggregate beneficiary statistics per region per month",
+      "tooltip": "gujarat_region_hierarchy + gujarat_aggregate_stats tables"
+    }
+  ],
+  "edges": [
+    {
+      "from": "batch-14--readme-md",
+      "to": "batch-14--eFPS-Intelligence-project",
+      "relation": "documents",
+      "label": "describes"
+    },
+    {
+      "from": "batch-14--readme-md",
+      "to": "batch-14--Fastify-API",
+      "relation": "documents",
+      "label": "references API"
+    },
+    {
+      "from": "batch-14--readme-md",
+      "to": "batch-14--PostgreSQL-16",
+      "relation": "documents",
+      "label": "references DB"
+    },
+    {
+      "from": "batch-14--readme-md",
+      "to": "batch-14--Redis-7",
+      "relation": "documents",
+      "label": "references cache"
+    },
+    {
+      "from": "batch-14--readme-md",
+      "to": "batch-14--Playwright-Sync",
+      "relation": "documents",
+      "label": "references worker"
+    },
+    {
+      "from": "batch-14--readme-md",
+      "to": "batch-14--BullMQ-Workers",
+      "relation": "documents",
+      "label": "lists workers"
+    },
+    {
+      "from": "batch-14--components-md",
+      "to": "batch-14--eFPS-Intelligence-project",
+      "relation": "documents",
+      "label": "describes component architecture"
+    },
+    {
+      "from": "batch-14--data-flow-md",
+      "to": "batch-14--eFPS-Intelligence-project",
+      "relation": "documents",
+      "label": "is PRD for"
+    },
+    {
+      "from": "batch-14--full-stack-md",
+      "to": "batch-14--eFPS-Intelligence-project",
+      "relation": "guides",
+      "label": "defines engineering standards for"
+    },
+    {
+      "from": "batch-14--full-stack-design-md",
+      "to": "batch-14--eFPS-Intelligence-project",
+      "relation": "guides",
+      "label": "defines design standards for"
+    },
+    {
+      "from": "batch-14--efps-backend-prd-md",
+      "to": "batch-14--eFPS-Intelligence-project",
+      "relation": "documents",
+      "label": "is backend PRD for"
+    },
+    {
+      "from": "batch-14--efps-backend-prd-md",
+      "to": "batch-14--Fastify-API",
+      "relation": "documents",
+      "label": "specifies API"
+    },
+    {
+      "from": "batch-14--efps-backend-prd-md",
+      "to": "batch-14--PostgreSQL-16",
+      "relation": "documents",
+      "label": "defines schema"
+    },
+    {
+      "from": "batch-14--efps-backend-prd-md",
+      "to": "batch-14--Redis-7",
+      "relation": "documents",
+      "label": "configures caching"
+    },
+    {
+      "from": "batch-14--efps-backend-prd-md",
+      "to": "batch-14--RBAC",
+      "relation": "documents",
+      "label": "defines roles"
+    },
+    {
+      "from": "batch-14--solution-md",
+      "to": "batch-14--eFPS-Intelligence-project",
+      "relation": "documents",
+      "label": "is implementation guide for"
+    },
+    {
+      "from": "batch-14--solution-md",
+      "to": "batch-14--Playwright-Sync",
+      "relation": "documents",
+      "label": "designs sync worker"
+    },
+    {
+      "from": "batch-14--solution-md",
+      "to": "batch-14--AES-256-GCM",
+      "relation": "documents",
+      "label": "implements encryption"
+    },
+    {
+      "from": "batch-14--solution-md",
+      "to": "batch-14--Gujarat-Region-Hierarchy",
+      "relation": "documents",
+      "label": "designs region hierarchy"
+    },
+    {
+      "from": "batch-14--runbook-md",
+      "to": "batch-14--eFPS-Intelligence-project",
+      "relation": "documents",
+      "label": "is ops guide for"
+    },
+    {
+      "from": "batch-14--runbook-md",
+      "to": "batch-14--env",
+      "relation": "references",
+      "label": "documents env vars"
+    },
+    {
+      "from": "batch-14--skills-lock-json",
+      "to": "batch-14--eFPS-Intelligence-project",
+      "relation": "configures",
+      "label": "pins agent skills for"
+    },
+    {
+      "from": "batch-14--env",
+      "to": "batch-14--env-example",
+      "relation": "derived-from",
+      "label": "copied from"
+    },
+    {
+      "from": "batch-14--env",
+      "to": "batch-14--eFPS-Intelligence-project",
+      "relation": "configures",
+      "label": "configures backend"
+    },
+    {
+      "from": "batch-14--env-example",
+      "to": "batch-14--eFPS-Intelligence-project",
+      "relation": "configures",
+      "label": "is template for"
+    },
+    {
+      "from": "batch-14--docker-entrypoint-sh",
+      "to": "batch-14--migrate-ts",
+      "relation": "invokes",
+      "label": "runs dist/scripts/migrate.js"
+    },
+    {
+      "from": "batch-14--docker-entrypoint-sh",
+      "to": "batch-14--seed-ts",
+      "relation": "invokes",
+      "label": "runs dist/scripts/seed.js (dev only)"
+    },
+    {
+      "from": "batch-14--docker-entrypoint-sh",
+      "to": "batch-14--eFPS-Intelligence-project",
+      "relation": "invokes",
+      "label": "starts app"
+    },
+    {
+      "from": "batch-14--migrate-ts",
+      "to": "batch-14--migrate-ts-function-migrate",
+      "relation": "contains",
+      "label": "exports"
+    },
+    {
+      "from": "batch-14--migrate-ts",
+      "to": "batch-14--PostgreSQL-16",
+      "relation": "operates-on",
+      "label": "migrates"
+    },
+    {
+      "from": "batch-14--seed-ts",
+      "to": "batch-14--seed-ts-function-seed",
+      "relation": "contains",
+      "label": "exports"
+    },
+    {
+      "from": "batch-14--seed-ts",
+      "to": "batch-14--PostgreSQL-16",
+      "relation": "operates-on",
+      "label": "seeds"
+    },
+    {
+      "from": "batch-14--seed-ts",
+      "to": "batch-14--env",
+      "relation": "reads",
+      "label": "reads DATABASE_URL"
+    },
+    {
+      "from": "batch-14--generate-openapi-ts",
+      "to": "batch-14--generate-openapi-ts-function-generateOpenApi",
+      "relation": "contains",
+      "label": "exports"
+    },
+    {
+      "from": "batch-14--generate-openapi-ts",
+      "to": "batch-14--Fastify-API",
+      "relation": "generates",
+      "label": "generates spec for"
+    },
+    {
+      "from": "batch-14--import-gujarat-csv-ts",
+      "to": "batch-14--import-gujarat-csv-ts-function-tabToCsv",
+      "relation": "contains",
+      "label": "defines"
+    },
+    {
+      "from": "batch-14--import-gujarat-csv-ts",
+      "to": "batch-14--import-gujarat-csv-ts-function-importLevel",
+      "relation": "contains",
+      "label": "defines"
+    },
+    {
+      "from": "batch-14--import-gujarat-csv-ts",
+      "to": "batch-14--import-gujarat-csv-ts-function-main",
+      "relation": "contains",
+      "label": "defines"
+    },
+    {
+      "from": "batch-14--import-gujarat-csv-ts",
+      "to": "batch-14--Gujarat-Region-Hierarchy",
+      "relation": "populates",
+      "label": "imports region data"
+    },
+    {
+      "from": "batch-14--import-gujarat-csv-ts",
+      "to": "batch-14--PostgreSQL-16",
+      "relation": "operates-on",
+      "label": "writes to"
+    },
+    {
+      "from": "batch-14--complete-seed-mjs",
+      "to": "batch-14--PostgreSQL-16",
+      "relation": "operates-on",
+      "label": "seeds extra data"
+    },
+    {
+      "from": "batch-14--list-tables-mjs",
+      "to": "batch-14--PostgreSQL-16",
+      "relation": "reads",
+      "label": "introspects"
+    },
+    {
+      "from": "batch-14--cookies2-txt",
+      "to": "batch-14--eFPS-Intelligence-project",
+      "relation": "related",
+      "label": "contains sample auth tokens"
+    },
+    {
+      "from": "batch-14--efps-backend-prd-md",
+      "to": "batch-14--solution-md",
+      "relation": "documents",
+      "label": "preceded by in design evolution"
+    },
+    {
+      "from": "batch-14--components-md",
+      "to": "batch-14--data-flow-md",
+      "relation": "related",
+      "label": "component view aligned with PRD"
+    },
+    {
+      "from": "batch-14--data-flow-md",
+      "to": "batch-14--efps-backend-prd-md",
+      "relation": "related",
+      "label": "PRD informs backend spec"
+    },
+    {
+      "from": "batch-14--runbook-md",
+      "to": "batch-14--migrate-ts",
+      "relation": "references",
+      "label": "documents npm run migrate"
+    },
+    {
+      "from": "batch-14--runbook-md",
+      "to": "batch-14--seed-ts",
+      "relation": "references",
+      "label": "documents npm run seed"
+    },
+    {
+      "from": "batch-14--runbook-md",
+      "to": "batch-14--generate-openapi-ts",
+      "relation": "references",
+      "label": "documents npm run generate-openapi"
+    },
+    {
+      "from": "batch-14--readme-md",
+      "to": "batch-14--migrate-ts",
+      "relation": "references",
+      "label": "setup instructions"
+    },
+    {
+      "from": "batch-14--readme-md",
+      "to": "batch-14--seed-ts",
+      "relation": "references",
+      "label": "setup instructions"
+    },
+    {
+      "from": "batch-14--full-stack-md",
+      "to": "batch-14--full-stack-design-md",
+      "relation": "complements",
+      "label": "engineering + design standards pair"
+    }
+  ]
+}

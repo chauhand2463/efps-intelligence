@@ -21,14 +21,14 @@ npm install
 npx playwright install chromium           
 cp .env.example .env                       
 
-npm run migrate                            # applies 29 SQL migrations
-npm run seed                               # seeds test accounts
-npm run dev                                # http://localhost:3000
+npm run migrate                           
+npm run seed                               
+npm run dev                                
 
 # 3. Frontend (separate terminal)
 cd efps-frontend
 npm install
-npm run dev                                # http://localhost:3001
+npm run dev                                
 ```
 
 ## Windows (no Docker)

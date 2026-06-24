@@ -1,0 +1,1334 @@
+{
+  "batch": 8,
+  "description": "Batch 8 — Notification, Report, Stock, Sync, Transaction, Audit modules (routes, controllers, services). Index files skipped (not found on disk).",
+  "skipped": [
+    "efps-backend/src/modules/notification/index.ts",
+    "efps-backend/src/modules/report/index.ts",
+    "efps-backend/src/modules/stock/index.ts",
+    "efps-backend/src/modules/sync/index.ts",
+    "efps-backend/src/modules/transaction/index.ts"
+  ],
+  "nodes": [
+    {
+      "id": "module:notification",
+      "type": "module",
+      "name": "notification",
+      "path": "efps-backend/src/modules/notification",
+      "metadata": { "fileCount": 2, "description": "Notification management module" }
+    },
+    {
+      "id": "module:report",
+      "type": "module",
+      "name": "report",
+      "path": "efps-backend/src/modules/report",
+      "metadata": { "fileCount": 3, "description": "Monthly reports, audit logs, PDF/CSV export" }
+    },
+    {
+      "id": "module:stock",
+      "type": "module",
+      "name": "stock",
+      "path": "efps-backend/src/modules/stock",
+      "metadata": { "fileCount": 3, "description": "Stock allocation management & history" }
+    },
+    {
+      "id": "module:sync",
+      "type": "module",
+      "name": "sync",
+      "path": "efps-backend/src/modules/sync",
+      "metadata": { "fileCount": 3, "description": "Govt data sync, bank info, credentials, import batches" }
+    },
+    {
+      "id": "module:transaction",
+      "type": "module",
+      "name": "transaction",
+      "path": "efps-backend/src/modules/transaction",
+      "metadata": { "fileCount": 3, "description": "Transaction CRUD, summary, pending beneficiaries" }
+    },
+    {
+      "id": "module:audit",
+      "type": "module",
+      "name": "audit",
+      "path": "efps-backend/src/modules/audit",
+      "metadata": { "fileCount": 3, "description": "Social audit meetings CRUD" }
+    },
+    {
+      "id": "file:efps-backend/src/modules/notification/notification.routes.ts",
+      "type": "file",
+      "name": "notification.routes.ts",
+      "module": "notification",
+      "metadata": { "exports": ["notificationRoutes"] }
+    },
+    {
+      "id": "file:efps-backend/src/modules/notification/notification.service.ts",
+      "type": "file",
+      "name": "notification.service.ts",
+      "module": "notification",
+      "metadata": { "exports": ["NotificationService", "notificationService"] }
+    },
+    {
+      "id": "file:efps-backend/src/modules/report/report.controller.ts",
+      "type": "file",
+      "name": "report.controller.ts",
+      "module": "report",
+      "metadata": { "exports": ["getMonthlyReportHandler", "getAuditLogHandler", "exportPdfHandler", "exportCsvHandler"] }
+    },
+    {
+      "id": "file:efps-backend/src/modules/report/report.routes.ts",
+      "type": "file",
+      "name": "report.routes.ts",
+      "module": "report",
+      "metadata": { "exports": ["reportRoutes"] }
+    },
+    {
+      "id": "file:efps-backend/src/modules/report/report.service.ts",
+      "type": "file",
+      "name": "report.service.ts",
+      "module": "report",
+      "metadata": { "exports": ["ReportService", "reportService"] }
+    },
+    {
+      "id": "file:efps-backend/src/modules/stock/stock.controller.ts",
+      "type": "file",
+      "name": "stock.controller.ts",
+      "module": "stock",
+      "metadata": { "exports": ["getCurrentStockHandler", "getStockHistoryHandler", "updateAllocationHandler", "deleteAllocationHandler"] }
+    },
+    {
+      "id": "file:efps-backend/src/modules/stock/stock.routes.ts",
+      "type": "file",
+      "name": "stock.routes.ts",
+      "module": "stock",
+      "metadata": { "exports": ["stockRoutes"] }
+    },
+    {
+      "id": "file:efps-backend/src/modules/stock/stock.service.ts",
+      "type": "file",
+      "name": "stock.service.ts",
+      "module": "stock",
+      "metadata": { "exports": ["StockService", "stockService"] }
+    },
+    {
+      "id": "file:efps-backend/src/modules/sync/sync.controller.ts",
+      "type": "file",
+      "name": "sync.controller.ts",
+      "module": "sync",
+      "metadata": { "exports": ["triggerSyncHandler", "getSyncHistoryHandler", "getBankInfoHandler", "updateBankInfoHandler", "importCsvHandler", "importSingleRowHandler", "syncAllDealersHandler", "syncDistrictHandler", "getImportBatchesHandler", "getChangeLogHandler", "triggerSelfSyncHandler", "getSelfSyncStatusHandler", "getSelfDashboardHandler", "saveCredentialsHandler", "getCredentialsStatusHandler"] }
+    },
+    {
+      "id": "file:efps-backend/src/modules/sync/sync.routes.ts",
+      "type": "file",
+      "name": "sync.routes.ts",
+      "module": "sync",
+      "metadata": { "exports": ["syncRoutes"] }
+    },
+    {
+      "id": "file:efps-backend/src/modules/sync/sync.service.ts",
+      "type": "file",
+      "name": "sync.service.ts",
+      "module": "sync",
+      "metadata": { "exports": ["SyncService", "syncService"] }
+    },
+    {
+      "id": "file:efps-backend/src/modules/transaction/transaction.controller.ts",
+      "type": "file",
+      "name": "transaction.controller.ts",
+      "module": "transaction",
+      "metadata": { "exports": ["createTransactionHandler", "listTransactionsHandler", "getTransactionHandler", "getTransactionSummaryHandler", "getPendingHandler", "deleteTransactionHandler"] }
+    },
+    {
+      "id": "file:efps-backend/src/modules/transaction/transaction.routes.ts",
+      "type": "file",
+      "name": "transaction.routes.ts",
+      "module": "transaction",
+      "metadata": { "exports": ["transactionRoutes"] }
+    },
+    {
+      "id": "file:efps-backend/src/modules/transaction/transaction.service.ts",
+      "type": "file",
+      "name": "transaction.service.ts",
+      "module": "transaction",
+      "metadata": { "exports": ["TransactionService", "transactionService"] }
+    },
+    {
+      "id": "file:efps-backend/src/modules/audit/audit.controller.ts",
+      "type": "file",
+      "name": "audit.controller.ts",
+      "module": "audit",
+      "metadata": { "exports": ["createAuditMeetingHandler", "listAuditMeetingsHandler", "getAuditMeetingHandler", "updateAuditMeetingHandler", "deleteAuditMeetingHandler"] }
+    },
+    {
+      "id": "file:efps-backend/src/modules/audit/audit.routes.ts",
+      "type": "file",
+      "name": "audit.routes.ts",
+      "module": "audit",
+      "metadata": { "exports": ["auditRoutes"] }
+    },
+    {
+      "id": "file:efps-backend/src/modules/audit/audit.service.ts",
+      "type": "file",
+      "name": "audit.service.ts",
+      "module": "audit",
+      "metadata": { "exports": ["AuditService", "auditService"] }
+    },
+    {
+      "id": "class:NotificationService",
+      "type": "class",
+      "name": "NotificationService",
+      "file": "efps-backend/src/modules/notification/notification.service.ts",
+      "module": "notification",
+      "metadata": { "methods": ["list", "markAsRead", "markAllAsRead", "create", "remove"] }
+    },
+    {
+      "id": "class:ReportService",
+      "type": "class",
+      "name": "ReportService",
+      "file": "efps-backend/src/modules/report/report.service.ts",
+      "module": "report",
+      "metadata": { "methods": ["getMonthlyReport", "getAuditLog", "exportCsv", "exportPdf"] }
+    },
+    {
+      "id": "class:StockService",
+      "type": "class",
+      "name": "StockService",
+      "file": "efps-backend/src/modules/stock/stock.service.ts",
+      "module": "stock",
+      "metadata": { "methods": ["getCurrent", "getHistory", "updateAllocation", "removeAllocation"] }
+    },
+    {
+      "id": "class:SyncService",
+      "type": "class",
+      "name": "SyncService",
+      "file": "efps-backend/src/modules/sync/sync.service.ts",
+      "module": "sync",
+      "metadata": { "methods": ["triggerSync", "triggerDealerSync", "getSyncStatus", "getSyncHistory", "getSelfDashboard", "getBankInfo", "getImportBatches", "getChangeLog", "updateBankInfo", "saveCredentials", "getCredentialsStatus"] }
+    },
+    {
+      "id": "class:TransactionService",
+      "type": "class",
+      "name": "TransactionService",
+      "file": "efps-backend/src/modules/transaction/transaction.service.ts",
+      "module": "transaction",
+      "metadata": { "methods": ["create", "list", "getById", "getSummary", "remove", "getPending"] }
+    },
+    {
+      "id": "class:AuditService",
+      "type": "class",
+      "name": "AuditService",
+      "file": "efps-backend/src/modules/audit/audit.service.ts",
+      "module": "audit",
+      "metadata": { "methods": ["create", "list", "getById", "update", "remove"] }
+    },
+    {
+      "id": "instance:notificationService",
+      "type": "instance",
+      "name": "notificationService",
+      "class": "NotificationService",
+      "file": "efps-backend/src/modules/notification/notification.service.ts",
+      "module": "notification"
+    },
+    {
+      "id": "instance:reportService",
+      "type": "instance",
+      "name": "reportService",
+      "class": "ReportService",
+      "file": "efps-backend/src/modules/report/report.service.ts",
+      "module": "report"
+    },
+    {
+      "id": "instance:stockService",
+      "type": "instance",
+      "name": "stockService",
+      "class": "StockService",
+      "file": "efps-backend/src/modules/stock/stock.service.ts",
+      "module": "stock"
+    },
+    {
+      "id": "instance:syncService",
+      "type": "instance",
+      "name": "syncService",
+      "class": "SyncService",
+      "file": "efps-backend/src/modules/sync/sync.service.ts",
+      "module": "sync"
+    },
+    {
+      "id": "instance:transactionService",
+      "type": "instance",
+      "name": "transactionService",
+      "class": "TransactionService",
+      "file": "efps-backend/src/modules/transaction/transaction.service.ts",
+      "module": "transaction"
+    },
+    {
+      "id": "instance:auditService",
+      "type": "instance",
+      "name": "auditService",
+      "class": "AuditService",
+      "file": "efps-backend/src/modules/audit/audit.service.ts",
+      "module": "audit"
+    },
+    {
+      "id": "function:notificationRoutes",
+      "type": "function",
+      "name": "notificationRoutes",
+      "module": "notification",
+      "metadata": { "routes": ["GET /notifications", "PATCH /notifications/read-all", "PATCH /notifications/:id/read", "DELETE /notifications/:id"] }
+    },
+    {
+      "id": "function:reportRoutes",
+      "type": "function",
+      "name": "reportRoutes",
+      "module": "report",
+      "metadata": { "routes": ["GET /reports/monthly", "GET /reports/audit", "GET /reports/export/pdf", "GET /reports/export/csv"] }
+    },
+    {
+      "id": "function:stockRoutes",
+      "type": "function",
+      "name": "stockRoutes",
+      "module": "stock",
+      "metadata": { "routes": ["GET /stock", "GET /stock/history", "PATCH /stock/:id", "DELETE /stock/:id"] }
+    },
+    {
+      "id": "function:syncRoutes",
+      "type": "function",
+      "name": "syncRoutes",
+      "module": "sync",
+      "metadata": { "routes": ["GET/PUT /sync/bank-info", "POST /sync/trigger", "GET /sync/history", "POST /sync/self/trigger", "GET /sync/self/status", "GET /sync/self/dashboard", "POST/GET /sync/credentials", "POST /sync/import/csv", "POST /sync/import/row", "POST /sync/run-all", "POST /sync/run-district", "GET /sync/import-batches", "GET /sync/import-batches/:batchId/changes"] }
+    },
+    {
+      "id": "function:transactionRoutes",
+      "type": "function",
+      "name": "transactionRoutes",
+      "module": "transaction",
+      "metadata": { "routes": ["POST /transactions", "GET /transactions", "GET /transactions/summary", "GET /transactions/pending", "GET /transactions/:id", "DELETE /transactions/:id"] }
+    },
+    {
+      "id": "function:auditRoutes",
+      "type": "function",
+      "name": "auditRoutes",
+      "module": "audit",
+      "metadata": { "routes": ["POST /audit/meetings", "GET /audit/meetings", "GET /audit/meetings/:id", "PATCH /audit/meetings/:id", "DELETE /audit/meetings/:id"] }
+    },
+    {
+      "id": "handler:listNotificationsHandler",
+      "type": "handler",
+      "name": "listNotificationsHandler",
+      "module": "notification",
+      "metadata": { "sourceFile": "notification.controller.ts", "method": "notificationService.list" }
+    },
+    {
+      "id": "handler:markAsReadHandler",
+      "type": "handler",
+      "name": "markAsReadHandler",
+      "module": "notification",
+      "metadata": { "sourceFile": "notification.controller.ts", "method": "notificationService.markAsRead" }
+    },
+    {
+      "id": "handler:markAllAsReadHandler",
+      "type": "handler",
+      "name": "markAllAsReadHandler",
+      "module": "notification",
+      "metadata": { "sourceFile": "notification.controller.ts", "method": "notificationService.markAllAsRead" }
+    },
+    {
+      "id": "handler:deleteNotificationHandler",
+      "type": "handler",
+      "name": "deleteNotificationHandler",
+      "module": "notification",
+      "metadata": { "sourceFile": "notification.controller.ts", "method": "notificationService.remove" }
+    },
+    {
+      "id": "handler:getMonthlyReportHandler",
+      "type": "handler",
+      "name": "getMonthlyReportHandler",
+      "module": "report",
+      "metadata": { "sourceFile": "report.controller.ts", "method": "reportService.getMonthlyReport" }
+    },
+    {
+      "id": "handler:getAuditLogHandler",
+      "type": "handler",
+      "name": "getAuditLogHandler",
+      "module": "report",
+      "metadata": { "sourceFile": "report.controller.ts", "method": "reportService.getAuditLog" }
+    },
+    {
+      "id": "handler:exportPdfHandler",
+      "type": "handler",
+      "name": "exportPdfHandler",
+      "module": "report",
+      "metadata": { "sourceFile": "report.controller.ts", "method": "reportService.exportPdf" }
+    },
+    {
+      "id": "handler:exportCsvHandler",
+      "type": "handler",
+      "name": "exportCsvHandler",
+      "module": "report",
+      "metadata": { "sourceFile": "report.controller.ts", "method": "reportService.exportCsv" }
+    },
+    {
+      "id": "handler:getCurrentStockHandler",
+      "type": "handler",
+      "name": "getCurrentStockHandler",
+      "module": "stock",
+      "metadata": { "sourceFile": "stock.controller.ts", "method": "stockService.getCurrent" }
+    },
+    {
+      "id": "handler:getStockHistoryHandler",
+      "type": "handler",
+      "name": "getStockHistoryHandler",
+      "module": "stock",
+      "metadata": { "sourceFile": "stock.controller.ts", "method": "stockService.getHistory" }
+    },
+    {
+      "id": "handler:updateAllocationHandler",
+      "type": "handler",
+      "name": "updateAllocationHandler",
+      "module": "stock",
+      "metadata": { "sourceFile": "stock.controller.ts", "method": "stockService.updateAllocation" }
+    },
+    {
+      "id": "handler:deleteAllocationHandler",
+      "type": "handler",
+      "name": "deleteAllocationHandler",
+      "module": "stock",
+      "metadata": { "sourceFile": "stock.controller.ts", "method": "stockService.removeAllocation" }
+    },
+    {
+      "id": "handler:triggerSyncHandler",
+      "type": "handler",
+      "name": "triggerSyncHandler",
+      "module": "sync",
+      "metadata": { "sourceFile": "sync.controller.ts", "method": "syncService.triggerSync" }
+    },
+    {
+      "id": "handler:getSyncHistoryHandler",
+      "type": "handler",
+      "name": "getSyncHistoryHandler",
+      "module": "sync",
+      "metadata": { "sourceFile": "sync.controller.ts", "method": "syncService.getSyncHistory" }
+    },
+    {
+      "id": "handler:getBankInfoHandler",
+      "type": "handler",
+      "name": "getBankInfoHandler",
+      "module": "sync",
+      "metadata": { "sourceFile": "sync.controller.ts", "method": "syncService.getBankInfo" }
+    },
+    {
+      "id": "handler:updateBankInfoHandler",
+      "type": "handler",
+      "name": "updateBankInfoHandler",
+      "module": "sync",
+      "metadata": { "sourceFile": "sync.controller.ts", "method": "syncService.updateBankInfo" }
+    },
+    {
+      "id": "handler:importCsvHandler",
+      "type": "handler",
+      "name": "importCsvHandler",
+      "module": "sync",
+      "metadata": { "sourceFile": "sync.controller.ts", "method": "govtImporterService.importBeneficiaries" }
+    },
+    {
+      "id": "handler:importSingleRowHandler",
+      "type": "handler",
+      "name": "importSingleRowHandler",
+      "module": "sync",
+      "metadata": { "sourceFile": "sync.controller.ts", "method": "govtImporterService.importBeneficiaries" }
+    },
+    {
+      "id": "handler:syncAllDealersHandler",
+      "type": "handler",
+      "name": "syncAllDealersHandler",
+      "module": "sync",
+      "metadata": { "sourceFile": "sync.controller.ts", "method": "enqueueFullStateSync" }
+    },
+    {
+      "id": "handler:syncDistrictHandler",
+      "type": "handler",
+      "name": "syncDistrictHandler",
+      "module": "sync",
+      "metadata": { "sourceFile": "sync.controller.ts", "method": "enqueueDistrictSync" }
+    },
+    {
+      "id": "handler:getImportBatchesHandler",
+      "type": "handler",
+      "name": "getImportBatchesHandler",
+      "module": "sync",
+      "metadata": { "sourceFile": "sync.controller.ts", "method": "syncService.getImportBatches" }
+    },
+    {
+      "id": "handler:getChangeLogHandler",
+      "type": "handler",
+      "name": "getChangeLogHandler",
+      "module": "sync",
+      "metadata": { "sourceFile": "sync.controller.ts", "method": "syncService.getChangeLog" }
+    },
+    {
+      "id": "handler:triggerSelfSyncHandler",
+      "type": "handler",
+      "name": "triggerSelfSyncHandler",
+      "module": "sync",
+      "metadata": { "sourceFile": "sync.controller.ts", "method": "syncService.triggerDealerSync" }
+    },
+    {
+      "id": "handler:getSelfSyncStatusHandler",
+      "type": "handler",
+      "name": "getSelfSyncStatusHandler",
+      "module": "sync",
+      "metadata": { "sourceFile": "sync.controller.ts", "method": "syncService.getSyncStatus" }
+    },
+    {
+      "id": "handler:getSelfDashboardHandler",
+      "type": "handler",
+      "name": "getSelfDashboardHandler",
+      "module": "sync",
+      "metadata": { "sourceFile": "sync.controller.ts", "method": "syncService.getSelfDashboard" }
+    },
+    {
+      "id": "handler:saveCredentialsHandler",
+      "type": "handler",
+      "name": "saveCredentialsHandler",
+      "module": "sync",
+      "metadata": { "sourceFile": "sync.controller.ts", "method": "syncService.saveCredentials" }
+    },
+    {
+      "id": "handler:getCredentialsStatusHandler",
+      "type": "handler",
+      "name": "getCredentialsStatusHandler",
+      "module": "sync",
+      "metadata": { "sourceFile": "sync.controller.ts", "method": "syncService.getCredentialsStatus" }
+    },
+    {
+      "id": "handler:createTransactionHandler",
+      "type": "handler",
+      "name": "createTransactionHandler",
+      "module": "transaction",
+      "metadata": { "sourceFile": "transaction.controller.ts", "method": "transactionService.create" }
+    },
+    {
+      "id": "handler:listTransactionsHandler",
+      "type": "handler",
+      "name": "listTransactionsHandler",
+      "module": "transaction",
+      "metadata": { "sourceFile": "transaction.controller.ts", "method": "transactionService.list" }
+    },
+    {
+      "id": "handler:getTransactionHandler",
+      "type": "handler",
+      "name": "getTransactionHandler",
+      "module": "transaction",
+      "metadata": { "sourceFile": "transaction.controller.ts", "method": "transactionService.getById" }
+    },
+    {
+      "id": "handler:getTransactionSummaryHandler",
+      "type": "handler",
+      "name": "getTransactionSummaryHandler",
+      "module": "transaction",
+      "metadata": { "sourceFile": "transaction.controller.ts", "method": "transactionService.getSummary" }
+    },
+    {
+      "id": "handler:getPendingHandler",
+      "type": "handler",
+      "name": "getPendingHandler",
+      "module": "transaction",
+      "metadata": { "sourceFile": "transaction.controller.ts", "method": "transactionService.getPending" }
+    },
+    {
+      "id": "handler:deleteTransactionHandler",
+      "type": "handler",
+      "name": "deleteTransactionHandler",
+      "module": "transaction",
+      "metadata": { "sourceFile": "transaction.controller.ts", "method": "transactionService.remove" }
+    },
+    {
+      "id": "handler:createAuditMeetingHandler",
+      "type": "handler",
+      "name": "createAuditMeetingHandler",
+      "module": "audit",
+      "metadata": { "sourceFile": "audit.controller.ts", "method": "auditService.create" }
+    },
+    {
+      "id": "handler:listAuditMeetingsHandler",
+      "type": "handler",
+      "name": "listAuditMeetingsHandler",
+      "module": "audit",
+      "metadata": { "sourceFile": "audit.controller.ts", "method": "auditService.list" }
+    },
+    {
+      "id": "handler:getAuditMeetingHandler",
+      "type": "handler",
+      "name": "getAuditMeetingHandler",
+      "module": "audit",
+      "metadata": { "sourceFile": "audit.controller.ts", "method": "auditService.getById" }
+    },
+    {
+      "id": "handler:updateAuditMeetingHandler",
+      "type": "handler",
+      "name": "updateAuditMeetingHandler",
+      "module": "audit",
+      "metadata": { "sourceFile": "audit.controller.ts", "method": "auditService.update" }
+    },
+    {
+      "id": "handler:deleteAuditMeetingHandler",
+      "type": "handler",
+      "name": "deleteAuditMeetingHandler",
+      "module": "audit",
+      "metadata": { "sourceFile": "audit.controller.ts", "method": "auditService.remove" }
+    },
+    {
+      "id": "ref:config/database",
+      "type": "external-ref",
+      "name": "../../config/database.js",
+      "metadata": { "exports": ["query"] }
+    },
+    {
+      "id": "ref:config/constants",
+      "type": "external-ref",
+      "name": "../../config/constants.js",
+      "metadata": { "exports": ["ERROR_CODES"] }
+    },
+    {
+      "id": "ref:shared/middleware/authenticate",
+      "type": "external-ref",
+      "name": "../../shared/middleware/authenticate.js",
+      "metadata": { "exports": ["authenticate"] }
+    },
+    {
+      "id": "ref:shared/middleware/authorize",
+      "type": "external-ref",
+      "name": "../../shared/middleware/authorize.js",
+      "metadata": { "exports": ["authorize"] }
+    },
+    {
+      "id": "ref:shared/errors/AppError",
+      "type": "external-ref",
+      "name": "../../shared/errors/AppError.js",
+      "metadata": { "exports": ["AppError"] }
+    },
+    {
+      "id": "ref:shared/errors/ValidationError",
+      "type": "external-ref",
+      "name": "../../shared/errors/ValidationError.js",
+      "metadata": { "exports": ["ValidationError"] }
+    },
+    {
+      "id": "ref:shared/utils/pagination",
+      "type": "external-ref",
+      "name": "../../shared/utils/pagination.js",
+      "metadata": { "exports": ["parsePaginationParams", "buildPaginationMeta"] }
+    },
+    {
+      "id": "ref:shared/utils/response",
+      "type": "external-ref",
+      "name": "../../shared/utils/response.js",
+      "metadata": { "exports": ["sendSuccess", "sendCreated", "sendNoContent"] }
+    },
+    {
+      "id": "ref:shared/utils/pdf",
+      "type": "external-ref",
+      "name": "../../shared/utils/pdf.js",
+      "metadata": { "exports": ["htmlToPdf"] }
+    },
+    {
+      "id": "ref:shared/utils/encrypt",
+      "type": "external-ref",
+      "name": "../../shared/utils/encrypt.js",
+      "metadata": { "exports": ["encrypt"] }
+    },
+    {
+      "id": "ref:shared/events",
+      "type": "external-ref",
+      "name": "../../shared/events/index.js",
+      "metadata": { "exports": ["eventBus", "EventTypes"] }
+    },
+    {
+      "id": "ref:shared/types/models",
+      "type": "external-ref",
+      "name": "../../shared/types/models.js",
+      "metadata": { "exports": ["Notification", "StockAllocation", "Transaction"] }
+    },
+    {
+      "id": "ref:shared/types/enums",
+      "type": "external-ref",
+      "name": "../../shared/types/enums.js",
+      "metadata": { "exports": ["Role"] }
+    },
+    {
+      "id": "ref:jobs/sync/govt-data-sync.job",
+      "type": "external-ref",
+      "name": "../../jobs/sync/govt-data-sync.job.js",
+      "metadata": { "exports": ["enqueueFullStateSync", "enqueueDistrictSync", "enqueueGovtSync"] }
+    },
+    {
+      "id": "ref:jobs/sync/efps-sync.worker",
+      "type": "external-ref",
+      "name": "../../jobs/sync/efps-sync.worker.js",
+      "metadata": { "exports": ["enqueueEfpsSync"] }
+    },
+    {
+      "id": "ref:sync/govt-importer.service",
+      "type": "external-ref",
+      "name": "./govt-importer.service.js",
+      "metadata": { "exports": ["govtImporterService"] }
+    }
+  ],
+  "edges": [
+    {
+      "source": "module:notification",
+      "target": "file:efps-backend/src/modules/notification/notification.routes.ts",
+      "type": "contains"
+    },
+    {
+      "source": "module:notification",
+      "target": "file:efps-backend/src/modules/notification/notification.service.ts",
+      "type": "contains"
+    },
+    {
+      "source": "module:report",
+      "target": "file:efps-backend/src/modules/report/report.controller.ts",
+      "type": "contains"
+    },
+    {
+      "source": "module:report",
+      "target": "file:efps-backend/src/modules/report/report.routes.ts",
+      "type": "contains"
+    },
+    {
+      "source": "module:report",
+      "target": "file:efps-backend/src/modules/report/report.service.ts",
+      "type": "contains"
+    },
+    {
+      "source": "module:stock",
+      "target": "file:efps-backend/src/modules/stock/stock.controller.ts",
+      "type": "contains"
+    },
+    {
+      "source": "module:stock",
+      "target": "file:efps-backend/src/modules/stock/stock.routes.ts",
+      "type": "contains"
+    },
+    {
+      "source": "module:stock",
+      "target": "file:efps-backend/src/modules/stock/stock.service.ts",
+      "type": "contains"
+    },
+    {
+      "source": "module:sync",
+      "target": "file:efps-backend/src/modules/sync/sync.controller.ts",
+      "type": "contains"
+    },
+    {
+      "source": "module:sync",
+      "target": "file:efps-backend/src/modules/sync/sync.routes.ts",
+      "type": "contains"
+    },
+    {
+      "source": "module:sync",
+      "target": "file:efps-backend/src/modules/sync/sync.service.ts",
+      "type": "contains"
+    },
+    {
+      "source": "module:transaction",
+      "target": "file:efps-backend/src/modules/transaction/transaction.controller.ts",
+      "type": "contains"
+    },
+    {
+      "source": "module:transaction",
+      "target": "file:efps-backend/src/modules/transaction/transaction.routes.ts",
+      "type": "contains"
+    },
+    {
+      "source": "module:transaction",
+      "target": "file:efps-backend/src/modules/transaction/transaction.service.ts",
+      "type": "contains"
+    },
+    {
+      "source": "module:audit",
+      "target": "file:efps-backend/src/modules/audit/audit.controller.ts",
+      "type": "contains"
+    },
+    {
+      "source": "module:audit",
+      "target": "file:efps-backend/src/modules/audit/audit.routes.ts",
+      "type": "contains"
+    },
+    {
+      "source": "module:audit",
+      "target": "file:efps-backend/src/modules/audit/audit.service.ts",
+      "type": "contains"
+    },
+    {
+      "source": "file:efps-backend/src/modules/notification/notification.service.ts",
+      "target": "class:NotificationService",
+      "type": "defines"
+    },
+    {
+      "source": "file:efps-backend/src/modules/notification/notification.service.ts",
+      "target": "instance:notificationService",
+      "type": "exports-instance"
+    },
+    {
+      "source": "file:efps-backend/src/modules/report/report.service.ts",
+      "target": "class:ReportService",
+      "type": "defines"
+    },
+    {
+      "source": "file:efps-backend/src/modules/report/report.service.ts",
+      "target": "instance:reportService",
+      "type": "exports-instance"
+    },
+    {
+      "source": "file:efps-backend/src/modules/stock/stock.service.ts",
+      "target": "class:StockService",
+      "type": "defines"
+    },
+    {
+      "source": "file:efps-backend/src/modules/stock/stock.service.ts",
+      "target": "instance:stockService",
+      "type": "exports-instance"
+    },
+    {
+      "source": "file:efps-backend/src/modules/sync/sync.service.ts",
+      "target": "class:SyncService",
+      "type": "defines"
+    },
+    {
+      "source": "file:efps-backend/src/modules/sync/sync.service.ts",
+      "target": "instance:syncService",
+      "type": "exports-instance"
+    },
+    {
+      "source": "file:efps-backend/src/modules/transaction/transaction.service.ts",
+      "target": "class:TransactionService",
+      "type": "defines"
+    },
+    {
+      "source": "file:efps-backend/src/modules/transaction/transaction.service.ts",
+      "target": "instance:transactionService",
+      "type": "exports-instance"
+    },
+    {
+      "source": "file:efps-backend/src/modules/audit/audit.service.ts",
+      "target": "class:AuditService",
+      "type": "defines"
+    },
+    {
+      "source": "file:efps-backend/src/modules/audit/audit.service.ts",
+      "target": "instance:auditService",
+      "type": "exports-instance"
+    },
+    {
+      "source": "file:efps-backend/src/modules/notification/notification.routes.ts",
+      "target": "function:notificationRoutes",
+      "type": "defines"
+    },
+    {
+      "source": "file:efps-backend/src/modules/report/report.routes.ts",
+      "target": "function:reportRoutes",
+      "type": "defines"
+    },
+    {
+      "source": "file:efps-backend/src/modules/stock/stock.routes.ts",
+      "target": "function:stockRoutes",
+      "type": "defines"
+    },
+    {
+      "source": "file:efps-backend/src/modules/sync/sync.routes.ts",
+      "target": "function:syncRoutes",
+      "type": "defines"
+    },
+    {
+      "source": "file:efps-backend/src/modules/transaction/transaction.routes.ts",
+      "target": "function:transactionRoutes",
+      "type": "defines"
+    },
+    {
+      "source": "file:efps-backend/src/modules/audit/audit.routes.ts",
+      "target": "function:auditRoutes",
+      "type": "defines"
+    },
+    {
+      "source": "function:notificationRoutes",
+      "target": "handler:listNotificationsHandler",
+      "type": "registers-route",
+      "metadata": { "method": "GET", "path": "/notifications" }
+    },
+    {
+      "source": "function:notificationRoutes",
+      "target": "handler:markAllAsReadHandler",
+      "type": "registers-route",
+      "metadata": { "method": "PATCH", "path": "/notifications/read-all" }
+    },
+    {
+      "source": "function:notificationRoutes",
+      "target": "handler:markAsReadHandler",
+      "type": "registers-route",
+      "metadata": { "method": "PATCH", "path": "/notifications/:id/read" }
+    },
+    {
+      "source": "function:notificationRoutes",
+      "target": "handler:deleteNotificationHandler",
+      "type": "registers-route",
+      "metadata": { "method": "DELETE", "path": "/notifications/:id" }
+    },
+    {
+      "source": "function:reportRoutes",
+      "target": "handler:getMonthlyReportHandler",
+      "type": "registers-route",
+      "metadata": { "method": "GET", "path": "/reports/monthly" }
+    },
+    {
+      "source": "function:reportRoutes",
+      "target": "handler:getAuditLogHandler",
+      "type": "registers-route",
+      "metadata": { "method": "GET", "path": "/reports/audit" }
+    },
+    {
+      "source": "function:reportRoutes",
+      "target": "handler:exportPdfHandler",
+      "type": "registers-route",
+      "metadata": { "method": "GET", "path": "/reports/export/pdf" }
+    },
+    {
+      "source": "function:reportRoutes",
+      "target": "handler:exportCsvHandler",
+      "type": "registers-route",
+      "metadata": { "method": "GET", "path": "/reports/export/csv" }
+    },
+    {
+      "source": "function:stockRoutes",
+      "target": "handler:getCurrentStockHandler",
+      "type": "registers-route",
+      "metadata": { "method": "GET", "path": "/stock" }
+    },
+    {
+      "source": "function:stockRoutes",
+      "target": "handler:getStockHistoryHandler",
+      "type": "registers-route",
+      "metadata": { "method": "GET", "path": "/stock/history" }
+    },
+    {
+      "source": "function:stockRoutes",
+      "target": "handler:updateAllocationHandler",
+      "type": "registers-route",
+      "metadata": { "method": "PATCH", "path": "/stock/:id" }
+    },
+    {
+      "source": "function:stockRoutes",
+      "target": "handler:deleteAllocationHandler",
+      "type": "registers-route",
+      "metadata": { "method": "DELETE", "path": "/stock/:id" }
+    },
+    {
+      "source": "function:syncRoutes",
+      "target": "handler:getBankInfoHandler",
+      "type": "registers-route",
+      "metadata": { "method": "GET", "path": "/sync/bank-info" }
+    },
+    {
+      "source": "function:syncRoutes",
+      "target": "handler:updateBankInfoHandler",
+      "type": "registers-route",
+      "metadata": { "method": "PUT", "path": "/sync/bank-info" }
+    },
+    {
+      "source": "function:syncRoutes",
+      "target": "handler:triggerSyncHandler",
+      "type": "registers-route",
+      "metadata": { "method": "POST", "path": "/sync/trigger" }
+    },
+    {
+      "source": "function:syncRoutes",
+      "target": "handler:getSyncHistoryHandler",
+      "type": "registers-route",
+      "metadata": { "method": "GET", "path": "/sync/history" }
+    },
+    {
+      "source": "function:syncRoutes",
+      "target": "handler:triggerSelfSyncHandler",
+      "type": "registers-route",
+      "metadata": { "method": "POST", "path": "/sync/self/trigger" }
+    },
+    {
+      "source": "function:syncRoutes",
+      "target": "handler:getSelfSyncStatusHandler",
+      "type": "registers-route",
+      "metadata": { "method": "GET", "path": "/sync/self/status" }
+    },
+    {
+      "source": "function:syncRoutes",
+      "target": "handler:getSelfDashboardHandler",
+      "type": "registers-route",
+      "metadata": { "method": "GET", "path": "/sync/self/dashboard" }
+    },
+    {
+      "source": "function:syncRoutes",
+      "target": "handler:saveCredentialsHandler",
+      "type": "registers-route",
+      "metadata": { "method": "POST", "path": "/sync/credentials" }
+    },
+    {
+      "source": "function:syncRoutes",
+      "target": "handler:getCredentialsStatusHandler",
+      "type": "registers-route",
+      "metadata": { "method": "GET", "path": "/sync/credentials" }
+    },
+    {
+      "source": "function:syncRoutes",
+      "target": "handler:importCsvHandler",
+      "type": "registers-route",
+      "metadata": { "method": "POST", "path": "/sync/import/csv" }
+    },
+    {
+      "source": "function:syncRoutes",
+      "target": "handler:importSingleRowHandler",
+      "type": "registers-route",
+      "metadata": { "method": "POST", "path": "/sync/import/row" }
+    },
+    {
+      "source": "function:syncRoutes",
+      "target": "handler:syncAllDealersHandler",
+      "type": "registers-route",
+      "metadata": { "method": "POST", "path": "/sync/run-all" }
+    },
+    {
+      "source": "function:syncRoutes",
+      "target": "handler:syncDistrictHandler",
+      "type": "registers-route",
+      "metadata": { "method": "POST", "path": "/sync/run-district" }
+    },
+    {
+      "source": "function:syncRoutes",
+      "target": "handler:getImportBatchesHandler",
+      "type": "registers-route",
+      "metadata": { "method": "GET", "path": "/sync/import-batches" }
+    },
+    {
+      "source": "function:syncRoutes",
+      "target": "handler:getChangeLogHandler",
+      "type": "registers-route",
+      "metadata": { "method": "GET", "path": "/sync/import-batches/:batchId/changes" }
+    },
+    {
+      "source": "function:transactionRoutes",
+      "target": "handler:createTransactionHandler",
+      "type": "registers-route",
+      "metadata": { "method": "POST", "path": "/transactions" }
+    },
+    {
+      "source": "function:transactionRoutes",
+      "target": "handler:listTransactionsHandler",
+      "type": "registers-route",
+      "metadata": { "method": "GET", "path": "/transactions" }
+    },
+    {
+      "source": "function:transactionRoutes",
+      "target": "handler:getTransactionSummaryHandler",
+      "type": "registers-route",
+      "metadata": { "method": "GET", "path": "/transactions/summary" }
+    },
+    {
+      "source": "function:transactionRoutes",
+      "target": "handler:getPendingHandler",
+      "type": "registers-route",
+      "metadata": { "method": "GET", "path": "/transactions/pending" }
+    },
+    {
+      "source": "function:transactionRoutes",
+      "target": "handler:getTransactionHandler",
+      "type": "registers-route",
+      "metadata": { "method": "GET", "path": "/transactions/:id" }
+    },
+    {
+      "source": "function:transactionRoutes",
+      "target": "handler:deleteTransactionHandler",
+      "type": "registers-route",
+      "metadata": { "method": "DELETE", "path": "/transactions/:id" }
+    },
+    {
+      "source": "function:auditRoutes",
+      "target": "handler:createAuditMeetingHandler",
+      "type": "registers-route",
+      "metadata": { "method": "POST", "path": "/audit/meetings" }
+    },
+    {
+      "source": "function:auditRoutes",
+      "target": "handler:listAuditMeetingsHandler",
+      "type": "registers-route",
+      "metadata": { "method": "GET", "path": "/audit/meetings" }
+    },
+    {
+      "source": "function:auditRoutes",
+      "target": "handler:getAuditMeetingHandler",
+      "type": "registers-route",
+      "metadata": { "method": "GET", "path": "/audit/meetings/:id" }
+    },
+    {
+      "source": "function:auditRoutes",
+      "target": "handler:updateAuditMeetingHandler",
+      "type": "registers-route",
+      "metadata": { "method": "PATCH", "path": "/audit/meetings/:id" }
+    },
+    {
+      "source": "function:auditRoutes",
+      "target": "handler:deleteAuditMeetingHandler",
+      "type": "registers-route",
+      "metadata": { "method": "DELETE", "path": "/audit/meetings/:id" }
+    },
+    {
+      "source": "file:efps-backend/src/modules/notification/notification.routes.ts",
+      "target": "ref:shared/middleware/authenticate",
+      "type": "imports"
+    },
+    {
+      "source": "file:efps-backend/src/modules/notification/notification.service.ts",
+      "target": "ref:config/database",
+      "type": "imports"
+    },
+    {
+      "source": "file:efps-backend/src/modules/notification/notification.service.ts",
+      "target": "ref:shared/errors/AppError",
+      "type": "imports"
+    },
+    {
+      "source": "file:efps-backend/src/modules/notification/notification.service.ts",
+      "target": "ref:config/constants",
+      "type": "imports"
+    },
+    {
+      "source": "file:efps-backend/src/modules/notification/notification.service.ts",
+      "target": "ref:shared/utils/pagination",
+      "type": "imports"
+    },
+    {
+      "source": "file:efps-backend/src/modules/notification/notification.service.ts",
+      "target": "ref:shared/types/models",
+      "type": "imports"
+    },
+    {
+      "source": "file:efps-backend/src/modules/report/report.controller.ts",
+      "target": "instance:reportService",
+      "type": "imports"
+    },
+    {
+      "source": "file:efps-backend/src/modules/report/report.controller.ts",
+      "target": "ref:shared/utils/response",
+      "type": "imports"
+    },
+    {
+      "source": "file:efps-backend/src/modules/report/report.routes.ts",
+      "target": "ref:shared/middleware/authenticate",
+      "type": "imports"
+    },
+    {
+      "source": "file:efps-backend/src/modules/report/report.service.ts",
+      "target": "ref:config/database",
+      "type": "imports"
+    },
+    {
+      "source": "file:efps-backend/src/modules/report/report.service.ts",
+      "target": "ref:shared/utils/pagination",
+      "type": "imports"
+    },
+    {
+      "source": "file:efps-backend/src/modules/report/report.service.ts",
+      "target": "ref:shared/utils/pdf",
+      "type": "imports"
+    },
+    {
+      "source": "file:efps-backend/src/modules/stock/stock.controller.ts",
+      "target": "instance:stockService",
+      "type": "imports"
+    },
+    {
+      "source": "file:efps-backend/src/modules/stock/stock.controller.ts",
+      "target": "ref:shared/utils/response",
+      "type": "imports"
+    },
+    {
+      "source": "file:efps-backend/src/modules/stock/stock.routes.ts",
+      "target": "ref:shared/middleware/authenticate",
+      "type": "imports"
+    },
+    {
+      "source": "file:efps-backend/src/modules/stock/stock.routes.ts",
+      "target": "ref:shared/middleware/authorize",
+      "type": "imports"
+    },
+    {
+      "source": "file:efps-backend/src/modules/stock/stock.service.ts",
+      "target": "ref:config/database",
+      "type": "imports"
+    },
+    {
+      "source": "file:efps-backend/src/modules/stock/stock.service.ts",
+      "target": "ref:shared/errors/AppError",
+      "type": "imports"
+    },
+    {
+      "source": "file:efps-backend/src/modules/stock/stock.service.ts",
+      "target": "ref:config/constants",
+      "type": "imports"
+    },
+    {
+      "source": "file:efps-backend/src/modules/stock/stock.service.ts",
+      "target": "ref:shared/utils/pagination",
+      "type": "imports"
+    },
+    {
+      "source": "file:efps-backend/src/modules/stock/stock.service.ts",
+      "target": "ref:shared/events",
+      "type": "imports"
+    },
+    {
+      "source": "file:efps-backend/src/modules/stock/stock.service.ts",
+      "target": "ref:shared/types/models",
+      "type": "imports"
+    },
+    {
+      "source": "file:efps-backend/src/modules/sync/sync.controller.ts",
+      "target": "instance:syncService",
+      "type": "imports"
+    },
+    {
+      "source": "file:efps-backend/src/modules/sync/sync.controller.ts",
+      "target": "ref:sync/govt-importer.service",
+      "type": "imports"
+    },
+    {
+      "source": "file:efps-backend/src/modules/sync/sync.controller.ts",
+      "target": "ref:jobs/sync/govt-data-sync.job",
+      "type": "imports"
+    },
+    {
+      "source": "file:efps-backend/src/modules/sync/sync.controller.ts",
+      "target": "ref:shared/utils/response",
+      "type": "imports"
+    },
+    {
+      "source": "file:efps-backend/src/modules/sync/sync.routes.ts",
+      "target": "ref:shared/middleware/authenticate",
+      "type": "imports"
+    },
+    {
+      "source": "file:efps-backend/src/modules/sync/sync.routes.ts",
+      "target": "ref:shared/middleware/authorize",
+      "type": "imports"
+    },
+    {
+      "source": "file:efps-backend/src/modules/sync/sync.routes.ts",
+      "target": "ref:shared/types/enums",
+      "type": "imports"
+    },
+    {
+      "source": "file:efps-backend/src/modules/sync/sync.service.ts",
+      "target": "ref:config/database",
+      "type": "imports"
+    },
+    {
+      "source": "file:efps-backend/src/modules/sync/sync.service.ts",
+      "target": "ref:shared/events",
+      "type": "imports"
+    },
+    {
+      "source": "file:efps-backend/src/modules/sync/sync.service.ts",
+      "target": "ref:jobs/sync/efps-sync.worker",
+      "type": "imports"
+    },
+    {
+      "source": "file:efps-backend/src/modules/sync/sync.service.ts",
+      "target": "ref:jobs/sync/govt-data-sync.job",
+      "type": "imports"
+    },
+    {
+      "source": "file:efps-backend/src/modules/sync/sync.service.ts",
+      "target": "ref:shared/utils/encrypt",
+      "type": "imports"
+    },
+    {
+      "source": "file:efps-backend/src/modules/transaction/transaction.controller.ts",
+      "target": "instance:transactionService",
+      "type": "imports"
+    },
+    {
+      "source": "file:efps-backend/src/modules/transaction/transaction.controller.ts",
+      "target": "ref:shared/utils/response",
+      "type": "imports"
+    },
+    {
+      "source": "file:efps-backend/src/modules/transaction/transaction.routes.ts",
+      "target": "ref:shared/middleware/authenticate",
+      "type": "imports"
+    },
+    {
+      "source": "file:efps-backend/src/modules/transaction/transaction.service.ts",
+      "target": "ref:config/database",
+      "type": "imports"
+    },
+    {
+      "source": "file:efps-backend/src/modules/transaction/transaction.service.ts",
+      "target": "ref:shared/errors/AppError",
+      "type": "imports"
+    },
+    {
+      "source": "file:efps-backend/src/modules/transaction/transaction.service.ts",
+      "target": "ref:shared/errors/ValidationError",
+      "type": "imports"
+    },
+    {
+      "source": "file:efps-backend/src/modules/transaction/transaction.service.ts",
+      "target": "ref:config/constants",
+      "type": "imports"
+    },
+    {
+      "source": "file:efps-backend/src/modules/transaction/transaction.service.ts",
+      "target": "ref:shared/utils/pagination",
+      "type": "imports"
+    },
+    {
+      "source": "file:efps-backend/src/modules/transaction/transaction.service.ts",
+      "target": "ref:shared/events",
+      "type": "imports"
+    },
+    {
+      "source": "file:efps-backend/src/modules/transaction/transaction.service.ts",
+      "target": "ref:shared/types/models",
+      "type": "imports"
+    },
+    {
+      "source": "file:efps-backend/src/modules/audit/audit.controller.ts",
+      "target": "instance:auditService",
+      "type": "imports"
+    },
+    {
+      "source": "file:efps-backend/src/modules/audit/audit.controller.ts",
+      "target": "ref:shared/utils/response",
+      "type": "imports"
+    },
+    {
+      "source": "file:efps-backend/src/modules/audit/audit.routes.ts",
+      "target": "ref:shared/middleware/authenticate",
+      "type": "imports"
+    },
+    {
+      "source": "file:efps-backend/src/modules/audit/audit.service.ts",
+      "target": "ref:config/database",
+      "type": "imports"
+    },
+    {
+      "source": "file:efps-backend/src/modules/audit/audit.service.ts",
+      "target": "ref:shared/errors/AppError",
+      "type": "imports"
+    },
+    {
+      "source": "file:efps-backend/src/modules/audit/audit.service.ts",
+      "target": "ref:config/constants",
+      "type": "imports"
+    },
+    {
+      "source": "file:efps-backend/src/modules/audit/audit.service.ts",
+      "target": "ref:shared/utils/pagination",
+      "type": "imports"
+    }
+  ]
+}

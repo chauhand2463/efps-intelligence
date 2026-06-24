@@ -1,0 +1,656 @@
+{
+  "batch": 9,
+  "description": "Batch 9: Ads & Directory modules — controllers, routes, services, and audit (not found). 6 files analyzed, 2 skipped.",
+  "skipped": [
+    { "file": "efps-backend/src/modules/audit/index.ts", "reason": "File not found on disk" },
+    { "file": "efps-backend/src/modules/ads/index.ts", "reason": "File not found on disk" }
+  ],
+  "nodes": [
+    {
+      "id": "ads:ads.controller.ts:file",
+      "type": "file",
+      "name": "ads.controller.ts",
+      "module": "ads",
+      "filePath": "efps-backend/src/modules/ads/ads.controller.ts",
+      "metadata": { "lines": 35, "exports": ["createAdHandler","listAdsHandler","getAdHandler","updateAdHandler","deleteAdHandler"] }
+    },
+    {
+      "id": "ads:ads.controller.ts:createAdHandler",
+      "type": "function",
+      "name": "createAdHandler",
+      "module": "ads",
+      "filePath": "efps-backend/src/modules/ads/ads.controller.ts",
+      "metadata": { "line": 6, "async": true, "exported": true, "params": ["request: FastifyRequest","reply: FastifyReply"] }
+    },
+    {
+      "id": "ads:ads.controller.ts:listAdsHandler",
+      "type": "function",
+      "name": "listAdsHandler",
+      "module": "ads",
+      "filePath": "efps-backend/src/modules/ads/ads.controller.ts",
+      "metadata": { "line": 12, "async": true, "exported": true, "params": ["request: FastifyRequest","reply: FastifyReply"] }
+    },
+    {
+      "id": "ads:ads.controller.ts:getAdHandler",
+      "type": "function",
+      "name": "getAdHandler",
+      "module": "ads",
+      "filePath": "efps-backend/src/modules/ads/ads.controller.ts",
+      "metadata": { "line": 18, "async": true, "exported": true, "params": ["request: FastifyRequest","reply: FastifyReply"] }
+    },
+    {
+      "id": "ads:ads.controller.ts:updateAdHandler",
+      "type": "function",
+      "name": "updateAdHandler",
+      "module": "ads",
+      "filePath": "efps-backend/src/modules/ads/ads.controller.ts",
+      "metadata": { "line": 24, "async": true, "exported": true, "params": ["request: FastifyRequest","reply: FastifyReply"] }
+    },
+    {
+      "id": "ads:ads.controller.ts:deleteAdHandler",
+      "type": "function",
+      "name": "deleteAdHandler",
+      "module": "ads",
+      "filePath": "efps-backend/src/modules/ads/ads.controller.ts",
+      "metadata": { "line": 31, "async": true, "exported": true, "params": ["request: FastifyRequest","reply: FastifyReply"] }
+    },
+
+    {
+      "id": "ads:ads.routes.ts:file",
+      "type": "file",
+      "name": "ads.routes.ts",
+      "module": "ads",
+      "filePath": "efps-backend/src/modules/ads/ads.routes.ts",
+      "metadata": { "lines": 11, "exports": ["adsRoutes"] }
+    },
+    {
+      "id": "ads:ads.routes.ts:adsRoutes",
+      "type": "function",
+      "name": "adsRoutes",
+      "module": "ads",
+      "filePath": "efps-backend/src/modules/ads/ads.routes.ts",
+      "metadata": { "line": 5, "async": true, "exported": true, "params": ["app: FastifyInstance"], "routes": ["POST /ads","GET /ads","GET /ads/:id","PATCH /ads/:id","DELETE /ads/:id"] }
+    },
+
+    {
+      "id": "ads:ads.service.ts:file",
+      "type": "file",
+      "name": "ads.service.ts",
+      "module": "ads",
+      "filePath": "efps-backend/src/modules/ads/ads.service.ts",
+      "metadata": { "lines": 87, "exports": ["AdsService","adsService"] }
+    },
+    {
+      "id": "ads:ads.service.ts:AdsService",
+      "type": "class",
+      "name": "AdsService",
+      "module": "ads",
+      "filePath": "efps-backend/src/modules/ads/ads.service.ts",
+      "metadata": { "line": 7 }
+    },
+    {
+      "id": "ads:ads.service.ts:create",
+      "type": "method",
+      "name": "create",
+      "module": "ads",
+      "filePath": "efps-backend/src/modules/ads/ads.service.ts",
+      "metadata": { "line": 8, "async": true, "params": ["dealerId: string","input: CreateAdInput"], "table": "dealer_ads" }
+    },
+    {
+      "id": "ads:ads.service.ts:list",
+      "type": "method",
+      "name": "list",
+      "module": "ads",
+      "filePath": "efps-backend/src/modules/ads/ads.service.ts",
+      "metadata": { "line": 17, "async": true, "params": ["dealerId: string","params: ListAdsInput"], "table": "dealer_ads" }
+    },
+    {
+      "id": "ads:ads.service.ts:getById",
+      "type": "method",
+      "name": "getById",
+      "module": "ads",
+      "filePath": "efps-backend/src/modules/ads/ads.service.ts",
+      "metadata": { "line": 35, "async": true, "params": ["id: string","dealerId: string"], "table": "dealer_ads", "throws": "AppError(404, ADS_NOT_FOUND)" }
+    },
+    {
+      "id": "ads:ads.service.ts:update",
+      "type": "method",
+      "name": "update",
+      "module": "ads",
+      "filePath": "efps-backend/src/modules/ads/ads.service.ts",
+      "metadata": { "line": 48, "async": true, "params": ["id: string","dealerId: string","input: UpdateAdInput"], "table": "dealer_ads" }
+    },
+    {
+      "id": "ads:ads.service.ts:remove",
+      "type": "method",
+      "name": "remove",
+      "module": "ads",
+      "filePath": "efps-backend/src/modules/ads/ads.service.ts",
+      "metadata": { "line": 75, "async": true, "params": ["id: string","dealerId: string"], "table": "dealer_ads" }
+    },
+    {
+      "id": "ads:ads.service.ts:adsService",
+      "type": "variable",
+      "name": "adsService",
+      "module": "ads",
+      "filePath": "efps-backend/src/modules/ads/ads.service.ts",
+      "metadata": { "line": 87, "exported": true, "kind": "singleton instance of AdsService" }
+    },
+
+    {
+      "id": "directory:directory.controller.ts:file",
+      "type": "file",
+      "name": "directory.controller.ts",
+      "module": "directory",
+      "filePath": "efps-backend/src/modules/directory/directory.controller.ts",
+      "metadata": { "lines": 9, "exports": ["listDirectoryHandler"] }
+    },
+    {
+      "id": "directory:directory.controller.ts:listDirectoryHandler",
+      "type": "function",
+      "name": "listDirectoryHandler",
+      "module": "directory",
+      "filePath": "efps-backend/src/modules/directory/directory.controller.ts",
+      "metadata": { "line": 5, "async": true, "exported": true, "params": ["request: FastifyRequest","reply: FastifyReply"] }
+    },
+
+    {
+      "id": "directory:directory.routes.ts:file",
+      "type": "file",
+      "name": "directory.routes.ts",
+      "module": "directory",
+      "filePath": "efps-backend/src/modules/directory/directory.routes.ts",
+      "metadata": { "lines": 7, "exports": ["directoryRoutes"] }
+    },
+    {
+      "id": "directory:directory.routes.ts:directoryRoutes",
+      "type": "function",
+      "name": "directoryRoutes",
+      "module": "directory",
+      "filePath": "efps-backend/src/modules/directory/directory.routes.ts",
+      "metadata": { "line": 5, "async": true, "exported": true, "params": ["app: FastifyInstance"], "routes": ["GET /directory"] }
+    },
+
+    {
+      "id": "directory:directory.service.ts:file",
+      "type": "file",
+      "name": "directory.service.ts",
+      "module": "directory",
+      "filePath": "efps-backend/src/modules/directory/directory.service.ts",
+      "metadata": { "lines": 30, "exports": ["DirectoryService","directoryService"] }
+    },
+    {
+      "id": "directory:directory.service.ts:DirectoryService",
+      "type": "class",
+      "name": "DirectoryService",
+      "module": "directory",
+      "filePath": "efps-backend/src/modules/directory/directory.service.ts",
+      "metadata": { "line": 5 }
+    },
+    {
+      "id": "directory:directory.service.ts:list",
+      "type": "method",
+      "name": "list",
+      "module": "directory",
+      "filePath": "efps-backend/src/modules/directory/directory.service.ts",
+      "metadata": { "line": 6, "async": true, "params": ["params: DirectoryQueryInput"], "table": "gujarat_directory" }
+    },
+    {
+      "id": "directory:directory.service.ts:directoryService",
+      "type": "variable",
+      "name": "directoryService",
+      "module": "directory",
+      "filePath": "efps-backend/src/modules/directory/directory.service.ts",
+      "metadata": { "line": 30, "exported": true, "kind": "singleton instance of DirectoryService" }
+    },
+
+    {
+      "id": "shared:authenticate",
+      "type": "middleware",
+      "name": "authenticate",
+      "module": "shared",
+      "filePath": "efps-backend/src/shared/middleware/authenticate.js",
+      "metadata": { "extern": false }
+    },
+    {
+      "id": "shared:response:sendSuccess",
+      "type": "util",
+      "name": "sendSuccess",
+      "module": "shared",
+      "filePath": "efps-backend/src/shared/utils/response.js",
+      "metadata": { "extern": false }
+    },
+    {
+      "id": "shared:response:sendCreated",
+      "type": "util",
+      "name": "sendCreated",
+      "module": "shared",
+      "filePath": "efps-backend/src/shared/utils/response.js",
+      "metadata": { "extern": false }
+    },
+    {
+      "id": "shared:response:sendNoContent",
+      "type": "util",
+      "name": "sendNoContent",
+      "module": "shared",
+      "filePath": "efps-backend/src/shared/utils/response.js",
+      "metadata": { "extern": false }
+    },
+    {
+      "id": "shared:pagination:parsePaginationParams",
+      "type": "util",
+      "name": "parsePaginationParams",
+      "module": "shared",
+      "filePath": "efps-backend/src/shared/utils/pagination.js",
+      "metadata": { "extern": false }
+    },
+    {
+      "id": "shared:pagination:buildPaginationMeta",
+      "type": "util",
+      "name": "buildPaginationMeta",
+      "module": "shared",
+      "filePath": "efps-backend/src/shared/utils/pagination.js",
+      "metadata": { "extern": false }
+    },
+    {
+      "id": "shared:errors:AppError",
+      "type": "class",
+      "name": "AppError",
+      "module": "shared",
+      "filePath": "efps-backend/src/shared/errors/AppError.js",
+      "metadata": { "extern": false }
+    },
+    {
+      "id": "shared:constants:ERROR_CODES",
+      "type": "constant",
+      "name": "ERROR_CODES",
+      "module": "shared",
+      "filePath": "efps-backend/src/config/constants.js",
+      "metadata": { "extern": false }
+    },
+    {
+      "id": "config:database:query",
+      "type": "function",
+      "name": "query",
+      "module": "config",
+      "filePath": "efps-backend/src/config/database.js",
+      "metadata": { "extern": false }
+    },
+
+    {
+      "id": "module:fastify",
+      "type": "external-package",
+      "name": "fastify",
+      "module": "external",
+      "filePath": "node_modules/fastify",
+      "metadata": { "extern": true, "types": ["FastifyInstance","FastifyRequest","FastifyReply"] }
+    }
+  ],
+  "edges": [
+    {
+      "source": "ads:ads.controller.ts:file",
+      "target": "module:fastify",
+      "type": "imports",
+      "metadata": { "imports": ["FastifyRequest","FastifyReply"], "line": 1 }
+    },
+    {
+      "source": "ads:ads.controller.ts:file",
+      "target": "ads:ads.service.ts:adsService",
+      "type": "imports",
+      "metadata": { "importPath": "./ads.service.js", "line": 2 }
+    },
+    {
+      "source": "ads:ads.controller.ts:file",
+      "target": "shared:response:sendSuccess",
+      "type": "imports",
+      "metadata": { "importPath": "../../shared/utils/response.js", "imports": ["sendSuccess","sendCreated","sendNoContent"], "line": 4 }
+    },
+    {
+      "source": "ads:ads.controller.ts:file",
+      "target": "shared:response:sendCreated",
+      "type": "imports",
+      "metadata": { "importPath": "../../shared/utils/response.js", "line": 4 }
+    },
+    {
+      "source": "ads:ads.controller.ts:file",
+      "target": "shared:response:sendNoContent",
+      "type": "imports",
+      "metadata": { "importPath": "../../shared/utils/response.js", "line": 4 }
+    },
+    {
+      "source": "ads:ads.controller.ts:createAdHandler",
+      "target": "ads:ads.service.ts:adsService",
+      "type": "calls",
+      "metadata": { "method": "adsService.create", "line": 8 }
+    },
+    {
+      "source": "ads:ads.controller.ts:createAdHandler",
+      "target": "shared:response:sendCreated",
+      "type": "calls",
+      "metadata": { "line": 9 }
+    },
+    {
+      "source": "ads:ads.controller.ts:listAdsHandler",
+      "target": "ads:ads.service.ts:adsService",
+      "type": "calls",
+      "metadata": { "method": "adsService.list", "line": 14 }
+    },
+    {
+      "source": "ads:ads.controller.ts:getAdHandler",
+      "target": "ads:ads.service.ts:adsService",
+      "type": "calls",
+      "metadata": { "method": "adsService.getById", "line": 20 }
+    },
+    {
+      "source": "ads:ads.controller.ts:getAdHandler",
+      "target": "shared:response:sendSuccess",
+      "type": "calls",
+      "metadata": { "line": 21 }
+    },
+    {
+      "source": "ads:ads.controller.ts:updateAdHandler",
+      "target": "ads:ads.service.ts:adsService",
+      "type": "calls",
+      "metadata": { "method": "adsService.update", "line": 27 }
+    },
+    {
+      "source": "ads:ads.controller.ts:updateAdHandler",
+      "target": "shared:response:sendSuccess",
+      "type": "calls",
+      "metadata": { "line": 28 }
+    },
+    {
+      "source": "ads:ads.controller.ts:deleteAdHandler",
+      "target": "ads:ads.service.ts:adsService",
+      "type": "calls",
+      "metadata": { "method": "adsService.remove", "line": 33 }
+    },
+    {
+      "source": "ads:ads.controller.ts:deleteAdHandler",
+      "target": "shared:response:sendNoContent",
+      "type": "calls",
+      "metadata": { "line": 34 }
+    },
+
+    {
+      "source": "ads:ads.routes.ts:file",
+      "target": "module:fastify",
+      "type": "imports",
+      "metadata": { "imports": ["FastifyInstance"], "line": 1 }
+    },
+    {
+      "source": "ads:ads.routes.ts:file",
+      "target": "shared:authenticate",
+      "type": "imports",
+      "metadata": { "importPath": "../../shared/middleware/authenticate.js", "line": 2 }
+    },
+    {
+      "source": "ads:ads.routes.ts:file",
+      "target": "ads:ads.controller.ts:file",
+      "type": "imports",
+      "metadata": { "importPath": "./ads.controller.js", "imports": ["createAdHandler","listAdsHandler","getAdHandler","updateAdHandler","deleteAdHandler"], "line": 3 }
+    },
+    {
+      "source": "ads:ads.routes.ts:adsRoutes",
+      "target": "shared:authenticate",
+      "type": "uses",
+      "metadata": { "role": "preHandler middleware", "lines": [6,7,8,9,10] }
+    },
+    {
+      "source": "ads:ads.routes.ts:adsRoutes",
+      "target": "ads:ads.controller.ts:createAdHandler",
+      "type": "binds",
+      "metadata": { "route": "POST /ads", "line": 6 }
+    },
+    {
+      "source": "ads:ads.routes.ts:adsRoutes",
+      "target": "ads:ads.controller.ts:listAdsHandler",
+      "type": "binds",
+      "metadata": { "route": "GET /ads", "line": 7 }
+    },
+    {
+      "source": "ads:ads.routes.ts:adsRoutes",
+      "target": "ads:ads.controller.ts:getAdHandler",
+      "type": "binds",
+      "metadata": { "route": "GET /ads/:id", "line": 8 }
+    },
+    {
+      "source": "ads:ads.routes.ts:adsRoutes",
+      "target": "ads:ads.controller.ts:updateAdHandler",
+      "type": "binds",
+      "metadata": { "route": "PATCH /ads/:id", "line": 9 }
+    },
+    {
+      "source": "ads:ads.routes.ts:adsRoutes",
+      "target": "ads:ads.controller.ts:deleteAdHandler",
+      "type": "binds",
+      "metadata": { "route": "DELETE /ads/:id", "line": 10 }
+    },
+
+    {
+      "source": "ads:ads.service.ts:file",
+      "target": "config:database:query",
+      "type": "imports",
+      "metadata": { "importPath": "../../config/database.js", "line": 1 }
+    },
+    {
+      "source": "ads:ads.service.ts:file",
+      "target": "shared:errors:AppError",
+      "type": "imports",
+      "metadata": { "importPath": "../../shared/errors/AppError.js", "line": 2 }
+    },
+    {
+      "source": "ads:ads.service.ts:file",
+      "target": "shared:constants:ERROR_CODES",
+      "type": "imports",
+      "metadata": { "importPath": "../../config/constants.js", "line": 3 }
+    },
+    {
+      "source": "ads:ads.service.ts:file",
+      "target": "shared:pagination:parsePaginationParams",
+      "type": "imports",
+      "metadata": { "importPath": "../../shared/utils/pagination.js", "line": 4 }
+    },
+    {
+      "source": "ads:ads.service.ts:file",
+      "target": "shared:pagination:buildPaginationMeta",
+      "type": "imports",
+      "metadata": { "importPath": "../../shared/utils/pagination.js", "line": 4 }
+    },
+    {
+      "source": "ads:ads.service.ts:AdsService",
+      "target": "ads:ads.service.ts:create",
+      "type": "contains",
+      "metadata": { "visibility": "public", "line": 8 }
+    },
+    {
+      "source": "ads:ads.service.ts:AdsService",
+      "target": "ads:ads.service.ts:list",
+      "type": "contains",
+      "metadata": { "visibility": "public", "line": 17 }
+    },
+    {
+      "source": "ads:ads.service.ts:AdsService",
+      "target": "ads:ads.service.ts:getById",
+      "type": "contains",
+      "metadata": { "visibility": "public", "line": 35 }
+    },
+    {
+      "source": "ads:ads.service.ts:AdsService",
+      "target": "ads:ads.service.ts:update",
+      "type": "contains",
+      "metadata": { "visibility": "public", "line": 48 }
+    },
+    {
+      "source": "ads:ads.service.ts:AdsService",
+      "target": "ads:ads.service.ts:remove",
+      "type": "contains",
+      "metadata": { "visibility": "public", "line": 75 }
+    },
+    {
+      "source": "ads:ads.service.ts:adsService",
+      "target": "ads:ads.service.ts:AdsService",
+      "type": "instance_of",
+      "metadata": { "line": 87 }
+    },
+    {
+      "source": "ads:ads.service.ts:create",
+      "target": "config:database:query",
+      "type": "calls",
+      "metadata": { "sql": "INSERT INTO dealer_ads ...", "line": 9 }
+    },
+    {
+      "source": "ads:ads.service.ts:list",
+      "target": "config:database:query",
+      "type": "calls",
+      "metadata": { "lines": [21,27] }
+    },
+    {
+      "source": "ads:ads.service.ts:list",
+      "target": "shared:pagination:parsePaginationParams",
+      "type": "calls",
+      "metadata": { "line": 18 }
+    },
+    {
+      "source": "ads:ads.service.ts:list",
+      "target": "shared:pagination:buildPaginationMeta",
+      "type": "calls",
+      "metadata": { "line": 32 }
+    },
+    {
+      "source": "ads:ads.service.ts:getById",
+      "target": "config:database:query",
+      "type": "calls",
+      "metadata": { "line": 36 }
+    },
+    {
+      "source": "ads:ads.service.ts:getById",
+      "target": "shared:errors:AppError",
+      "type": "throws",
+      "metadata": { "code": "ERROR_CODES.ADS_NOT_FOUND", "line": 42 }
+    },
+    {
+      "source": "ads:ads.service.ts:update",
+      "target": "ads:ads.service.ts:getById",
+      "type": "calls",
+      "metadata": { "line": 49 }
+    },
+    {
+      "source": "ads:ads.service.ts:update",
+      "target": "config:database:query",
+      "type": "calls",
+      "metadata": { "sql": "UPDATE dealer_ads ...", "line": 68 }
+    },
+    {
+      "source": "ads:ads.service.ts:remove",
+      "target": "ads:ads.service.ts:getById",
+      "type": "calls",
+      "metadata": { "line": 76 }
+    },
+    {
+      "source": "ads:ads.service.ts:remove",
+      "target": "config:database:query",
+      "type": "calls",
+      "metadata": { "sql": "DELETE FROM dealer_ads ...", "line": 79 }
+    },
+
+    {
+      "source": "directory:directory.controller.ts:file",
+      "target": "module:fastify",
+      "type": "imports",
+      "metadata": { "imports": ["FastifyRequest","FastifyReply"], "line": 1 }
+    },
+    {
+      "source": "directory:directory.controller.ts:file",
+      "target": "directory:directory.service.ts:directoryService",
+      "type": "imports",
+      "metadata": { "importPath": "./directory.service.js", "line": 2 }
+    },
+    {
+      "source": "directory:directory.controller.ts:listDirectoryHandler",
+      "target": "directory:directory.service.ts:directoryService",
+      "type": "calls",
+      "metadata": { "method": "directoryService.list", "line": 7 }
+    },
+
+    {
+      "source": "directory:directory.routes.ts:file",
+      "target": "module:fastify",
+      "type": "imports",
+      "metadata": { "imports": ["FastifyInstance"], "line": 1 }
+    },
+    {
+      "source": "directory:directory.routes.ts:file",
+      "target": "shared:authenticate",
+      "type": "imports",
+      "metadata": { "importPath": "../../shared/middleware/authenticate.js", "line": 2 }
+    },
+    {
+      "source": "directory:directory.routes.ts:file",
+      "target": "directory:directory.controller.ts:file",
+      "type": "imports",
+      "metadata": { "importPath": "./directory.controller.js", "line": 3 }
+    },
+    {
+      "source": "directory:directory.routes.ts:directoryRoutes",
+      "target": "shared:authenticate",
+      "type": "uses",
+      "metadata": { "role": "preHandler middleware", "line": 6 }
+    },
+    {
+      "source": "directory:directory.routes.ts:directoryRoutes",
+      "target": "directory:directory.controller.ts:listDirectoryHandler",
+      "type": "binds",
+      "metadata": { "route": "GET /directory", "line": 6 }
+    },
+
+    {
+      "source": "directory:directory.service.ts:file",
+      "target": "config:database:query",
+      "type": "imports",
+      "metadata": { "importPath": "../../config/database.js", "line": 1 }
+    },
+    {
+      "source": "directory:directory.service.ts:file",
+      "target": "shared:pagination:parsePaginationParams",
+      "type": "imports",
+      "metadata": { "importPath": "../../shared/utils/pagination.js", "line": 2 }
+    },
+    {
+      "source": "directory:directory.service.ts:file",
+      "target": "shared:pagination:buildPaginationMeta",
+      "type": "imports",
+      "metadata": { "importPath": "../../shared/utils/pagination.js", "line": 2 }
+    },
+    {
+      "source": "directory:directory.service.ts:DirectoryService",
+      "target": "directory:directory.service.ts:list",
+      "type": "contains",
+      "metadata": { "visibility": "public", "line": 6 }
+    },
+    {
+      "source": "directory:directory.service.ts:directoryService",
+      "target": "directory:directory.service.ts:DirectoryService",
+      "type": "instance_of",
+      "metadata": { "line": 30 }
+    },
+    {
+      "source": "directory:directory.service.ts:list",
+      "target": "config:database:query",
+      "type": "calls",
+      "metadata": { "lines": [19,22] }
+    },
+    {
+      "source": "directory:directory.service.ts:list",
+      "target": "shared:pagination:parsePaginationParams",
+      "type": "calls",
+      "metadata": { "line": 7 }
+    },
+    {
+      "source": "directory:directory.service.ts:list",
+      "target": "shared:pagination:buildPaginationMeta",
+      "type": "calls",
+      "metadata": { "line": 26 }
+    }
+  ]
+}

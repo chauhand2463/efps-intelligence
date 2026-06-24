@@ -1,0 +1,74 @@
+[
+  {
+    "order": 1,
+    "title": "Project Overview",
+    "description": "Start with the README to understand the project's purpose — a modern Fair Price Shop management platform replacing Gujarat's legacy government PDS portal. The architecture follows: Dealer Browser → Next.js Frontend → Fastify API (18 module triads) → PostgreSQL 16 + Redis 7, with BullMQ background workers for sync, SMS, and reporting.",
+    "nodeIds": ["document:batch-14--readme-md", "document:batch-14--data-flow-md", "document:batch-14--components-md"]
+  },
+  {
+    "order": 2,
+    "title": "Backend Entry Point & App Bootstrap",
+    "description": "server.ts is the process entrypoint — it calls buildApp(), runs DB migrations, connects Redis, starts the HTTP listener, and registers graceful shutdown (SIGTERM/SIGINT). app.ts creates the Fastify instance, registers all plugins (cors, helmet, rate-limit, swagger, metrics, multipart, auth/cookie), adds health/ready/metrics endpoints, and mounts all 18 module route groups under /api/v1.",
+    "nodeIds": ["file:efps-backend/src/server.ts", "file:efps-backend/src/app.ts", "function:main", "function:buildApp", "function:gracefulShutdown"]
+  },
+  {
+    "order": 3,
+    "title": "Configuration Layer & Infrastructure",
+    "description": "The config module validates all environment variables via Zod (db, Redis, JWT, encryption keys, sync, SMS, CORS, R2, logging). database.ts manages PostgreSQL primary/replica pools with slow-query logging and a transaction helper. redis.ts provides lazy-connect singletons for general Redis and BullMQ. constants.ts defines commodities, error codes, and domain constants used across the backend.",
+    "nodeIds": ["module:config", "file:efps-backend/src/config/index.ts", "file:efps-backend/src/config/database.ts", "file:efps-backend/src/config/redis.ts", "file:efps-backend/src/config/constants.ts", "config:database", "config:redis"]
+  },
+  {
+    "order": 4,
+    "title": "Shared Infrastructure: Middleware, Errors, Utils, Events",
+    "description": "The shared layer provides the backbone: JWT authentication (authenticate.ts), role-based authorization (authorize.ts, authorizeSelf()), idempotency key deduplication, audit logging, and FPS ID validation. The error system has AppError base class with AuthError (401), ForbiddenError (403), ValidationError (400) subtypes, plus a global Fastify error handler. Utils include Pino logger, JWT sign/verify, Argon2 hashing, AES-256-GCM encryption, OTP generation, PDF via Playwright, pagination helpers, and a circuit breaker. The domain event bus (EventBus) enqueues events to BullMQ for async processing.",
+    "nodeIds": ["module:shared-middleware", "module:shared-errors", "module:shared-utils", "module:shared-events", "file:efps-backend/src/shared/middleware/authenticate.ts", "file:efps-backend/src/shared/errors/error-handler.ts", "function:errorHandler", "file:efps-backend/src/shared/utils/token.ts", "file:efps-backend/src/shared/utils/hash.ts", "file:efps-backend/src/shared/utils/encrypt.ts", "class:CircuitBreaker", "class:EventBus", "file:symbol:const:eventBus"]
+  },
+  {
+    "order": 5,
+    "title": "Database Schema — 31 Sequential Migrations",
+    "description": "The migration runner applies .sql files from migrations/ dir, tracking applied migrations in a _migrations table. The sequence builds the schema from core entities (001: dealers, beneficiaries, stock_allocations, transactions) through auth support (sessions, OTP, audit logs), financial tables (commissions, income/expense, TDS), sync infrastructure (sync_logs, sync_jobs, sync_quarantine, system_events), MDM/ICDS, Gujarat admin hierarchy, and culminates in the enterprise ERP redesign (031) adding items, stock_ledger, transaction_line_items, and financial_ledger with auto-triggers.",
+    "nodeIds": ["concept:migration-group", "file:db-migration-runner-ts", "file:mig-001-init-tables", "file:mig-007-add-commissions", "file:mig-015-add-govt-sync-enhancements", "file:mig-026-enterprise-sync-infrastructure", "file:mig-030-create-stock-entry-system", "file:mig-031-enterprise-erp-redesign"]
+  },
+  {
+    "order": 6,
+    "title": "Core Business Modules: Route → Controller → Service Pattern",
+    "description": "Each of the 18 backend modules follows a consistent triad: *.routes.ts (Fastify route registration with middleware), *.controller.ts (request handlers calling service methods), *.service.ts (business logic with DB queries). Key modules: auth (login with JWT rotation, OTP password reset, cookie management), dealer (register, lookup, heartbeat), beneficiary (CRUD with text search), transaction (create with stock deduction, monthly summaries, pending beneficiaries), stock (allocations, history), and reports (monthly, audit log, PDF/CSV export). The domain types and enums are shared between backend (models.ts, enums.ts) and frontend (types.ts).",
+    "nodeIds": ["module:dealer", "file:efps-backend/src/modules/auth/auth.service.ts", "file:efps-backend/src/modules/beneficiary/beneficiary.service.ts", "module:transaction", "module:stock", "module:report", "file:symbol:interface:Dealer", "file:symbol:interface:Transaction", "file:efps-backend/src/shared/types/models.ts", "file:efps-backend/src/shared/types/enums.ts"]
+  },
+  {
+    "order": 7,
+    "title": "Financial Modules: Commission Engine & Finance Tracking",
+    "description": "The commission module handles rate management (per-commodity), monthly commission calculation with TDS deduction, settlement lifecycle, and payment recording — triggered automatically by the TRANSACTION_COMPLETED domain event. The finance module tracks dealer income and expense entries with profit/loss calculations that include commission income. Both modules use the standard route→controller→service pattern and feed into the commission calculator and income-expense pages on the frontend.",
+    "nodeIds": ["module:commission", "class:efps-backend/src/modules/commission/commission.service.ts:CommissionService", "file:efps-backend/src/modules/commission/commission.controller.ts", "module:finance", "file:finance:service", "concept:concept-commission-engine"]
+  },
+  {
+    "order": 8,
+    "title": "Background Job System — BullMQ Workers",
+    "description": "The application uses BullMQ with 8 queue/worker pairs, all backed by Redis. Workers include: audit-flush (async audit log persistence), daily-report (scheduled at 22:00 for daily dealer summaries), domain-events (event processor handling TRANSACTION_COMPLETED → commission calc, COMMISSION_SETTLED → income entry, STOCK_LOW alerts, cache invalidation), session-cleanup (expired session/OTP cleanup), sms-otp (SMS delivery via MSG91 with circuit breaker), sync-scheduler (polls sync_scheduler_config, creates sync jobs), and three sync workers (efps-sync, ipds-sync, govt-data-sync). Workers use exponential backoff, job lifecycle tracking, and typed payloads.",
+    "nodeIds": ["concept:concept-job-system", "file:jobs-domain-events", "file:jobs-daily-report", "file:jobs-sms-otp", "file:jobs-session-cleanup", "file:jobs-audit-flush", "file:jobs-sync-scheduler"]
+  },
+  {
+    "order": 9,
+    "title": "Government Portal Sync Pipeline — Playwright Automation",
+    "description": "The most architecturally significant subsystem: sync-scheduler polls sync_scheduler_config → creates sync_jobs → enqueues efps-sync or ipds-sync workers. These workers use Playwright headless Chromium to automate login on Gujarat's ASP.NET WebForms portals (eFPS and IPDS), solve CAPTCHAs via Tesseract OCR, scrape beneficiary/transaction/stock/social audit data, decrypt stored dealer credentials (AES-256-GCM), normalize and validate records, post to internal sync API, and emit domain events. The govt-data-sync worker handles CSV/API-based bulk imports from government data sources. Failed records go to sync_quarantine; all operations are tracked via system_events.",
+    "nodeIds": ["concept:concept-sync-pipeline", "file:jobs-efps-sync", "file:jobs-ipds-sync", "file:jobs-govt-data-sync", "file:efps-backend/src/shared/sync/normalization.service.ts", "file:efps-backend/src/shared/sync/validation.service.ts", "file:efps-backend/src/shared/sync/quarantine.service.ts", "file:efps-backend/src/shared/sync/system-events.service.ts", "module:sync"]
+  },
+  {
+    "order": 10,
+    "title": "Frontend Entry Point, Auth & Providers",
+    "description": "The Next.js frontend boots from src/app/layout.tsx (root layout with Inter font and Providers wrapper). providers.tsx sets up React Query (30s stale time, 5m GC) and the AuthProvider. The auth-context manages AuthState with login/logout via API and session restoration on mount. Protected routes use RequireAuth (redirects to /login if unauthenticated, checks role authorization). The dashboard layout wraps pages with Sidebar and PageTransition animations. The home route (/) immediately redirects to /dashboard.",
+    "nodeIds": ["file:efps-frontend/src/app/layout.tsx", "file:comp:efps-frontend\\src\\app\\providers.tsx:Providers", "file:efps-frontend\\src\\lib\\auth-context.tsx", "function:efps-frontend\\src\\lib\\auth-context.tsx:AuthProvider", "file:comp:efps-frontend\\src\\lib\\auth-guard.tsx:RequireAuth", "file:efps-frontend/src/app/(dashboard)/layout.tsx", "file:efps-frontend/src/app/page.tsx"]
+  },
+  {
+    "order": 11,
+    "title": "Frontend Data Layer: API Client, Types & React Query Hooks",
+    "description": "The API layer is built on Axios with auto token refresh (401 queue with singleton refresh promise), request IDs, and envelope unwrapping (api.ts). Types.ts is the source-of-truth for all DTOs (DealerDto, Beneficiary, Transaction, StockAllocation, DashboardSummary, MasterDashboard, SyncJob, etc.) mirroring the backend models. The api-hooks.ts file provides 12 domain-specific React Query hooks (useBeneficiaries, useTransactions, useStock, useFinance, useCommission, useDashboard, useProfile, useSync, etc.) plus a generic usePaginatedList, all consuming the api facade.",
+    "nodeIds": ["file:efps-frontend\\src\\lib\\api.ts", "class:efps-frontend\\src\\lib\\api.ts:ApiRequestError", "file:iface:efps-frontend\\src\\lib\\types.ts:ApiResponse", "file:iface:efps-frontend\\src\\lib\\types.ts:DealerDto", "file:iface:efps-frontend\\src\\lib\\types.ts:MasterDashboard", "file:efps-frontend\\src\\lib\\api-hooks.ts", "function:efps-frontend\\src\\lib\\api-hooks.ts:usePaginatedList"]
+  },
+  {
+    "order": 12,
+    "title": "Deployment & Operations",
+    "description": "Production deployment uses Docker (node:22-alpine for app, postgres:16-alpine, redis:7-alpine) with a multi-stage Dockerfile, docker-compose.yml defining 4 services (postgres, redis, app, sync-worker), and a Playwright-based sync worker image (mcr.microsoft.com/playwright:v1.52.0-jammy). PM2 manages the Node process in cluster mode with wait_ready pattern for graceful startup. Development uses a PowerShell script (dev.ps1) with tsx-based hot-reload. The vitest config enforces 80% coverage on service files. ESLint (typescript-eslint) and TypeScript strict mode enforce code quality.",
+    "nodeIds": ["file:file-root-dockerfile", "file:file-root-compose", "file:file-docker-dockerfile-worker", "service:service-app-prod", "service:service-sync-worker", "config:batch-13--ecosystem-config", "file:batch-13--dev-ps1", "config:efps-backend/vitest.config.ts", "config:efps-backend/eslint.config.js", "config:efps-backend/tsconfig.json"]
+  }
+]

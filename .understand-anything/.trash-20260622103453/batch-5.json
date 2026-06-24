@@ -1,0 +1,775 @@
+{
+  "batch": 5,
+  "description": "Backend database layer (migrations, queries, seed) and background job workers (BullMQ queues and workers)",
+  "generatedAt": "2026-06-22T10:04:00.000Z",
+  "projectRoot": "E:\\efps",
+  "nodes": [
+    {
+      "id": "db-migration-runner-ts",
+      "type": "file",
+      "label": "migration-runner.ts",
+      "filePath": "efps-backend/src/database/migration-runner.ts",
+      "language": "typescript",
+      "lines": 78,
+      "description": "Migration runner — reads .sql files from migrations/ dir, tracks applied migrations in _migrations table, applies pending ones in transaction with hash-based change detection",
+      "exports": ["runMigrations"],
+      "imports": [
+        "node:fs",
+        "node:path",
+        "node:url",
+        "../config/database.js"
+      ],
+      "dependencies": ["db-config-database"],
+      "usedBy": []
+    },
+    {
+      "id": "migration-group",
+      "type": "concept",
+      "label": "DatabaseMigrations (31 files)",
+      "description": "Sequential SQL migration files (001-031) that build the full eFPS schema from core tables through enterprise ERP redesign",
+      "children": [
+        "mig-001-init-tables",
+        "mig-002-add-sessions",
+        "mig-003-add-otp",
+        "mig-004-add-audit-log",
+        "mig-005-add-notifications",
+        "mig-006-inventory-movements",
+        "mig-007-add-commissions",
+        "mig-008-add-finance",
+        "mig-009-add-ads",
+        "mig-010-add-mdm",
+        "mig-011-add-sync-logs",
+        "mig-012-add-social-audit",
+        "mig-013-add-missing-tables",
+        "mig-014-add-views",
+        "mig-015-add-govt-sync-enhancements",
+        "mig-016-add-gujarat-hierarchy",
+        "mig-017-add-dealer-credentials",
+        "mig-018-add-sync-jobs",
+        "mig-019-add-composite-indexes",
+        "mig-020-add-mdm-monthly-records",
+        "mig-021-add-dealer-credential-iv-password",
+        "mig-022-add-sync-scheduler-source-url",
+        "mig-023-add-tds-rates",
+        "mig-024-add-on-delete-cascade",
+        "mig-025-add-updated-at-trigger",
+        "mig-026-enterprise-sync-infrastructure",
+        "mig-027-auth-refresh-optimization",
+        "mig-028-add-commission-payments",
+        "mig-029-add-sync-columns",
+        "mig-030-create-stock-entry-system",
+        "mig-031-enterprise-erp-redesign"
+      ]
+    },
+    {
+      "id": "mig-001-init-tables",
+      "type": "migration",
+      "label": "001_init_tables.sql",
+      "filePath": "efps-backend/src/database/migrations/001_init_tables.sql",
+      "lines": 80,
+      "description": "Core schema: dealers, beneficiaries, stock_allocations, transactions — the 4 primary entities of the FPS domain",
+      "tablesCreated": ["dealers", "beneficiaries", "stock_allocations", "transactions"]
+    },
+    {
+      "id": "mig-002-add-sessions",
+      "type": "migration",
+      "label": "002_add_sessions.sql",
+      "filePath": "efps-backend/src/database/migrations/002_add_sessions.sql",
+      "lines": 13,
+      "description": "Sessions table for dealer auth with refresh token hashing",
+      "tablesCreated": ["sessions"]
+    },
+    {
+      "id": "mig-003-add-otp",
+      "type": "migration",
+      "label": "003_add_otp.sql",
+      "filePath": "efps-backend/src/database/migrations/003_add_otp.sql",
+      "description": "OTP requests table for mobile-based authentication flows"
+    },
+    {
+      "id": "mig-004-add-audit-log",
+      "type": "migration",
+      "label": "004_add_audit_log.sql",
+      "filePath": "efps-backend/src/database/migrations/004_add_audit_log.sql",
+      "description": "Audit logs table tracking user actions on entities"
+    },
+    {
+      "id": "mig-005-add-notifications",
+      "type": "migration",
+      "label": "005_add_notifications.sql",
+      "filePath": "efps-backend/src/database/migrations/005_add_notifications.sql",
+      "description": "Notifications table for in-app dealer alerts"
+    },
+    {
+      "id": "mig-006-inventory-movements",
+      "type": "migration",
+      "label": "006_inventory_movements.sql",
+      "filePath": "efps-backend/src/database/migrations/006_inventory_movements.sql",
+      "description": "Inventory movements table tracking stock in/out"
+    },
+    {
+      "id": "mig-007-add-commissions",
+      "type": "migration",
+      "label": "007_add_commissions.sql",
+      "filePath": "efps-backend/src/database/migrations/007_add_commissions.sql",
+      "lines": 52,
+      "description": "Commission engine: commission_rates, commissions, bank_settlements — dealer commission calculation with TDS",
+      "tablesCreated": ["commission_rates", "commissions", "bank_settlements"]
+    },
+    {
+      "id": "mig-008-add-finance",
+      "type": "migration",
+      "label": "008_add_finance.sql",
+      "filePath": "efps-backend/src/database/migrations/008_add_finance.sql",
+      "description": "Finance tables: income_entries, expense_entries for dealer P&L"
+    },
+    {
+      "id": "mig-009-add-ads",
+      "type": "migration",
+      "label": "009_add_ads.sql",
+      "filePath": "efps-backend/src/database/migrations/009_add_ads.sql",
+      "description": "Advertisement/circular display tables for dealer dashboard"
+    },
+    {
+      "id": "mig-010-add-mdm",
+      "type": "migration",
+      "label": "010_add_mdm.sql",
+      "filePath": "efps-backend/src/database/migrations/010_add_mdm.sql",
+      "description": "Mid-Day Meal tables: MDM allocations, distributions, stock tracking"
+    },
+    {
+      "id": "mig-011-add-sync-logs",
+      "type": "migration",
+      "label": "011_add_sync_logs.sql",
+      "filePath": "efps-backend/src/database/migrations/011_add_sync_logs.sql",
+      "description": "Sync logs tracking all government data import/export operations"
+    },
+    {
+      "id": "mig-012-add-social-audit",
+      "type": "migration",
+      "label": "012_add_social_audit.sql",
+      "filePath": "efps-backend/src/database/migrations/012_add_social_audit.sql",
+      "description": "Social audit tables for IPDS portal scraped data"
+    },
+    {
+      "id": "mig-013-add-missing-tables",
+      "type": "migration",
+      "label": "013_add_missing_tables.sql",
+      "filePath": "efps-backend/src/database/migrations/013_add_missing_tables.sql",
+      "description": "Adds missing tables identified during integration testing"
+    },
+    {
+      "id": "mig-014-add-views",
+      "type": "migration",
+      "label": "014_add_views.sql",
+      "filePath": "efps-backend/src/database/migrations/014_add_views.sql",
+      "description": "Materialized/reporting views for dealer dashboards and analytics"
+    },
+    {
+      "id": "mig-015-add-govt-sync-enhancements",
+      "type": "migration",
+      "label": "015_add_govt_sync_enhancements.sql",
+      "filePath": "efps-backend/src/database/migrations/015_add_govt_sync_enhancements.sql",
+      "lines": 93,
+      "description": "Govt PDS sync: extends beneficiaries with portal fields, adds govt_beneficiary_imports, govt_change_log, sync_scheduler_config, sync_import_batches",
+      "tablesCreated": ["govt_beneficiary_imports", "govt_change_log", "sync_scheduler_config", "sync_import_batches"],
+      "tablesAltered": ["beneficiaries"]
+    },
+    {
+      "id": "mig-016-add-gujarat-hierarchy",
+      "type": "migration",
+      "label": "016_add_gujarat_hierarchy.sql",
+      "filePath": "efps-backend/src/database/migrations/016_add_gujarat_hierarchy.sql",
+      "description": "Gujarat admin hierarchy: districts, talukas, villages reference data"
+    },
+    {
+      "id": "mig-017-add-dealer-credentials",
+      "type": "migration",
+      "label": "017_add_dealer_credentials.sql",
+      "filePath": "efps-backend/src/database/migrations/017_add_dealer_credentials.sql",
+      "description": "Dealer credentials table storing encrypted portal login info"
+    },
+    {
+      "id": "mig-018-add-sync-jobs",
+      "type": "migration",
+      "label": "018_add_sync_jobs.sql",
+      "filePath": "efps-backend/src/database/migrations/018_add_sync_jobs.sql",
+      "description": "Sync jobs table tracking individual sync operation lifecycle"
+    },
+    {
+      "id": "mig-019-add-composite-indexes",
+      "type": "migration",
+      "label": "019_add_composite_indexes.sql",
+      "filePath": "efps-backend/src/database/migrations/019_add_composite_indexes.sql",
+      "description": "Composite indexes for query performance optimization"
+    },
+    {
+      "id": "mig-020-add-mdm-monthly-records",
+      "type": "migration",
+      "label": "020_add_mdm_monthly_records.sql",
+      "filePath": "efps-backend/src/database/migrations/020_add_mdm_monthly_records.sql",
+      "description": "MDM monthly record tables for school-level nutrition tracking"
+    },
+    {
+      "id": "mig-021-add-dealer-credential-iv-password",
+      "type": "migration",
+      "label": "021_add_dealer_credential_iv_password.sql",
+      "filePath": "efps-backend/src/database/migrations/021_add_dealer_credential_iv_password.sql",
+      "description": "Adds separate IV/password columns for credential encryption upgrade"
+    },
+    {
+      "id": "mig-022-add-sync-scheduler-source-url",
+      "type": "migration",
+      "label": "022_add_sync_scheduler_source_url.sql",
+      "filePath": "efps-backend/src/database/migrations/022_add_sync_scheduler_source_url.sql",
+      "description": "Adds source_url to sync_scheduler_config for per-dealer portal URL"
+    },
+    {
+      "id": "mig-023-add-tds-rates",
+      "type": "migration",
+      "label": "023_add_tds_rates.sql",
+      "filePath": "efps-backend/src/database/migrations/023_add_tds_rates.sql",
+      "description": "TDS rates table for per-commodity tax deduction configuration"
+    },
+    {
+      "id": "mig-024-add-on-delete-cascade",
+      "type": "migration",
+      "label": "024_add_on_delete_cascade.sql",
+      "filePath": "efps-backend/src/database/migrations/024_add_on_delete_cascade.sql",
+      "description": "Adds ON DELETE CASCADE to existing FK relationships for referential integrity"
+    },
+    {
+      "id": "mig-025-add-updated-at-trigger",
+      "type": "migration",
+      "label": "025_add_updated_at_trigger.sql",
+      "filePath": "efps-backend/src/database/migrations/025_add_updated_at_trigger.sql",
+      "description": "Auto-update trigger function for updated_at columns across tables"
+    },
+    {
+      "id": "mig-026-enterprise-sync-infrastructure",
+      "type": "migration",
+      "label": "026_enterprise_sync_infrastructure.sql",
+      "filePath": "efps-backend/src/database/migrations/026_enterprise_sync_infrastructure.sql",
+      "lines": 100,
+      "description": "Enterprise sync: sync_jobs enhancements, sync_quarantine, system_events, service_tokens, scheduler config columns",
+      "tablesCreated": ["sync_quarantine", "system_events", "service_tokens"],
+      "tablesAltered": ["sync_jobs", "sync_scheduler_config", "beneficiaries", "transactions", "stock_allocations", "lifting_records"]
+    },
+    {
+      "id": "mig-027-auth-refresh-optimization",
+      "type": "migration",
+      "label": "027_auth_refresh_optimization.sql",
+      "filePath": "efps-backend/src/database/migrations/027_auth_refresh_optimization.sql",
+      "description": "Auth refresh token optimization and index improvements"
+    },
+    {
+      "id": "mig-028-add-commission-payments",
+      "type": "migration",
+      "label": "028_add_commission_payments.sql",
+      "filePath": "efps-backend/src/database/migrations/028_add_commission_payments.sql",
+      "description": "Commission payments table for tracking actual disbursements to dealers"
+    },
+    {
+      "id": "mig-029-add-sync-columns",
+      "type": "migration",
+      "label": "029_add_sync_columns.sql",
+      "filePath": "efps-backend/src/database/migrations/029_add_sync_columns.sql",
+      "description": "Adds sync-related columns (source_synced_at, sync_job_id, version) to domain tables"
+    },
+    {
+      "id": "mig-030-create-stock-entry-system",
+      "type": "migration",
+      "label": "030_create_stock_entry_system.sql",
+      "filePath": "efps-backend/src/database/migrations/030_create_stock_entry_system.sql",
+      "lines": 38,
+      "description": "Stock entry system: stock_entries (government qty vs received/damaged) and per-beneficiary allocations table",
+      "tablesCreated": ["stock_entries", "allocations"]
+    },
+    {
+      "id": "mig-031-enterprise-erp-redesign",
+      "type": "migration",
+      "label": "031_enterprise_erp_redesign.sql",
+      "filePath": "efps-backend/src/database/migrations/031_enterprise_erp_redesign.sql",
+      "lines": 373,
+      "description": "Major ERP redesign resolving 4 architectural conflicts: transaction_source enum to prevent double-deductions, inventory_department (REGULAR_FPS/MDM/ICDS), items + stock_ledger + stock_ledger_movements, transaction_line_items with temporal pricing snapshot, financial_ledger separating physical from financial, auto-triggers for stock/financial posting, vw_stock_ledger_rolling and vw_financial_summary views",
+      "tablesCreated": ["items", "stock_ledger", "stock_ledger_movements", "transaction_line_items", "financial_ledger"],
+      "tablesAltered": ["transactions"],
+      "typesCreated": ["transaction_source", "inventory_department"]
+    },
+    {
+      "id": "db-queries-index-ts",
+      "type": "file",
+      "label": "queries/index.ts (MISSING FROM DISK — empty queries/ dir)",
+      "filePath": "efps-backend/src/database/queries/index.ts",
+      "description": "Barrel export for all query modules — directory is empty on disk, likely planned re-export point for beneficiary.queries, dealer.queries, transaction.queries, report.queries",
+      "exists": false
+    },
+    {
+      "id": "db-queries-beneficiary-ts",
+      "type": "file",
+      "label": "beneficiary.queries.ts (MISSING FROM DISK)",
+      "filePath": "efps-backend/src/database/queries/beneficiary.queries.ts",
+      "description": "Beneficiary database query functions (CRUD, search, bulk operations) — does not exist on disk",
+      "exists": false
+    },
+    {
+      "id": "db-queries-dealer-ts",
+      "type": "file",
+      "label": "dealer.queries.ts (MISSING FROM DISK)",
+      "filePath": "efps-backend/src/database/queries/dealer.queries.ts",
+      "description": "Dealer database query functions (CRUD, auth lookups, sync config) — does not exist on disk",
+      "exists": false
+    },
+    {
+      "id": "db-queries-transaction-ts",
+      "type": "file",
+      "label": "transaction.queries.ts (MISSING FROM DISK)",
+      "filePath": "efps-backend/src/database/queries/transaction.queries.ts",
+      "description": "Transaction database query functions (CRUD, aggregations, monthly summaries) — does not exist on disk",
+      "exists": false
+    },
+    {
+      "id": "db-queries-report-ts",
+      "type": "file",
+      "label": "report.queries.ts (MISSING FROM DISK)",
+      "filePath": "efps-backend/src/database/queries/report.queries.ts",
+      "description": "Report/analytics query functions (dashboard aggregations, financial reports) — does not exist on disk",
+      "exists": false
+    },
+    {
+      "id": "db-seed-ts",
+      "type": "file",
+      "label": "seed.ts (MISSING FROM DISK — empty seeds/ dir)",
+      "filePath": "efps-backend/src/database/seed.ts",
+      "description": "Database seeder for development/test data — directory is empty on disk, does not exist",
+      "exists": false
+    },
+    {
+      "id": "jobs-audit-flush",
+      "type": "file",
+      "label": "audit-flush.job.ts",
+      "filePath": "efps-backend/src/jobs/audit-flush.job.ts",
+      "language": "typescript",
+      "lines": 63,
+      "description": "BullMQ queue + worker for async audit log flushing — accepts AuditFlushPayload, inserts into audit_logs table",
+      "exports": ["auditFlushQueue", "enqueueAuditLog", "auditFlushWorker"],
+      "imports": ["bullmq", "../config/redis.js", "../config/database.js"],
+      "dependencies": ["db-config-redis", "db-config-database"],
+      "queueName": "audit-flush",
+      "queueType": "writer"
+    },
+    {
+      "id": "jobs-daily-report",
+      "type": "file",
+      "label": "daily-report.job.ts",
+      "filePath": "efps-backend/src/jobs/daily-report.job.ts",
+      "language": "typescript",
+      "lines": 77,
+      "description": "BullMQ queue + worker for daily dealer reports — aggregates transactions, counts pending beneficiaries, generates summary notification (scheduled at 22:00 daily)",
+      "exports": ["dailyReportQueue", "enqueueDailyReport", "dailyReportWorker"],
+      "imports": ["bullmq", "../config/redis.js", "../config/database.js"],
+      "dependencies": ["db-config-redis", "db-config-database"],
+      "queueName": "daily-report",
+      "queueType": "scheduled"
+    },
+    {
+      "id": "jobs-domain-events",
+      "type": "file",
+      "label": "domain-events.queue.ts",
+      "filePath": "efps-backend/src/jobs/domain-events.queue.ts",
+      "language": "typescript",
+      "lines": 257,
+      "description": "BullMQ queue + worker for domain event processing — handles TRANSACTION_COMPLETED (commission calc + low stock alert), LIFTING_CREATED, COMMISSION_SETTLED (income entry), BENEFICIARY_CREATED, ALLOCATION_CREATED, SYNC_COMPLETED, STOCK_LOW, BENEFICIARY_UPDATED, ALLOCATION_UPDATED events; uses circuit-breaker patterns and Redis cache invalidation",
+      "exports": ["domainEventsQueue", "enqueueDomainEvent", "domainEventsWorker"],
+      "imports": ["bullmq", "../config/redis.js", "../config/database.js", "../shared/events/event-bus.js"],
+      "dependencies": ["db-config-redis", "db-config-database", "shared-event-bus"],
+      "queueName": "domain-events",
+      "queueType": "event-processor"
+    },
+    {
+      "id": "jobs-session-cleanup",
+      "type": "file",
+      "label": "session-cleanup.job.ts",
+      "filePath": "efps-backend/src/jobs/session-cleanup.job.ts",
+      "language": "typescript",
+      "lines": 54,
+      "description": "BullMQ worker for periodic session cleanup — deletes expired sessions, marks expired OTPs, cleans stale Redis online_dealers set",
+      "exports": ["sessionCleanupQueue", "sessionCleanupWorker"],
+      "imports": ["bullmq", "../config/redis.js", "../config/database.js"],
+      "dependencies": ["db-config-redis", "db-config-database"],
+      "queueName": "session-cleanup",
+      "queueType": "maintenance"
+    },
+    {
+      "id": "jobs-sms-otp",
+      "type": "file",
+      "label": "sms-otp.job.ts",
+      "filePath": "efps-backend/src/jobs/sms-otp.job.ts",
+      "language": "typescript",
+      "lines": 101,
+      "description": "BullMQ queue + worker for SMS OTP delivery — supports mock (console) and MSG91 provider with circuit breaker for SMS API resilience; handles password_reset, verify_mobile, 2fa purposes",
+      "exports": ["smsOtpQueue", "enqueueSmsOtp", "smsOtpWorker"],
+      "imports": ["bullmq", "../config/redis.js", "../config/index.js", "../shared/utils/circuit-breaker.js"],
+      "dependencies": ["db-config-redis", "app-config", "shared-circuit-breaker"],
+      "queueName": "sms-otp",
+      "queueType": "notification"
+    },
+    {
+      "id": "jobs-sync-scheduler",
+      "type": "file",
+      "label": "sync/sync-scheduler.job.ts",
+      "filePath": "efps-backend/src/jobs/sync/sync-scheduler.job.ts",
+      "language": "typescript",
+      "lines": 91,
+      "description": "BullMQ queue + worker that checks sync_scheduler_config for pending syncs, creates sync_jobs records, and enqueues efps-sync workers with exponential backoff and jitter; processes up to 50 dealers per run",
+      "exports": ["syncSchedulerQueue", "syncSchedulerWorker"],
+      "imports": ["bullmq", "../../config/redis.js", "../../config/database.js", "./efps-sync.worker.js"],
+      "dependencies": ["db-config-redis", "db-config-database", "jobs-efps-sync"],
+      "queueName": "sync-scheduler",
+      "queueType": "scheduler"
+    },
+    {
+      "id": "jobs-ipds-sync",
+      "type": "file",
+      "label": "sync/ipds-sync.worker.ts",
+      "filePath": "efps-backend/src/jobs/sync/ipds-sync.worker.ts",
+      "language": "typescript",
+      "lines": 407,
+      "description": "Playwright automation worker for IPDS (Gujarat PDS) social audit portal — decrypts dealer credentials, logs in via ASP.NET WebForms (with CAPTCHA solving via Tesseract OCR), scrapes social audit table data, posts to internal sync API; supports mock mode, circuit breaker, and sync_job lifecycle tracking",
+      "exports": ["ipdsSyncQueue", "enqueueIpdsSync", "ipdsSyncWorker"],
+      "imports": ["bullmq", "playwright", "tesseract.js", "../../config/redis.js", "../../config/database.js", "../../shared/utils/encrypt.js", "../../shared/utils/logger.js", "../../shared/events/index.js", "../../shared/utils/circuit-breaker.js", "../../config/index.js", "crypto"],
+      "dependencies": ["db-config-redis", "db-config-database", "shared-encrypt", "shared-logger", "shared-event-bus", "shared-circuit-breaker", "app-config"],
+      "queueName": "ipds-sync",
+      "queueType": "sync-worker"
+    },
+    {
+      "id": "jobs-govt-data-sync",
+      "type": "file",
+      "label": "sync/govt-data-sync.job.ts",
+      "filePath": "efps-backend/src/jobs/sync/govt-data-sync.job.ts",
+      "language": "typescript",
+      "lines": 282,
+      "description": "BullMQ queue + worker for government beneficiary data sync — fetches CSV/API data from govt portal, parses with CSV parser, imports via govtImporterService, marks deactivated beneficiaries, updates sync logs and scheduler config, emits SYNC_COMPLETED and BENEFICIARY_UPDATED domain events; supports full state and district-level sync orchestration",
+      "exports": ["govtDataSyncQueue", "enqueueGovtSync", "enqueueFullStateSync", "enqueueDistrictSync", "govtDataSyncWorker"],
+      "imports": ["bullmq", "../../config/redis.js", "../../config/database.js", "../../modules/sync/govt-importer.service.js", "../../shared/events/index.js"],
+      "dependencies": ["db-config-redis", "db-config-database", "module-govt-importer", "shared-event-bus"],
+      "queueName": "govt-data-sync",
+      "queueType": "sync-worker"
+    },
+    {
+      "id": "jobs-efps-sync",
+      "type": "file",
+      "label": "sync/efps-sync.worker.ts",
+      "filePath": "efps-backend/src/jobs/sync/efps-sync.worker.ts",
+      "language": "typescript",
+      "lines": 477,
+      "description": "Playwright automation worker for eFPS Gujarat portal — decrypts dealer credentials, solves CAPTCHA with Tesseract OCR, scrapes beneficiaries, transactions, and stock allocations from ASP.NET WebForms, maps to internal format, posts to internal sync API; supports full/incremental/priority sync modes, circuit breaker, and sync_job lifecycle tracking",
+      "exports": ["efpsSyncQueue", "enqueueEfpsSync", "efpsSyncWorker"],
+      "imports": ["bullmq", "playwright", "tesseract.js", "../../config/redis.js", "../../config/database.js", "../../shared/utils/encrypt.js", "../../shared/utils/logger.js", "../../shared/events/index.js", "../../shared/utils/circuit-breaker.js", "../../config/index.js", "crypto"],
+      "dependencies": ["db-config-redis", "db-config-database", "shared-encrypt", "shared-logger", "shared-event-bus", "shared-circuit-breaker", "app-config"],
+      "queueName": "efps-sync",
+      "queueType": "sync-worker"
+    },
+    {
+      "id": "jobs-index-ts",
+      "type": "file",
+      "label": "jobs/index.ts (MISSING FROM DISK)",
+      "filePath": "efps-backend/src/jobs/index.ts",
+      "description": "Barrel export for all job modules — does not exist on disk",
+      "exists": false
+    },
+    {
+      "id": "jobs-queue-service-ts",
+      "type": "file",
+      "label": "jobs/queue-service.ts (MISSING FROM DISK)",
+      "filePath": "efps-backend/src/jobs/queue-service.ts",
+      "description": "Central queue service/manager for all BullMQ queues — does not exist on disk",
+      "exists": false
+    },
+    {
+      "id": "concept-db-layer",
+      "type": "concept",
+      "label": "DatabaseAccessLayer",
+      "description": "The database layer: migration-runner applies 31 sequential SQL migrations; query modules (planned but not yet created in queries/ dir) would provide typed CRUD; seeds/ dir is empty"
+    },
+    {
+      "id": "concept-job-system",
+      "type": "concept",
+      "label": "BackgroundJobSystem",
+      "description": "BullMQ-based job system with 8 queues — each file defines a Queue + Worker pair. Workers are typed, use exponential backoff, and separate queue concerns: audit persistence, daily reporting, domain event processing, session/OTP maintenance, SMS notifications, sync scheduling, and government portal scraping (eFPS + IPDS)"
+    },
+    {
+      "id": "concept-sync-pipeline",
+      "type": "concept",
+      "label": "GovernmentSyncPipeline",
+      "description": "End-to-end sync pipeline: sync-scheduler polls sync_scheduler_config → creates sync_jobs → enqueues efps-sync or ipds-sync workers → Playwright scrapes govt portals → posts to internal sync API → govt-data-sync processes CSV/API imports → govtImporterService handles upsert → domain events emitted for notifications/dashboard cache invalidation"
+    },
+    {
+      "id": "concept-commission-engine",
+      "type": "concept",
+      "label": "CommissionEngine",
+      "description": "Commission calculation triggered by TRANSACTION_COMPLETED domain event — reads commission_rates and tds_rates per commodity, calculates gross/net with TDS deduction, upserts into commissions table with pending status"
+    }
+  ],
+  "edges": [
+    {
+      "id": "edge-migration-runner-to-all-migrations",
+      "type": "reads",
+      "sourceId": "db-migration-runner-ts",
+      "targetId": "migration-group",
+      "label": "applies sequentially"
+    },
+    {
+      "id": "edge-migration-runner-to-config-db",
+      "type": "imports",
+      "sourceId": "db-migration-runner-ts",
+      "targetId": "db-config-database",
+      "label": "imports query/getClient from config/database.js"
+    },
+    {
+      "id": "edge-mig-001-to-dealers-table",
+      "type": "creates",
+      "sourceId": "mig-001-init-tables",
+      "targetId": "concept-db-layer",
+      "label": "foundation tables: dealers, beneficiaries, stock_allocations, transactions"
+    },
+    {
+      "id": "edge-mig-015-to-beneficiaries",
+      "type": "alters",
+      "sourceId": "mig-015-add-govt-sync-enhancements",
+      "targetId": "mig-001-init-tables",
+      "label": "extends beneficiaries with govt portal fields"
+    },
+    {
+      "id": "edge-mig-026-to-mig-018",
+      "type": "alters",
+      "sourceId": "mig-026-enterprise-sync-infrastructure",
+      "targetId": "mig-018-add-sync-jobs",
+      "label": "enhances sync_jobs with priority/mode/version/quarantine columns"
+    },
+    {
+      "id": "edge-mig-031-erp-redesign",
+      "type": "redesigns",
+      "sourceId": "mig-031-enterprise-erp-redesign",
+      "targetId": "concept-db-layer",
+      "label": "enterprise ERP: stock_ledger, financial_ledger, transaction_line_items, inventory_department enum, auto-triggers"
+    },
+    {
+      "id": "edge-mig-031-to-transactions",
+      "type": "alters",
+      "sourceId": "mig-031-enterprise-erp-redesign",
+      "targetId": "mig-001-init-tables",
+      "label": "adds transaction_source enum, source_file_id, upstream_hash to transactions"
+    },
+    {
+      "id": "edge-audit-flush-to-db",
+      "type": "writes",
+      "sourceId": "jobs-audit-flush",
+      "targetId": "db-config-database",
+      "label": "inserts into audit_logs table"
+    },
+    {
+      "id": "edge-audit-flush-to-redis",
+      "type": "connects",
+      "sourceId": "jobs-audit-flush",
+      "targetId": "db-config-redis",
+      "label": "uses getBullRedis for queue connection"
+    },
+    {
+      "id": "edge-daily-report-to-db",
+      "type": "reads-writes",
+      "sourceId": "jobs-daily-report",
+      "targetId": "db-config-database",
+      "label": "aggregates transactions, counts beneficiaries, inserts notification"
+    },
+    {
+      "id": "edge-domain-events-to-db",
+      "type": "reads-writes",
+      "sourceId": "jobs-domain-events",
+      "targetId": "db-config-database",
+      "label": "commission calc, stock queries, notifications inserts, income entries"
+    },
+    {
+      "id": "edge-domain-events-to-redis",
+      "type": "invalidates",
+      "sourceId": "jobs-domain-events",
+      "targetId": "db-config-redis",
+      "label": "clears dashboard:${dealerId} cache on data changes"
+    },
+    {
+      "id": "edge-domain-events-to-eventbus",
+      "type": "imports",
+      "sourceId": "jobs-domain-events",
+      "targetId": "shared-event-bus",
+      "label": "imports EventTypes from event-bus.js"
+    },
+    {
+      "id": "edge-session-cleanup-to-db",
+      "type": "deletes",
+      "sourceId": "jobs-session-cleanup",
+      "targetId": "db-config-database",
+      "label": "deletes expired sessions, marks expired OTPs"
+    },
+    {
+      "id": "edge-session-cleanup-to-redis",
+      "type": "cleans",
+      "sourceId": "jobs-session-cleanup",
+      "targetId": "db-config-redis",
+      "label": "cleans stale online_dealers from Redis"
+    },
+    {
+      "id": "edge-sms-otp-to-config",
+      "type": "reads",
+      "sourceId": "jobs-sms-otp",
+      "targetId": "app-config",
+      "label": "reads SMS_PROVIDER, MSG91_AUTH_KEY, MSG91_* config"
+    },
+    {
+      "id": "edge-sms-otp-to-circuitbreaker",
+      "type": "uses",
+      "sourceId": "jobs-sms-otp",
+      "targetId": "shared-circuit-breaker",
+      "label": "wraps MSG91 API calls in CircuitBreaker"
+    },
+    {
+      "id": "edge-sync-scheduler-to-db",
+      "type": "reads-writes",
+      "sourceId": "jobs-sync-scheduler",
+      "targetId": "db-config-database",
+      "label": "queries sync_scheduler_config, creates sync_jobs, updates next_sync_at"
+    },
+    {
+      "id": "edge-sync-scheduler-to-efps-sync",
+      "type": "enqueues",
+      "sourceId": "jobs-sync-scheduler",
+      "targetId": "jobs-efps-sync",
+      "label": "calls enqueueEfpsSync() for each scheduled dealer"
+    },
+    {
+      "id": "edge-ipds-sync-to-db",
+      "type": "reads-writes",
+      "sourceId": "jobs-ipds-sync",
+      "targetId": "db-config-database",
+      "label": "reads dealer_credentials, updates sync_jobs and sync_scheduler_config"
+    },
+    {
+      "id": "edge-ipds-sync-to-encrypt",
+      "type": "uses",
+      "sourceId": "jobs-ipds-sync",
+      "targetId": "shared-encrypt",
+      "label": "decrypts IPDS credentials with decrypt()"
+    },
+    {
+      "id": "edge-ipds-sync-to-eventbus",
+      "type": "emits",
+      "sourceId": "jobs-ipds-sync",
+      "targetId": "shared-event-bus",
+      "label": "emits SYNC_COMPLETED event"
+    },
+    {
+      "id": "edge-ipds-sync-to-circuitbreaker",
+      "type": "uses",
+      "sourceId": "jobs-ipds-sync",
+      "targetId": "shared-circuit-breaker",
+      "label": "wraps IPDS portal scraping in CircuitBreaker"
+    },
+    {
+      "id": "edge-govt-data-sync-to-db",
+      "type": "reads-writes",
+      "sourceId": "jobs-govt-data-sync",
+      "targetId": "db-config-database",
+      "label": "reads dealers, writes sync_logs and updates scheduler config"
+    },
+    {
+      "id": "edge-govt-data-sync-to-importer",
+      "type": "calls",
+      "sourceId": "jobs-govt-data-sync",
+      "targetId": "module-govt-importer",
+      "label": "calls govtImporterService.importBeneficiaries() and markDeactivatedBeneficiaries()"
+    },
+    {
+      "id": "edge-govt-data-sync-to-eventbus",
+      "type": "emits",
+      "sourceId": "jobs-govt-data-sync",
+      "targetId": "shared-event-bus",
+      "label": "emits SYNC_COMPLETED and BENEFICIARY_UPDATED events"
+    },
+    {
+      "id": "edge-efps-sync-to-db",
+      "type": "reads-writes",
+      "sourceId": "jobs-efps-sync",
+      "targetId": "db-config-database",
+      "label": "reads dealer_credentials, updates sync_jobs, dealers, sync_scheduler_config"
+    },
+    {
+      "id": "edge-efps-sync-to-encrypt",
+      "type": "uses",
+      "sourceId": "jobs-efps-sync",
+      "targetId": "shared-encrypt",
+      "label": "decrypts eFPS credentials with decrypt()"
+    },
+    {
+      "id": "edge-efps-sync-to-eventbus",
+      "type": "emits",
+      "sourceId": "jobs-efps-sync",
+      "targetId": "shared-event-bus",
+      "label": "emits SYNC_COMPLETED event"
+    },
+    {
+      "id": "edge-efps-sync-to-circuitbreaker",
+      "type": "uses",
+      "sourceId": "jobs-efps-sync",
+      "targetId": "shared-circuit-breaker",
+      "label": "wraps eFPS portal scraping in CircuitBreaker"
+    },
+    {
+      "id": "edge-efps-sync-to-sync-scheduler",
+      "type": "triggered-by",
+      "sourceId": "jobs-efps-sync",
+      "targetId": "jobs-sync-scheduler",
+      "label": "enqueued by sync-scheduler; reports back via sync_job_id updates"
+    },
+    {
+      "id": "edge-all-sync-to-concept",
+      "type": "part-of",
+      "sourceId": "concept-sync-pipeline",
+      "targetId": "concept-job-system",
+      "label": "sync pipeline is a subsystem of the job system"
+    },
+    {
+      "id": "edge-commission-to-domain-events",
+      "type": "triggered-by",
+      "sourceId": "concept-commission-engine",
+      "targetId": "jobs-domain-events",
+      "label": "commission calculation runs inside domain-events worker on TRANSACTION_COMPLETED"
+    },
+    {
+      "id": "edge-seed-missing",
+      "type": "planned",
+      "sourceId": "db-seed-ts",
+      "targetId": "concept-db-layer",
+      "label": "planned seed module — directory exists but is empty"
+    },
+    {
+      "id": "edge-queries-missing",
+      "type": "planned",
+      "sourceId": "db-queries-index-ts",
+      "targetId": "concept-db-layer",
+      "label": "planned query barrel — directory exists but is empty"
+    },
+    {
+      "id": "edge-jobs-index-missing",
+      "type": "planned",
+      "sourceId": "jobs-index-ts",
+      "targetId": "concept-job-system",
+      "label": "planned barrel export for jobs — does not exist on disk"
+    },
+    {
+      "id": "edge-queue-service-missing",
+      "type": "planned",
+      "sourceId": "jobs-queue-service-ts",
+      "targetId": "concept-job-system",
+      "label": "planned central queue manager — does not exist on disk"
+    }
+  ]
+}

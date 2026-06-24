@@ -1,0 +1,145 @@
+{
+  "batch": 10,
+  "description": "Backend tests — unit and integration test files (batch 10/23)",
+  "files": [
+    {
+      "path": "efps-backend/tests/unit/test-utils.ts",
+      "status": "not_found",
+      "note": "File does not exist anywhere in the project. Possibly renamed or planned but not created."
+    },
+    {
+      "path": "efps-backend/tests/unit/config.test.ts",
+      "status": "not_found",
+      "note": "File does not exist anywhere in the project. Possibly renamed or planned but not created."
+    },
+    {
+      "path": "efps-backend/tests/unit/dealer.test.ts",
+      "status": "not_found",
+      "note": "File does not exist anywhere in the project. Possibly renamed or planned but not created."
+    },
+    {
+      "path": "efps-backend/tests/integration/auth.test.ts",
+      "status": "analysed",
+      "nodes": [
+        {
+          "id": "efps-backend/tests/integration/auth.test.ts",
+          "type": "file",
+          "kind": "test-integration",
+          "label": "Auth Integration Tests",
+          "description": "Integration tests for auth endpoints: login, refresh, me, logout"
+        },
+        {
+          "id": "efps-backend/tests/integration/auth.test.ts:fn:extractCookie",
+          "type": "function",
+          "parent": "efps-backend/tests/integration/auth.test.ts",
+          "label": "extractCookie",
+          "signature": "function extractCookie(cookies, name): string | undefined",
+          "description": "Helper to extract a cookie by name from an array of cookie objects"
+        },
+        {
+          "id": "efps-backend/tests/integration/auth.test.ts:fn:makeCookieHeader",
+          "type": "function",
+          "parent": "efps-backend/tests/integration/auth.test.ts",
+          "label": "makeCookieHeader",
+          "signature": "function makeCookieHeader(tokens): string",
+          "description": "Helper to build a cookie header string from a tokens record"
+        },
+        {
+          "id": "efps-backend/tests/integration/auth.test.ts:fn:beforeAll",
+          "type": "function",
+          "parent": "efps-backend/tests/integration/auth.test.ts",
+          "label": "beforeAll",
+          "description": "Setup: seeds dealer into DB, connects Redis, builds Fastify app"
+        },
+        {
+          "id": "efps-backend/tests/integration/auth.test.ts:fn:afterAll",
+          "type": "function",
+          "parent": "efps-backend/tests/integration/auth.test.ts",
+          "label": "afterAll",
+          "description": "Teardown: closes app, removes test dealer/sessions, disconnects Redis"
+        },
+        {
+          "id": "efps-backend/tests/integration/auth.test.ts:describe:Auth Integration",
+          "type": "describe-block",
+          "parent": "efps-backend/tests/integration/auth.test.ts",
+          "label": "describe('Auth Integration')",
+          "description": "Test suite for auth endpoints"
+        }
+      ],
+      "edges": [
+        { "from": "efps-backend/tests/integration/auth.test.ts", "to": "vitest", "type": "imports", "symbols": ["describe", "it", "expect", "beforeAll", "afterAll"] },
+        { "from": "efps-backend/tests/integration/auth.test.ts", "to": "efps-backend/src/app.js", "type": "imports", "symbols": ["buildApp"] },
+        { "from": "efps-backend/tests/integration/auth.test.ts", "to": "efps-backend/src/config/redis.js", "type": "imports", "symbols": ["getRedis", "closeRedis"] },
+        { "from": "efps-backend/tests/integration/auth.test.ts", "to": "pg", "type": "imports", "symbols": ["pg"] },
+        { "from": "efps-backend/tests/integration/auth.test.ts", "to": "argon2", "type": "imports", "symbols": ["argon2"] },
+        { "from": "efps-backend/tests/integration/auth.test.ts:describe:Auth Integration", "to": "efps-backend/tests/integration/auth.test.ts:fn:beforeAll", "type": "contains" },
+        { "from": "efps-backend/tests/integration/auth.test.ts:describe:Auth Integration", "to": "efps-backend/tests/integration/auth.test.ts:fn:afterAll", "type": "contains" },
+        { "from": "efps-backend/tests/integration/auth.test.ts:describe:Auth Integration", "to": "efps-backend/tests/integration/auth.test.ts:fn:extractCookie", "type": "contains" },
+        { "from": "efps-backend/tests/integration/auth.test.ts:describe:Auth Integration", "to": "efps-backend/tests/integration/auth.test.ts:fn:makeCookieHeader", "type": "contains" },
+        { "from": "efps-backend/tests/integration/auth.test.ts", "to": "efps-backend/src/app.js:fn:buildApp", "type": "tested_by", "label": "integration tests exercise buildApp-based routes" },
+        { "from": "efps-backend/tests/integration/auth.test.ts", "to": "efps-backend/src/config/redis.js:fn:getRedis", "type": "tested_by" },
+        { "from": "efps-backend/tests/integration/auth.test.ts", "to": "efps-backend/src/config/redis.js:fn:closeRedis", "type": "tested_by" }
+      ]
+    },
+    {
+      "path": "efps-backend/tests/integration/sync.test.ts",
+      "status": "analysed",
+      "nodes": [
+        {
+          "id": "efps-backend/tests/integration/sync.test.ts",
+          "type": "file",
+          "kind": "test-integration",
+          "label": "Sync Integration Tests",
+          "description": "Integration tests for sync endpoints: trigger, status, bank-info"
+        },
+        {
+          "id": "efps-backend/tests/integration/sync.test.ts:fn:beforeAll",
+          "type": "function",
+          "parent": "efps-backend/tests/integration/sync.test.ts",
+          "label": "beforeAll",
+          "description": "Setup: seeds dealer, ensures sync_jobs.sync_mode column, builds app, signs access token"
+        },
+        {
+          "id": "efps-backend/tests/integration/sync.test.ts:fn:afterAll",
+          "type": "function",
+          "parent": "efps-backend/tests/integration/sync.test.ts",
+          "label": "afterAll",
+          "description": "Teardown: cleans up sync_jobs, sessions, bank_info, dealers; disconnects"
+        },
+        {
+          "id": "efps-backend/tests/integration/sync.test.ts:describe:Sync Integration",
+          "type": "describe-block",
+          "parent": "efps-backend/tests/integration/sync.test.ts",
+          "label": "describe('Sync Integration')",
+          "description": "Test suite for sync endpoints"
+        }
+      ],
+      "edges": [
+        { "from": "efps-backend/tests/integration/sync.test.ts", "to": "vitest", "type": "imports", "symbols": ["describe", "it", "expect", "beforeAll", "afterAll", "vi"] },
+        { "from": "efps-backend/tests/integration/sync.test.ts", "to": "efps-backend/src/app.js", "type": "imports", "symbols": ["buildApp"] },
+        { "from": "efps-backend/tests/integration/sync.test.ts", "to": "efps-backend/src/config/redis.js", "type": "imports", "symbols": ["getRedis", "closeRedis"] },
+        { "from": "efps-backend/tests/integration/sync.test.ts", "to": "efps-backend/src/shared/utils/token.js", "type": "imports", "symbols": ["signAccessToken"] },
+        { "from": "efps-backend/tests/integration/sync.test.ts", "to": "pg", "type": "imports", "symbols": ["pg"] },
+        { "from": "efps-backend/tests/integration/sync.test.ts", "to": "argon2", "type": "imports", "symbols": ["argon2"] },
+        { "from": "efps-backend/tests/integration/sync.test.ts", "to": "efps-backend/src/jobs/sync/efps-sync.worker.js", "type": "mocks", "symbols": ["enqueueEfpsSync", "efpsSyncQueue", "EfpsSyncPayload"] },
+        { "from": "efps-backend/tests/integration/sync.test.ts", "to": "efps-backend/src/jobs/sync/govt-data-sync.job.js", "type": "mocks", "symbols": ["enqueueGovtSync", "GovtSyncPayload"] },
+        { "from": "efps-backend/tests/integration/sync.test.ts:describe:Sync Integration", "to": "efps-backend/tests/integration/sync.test.ts:fn:beforeAll", "type": "contains" },
+        { "from": "efps-backend/tests/integration/sync.test.ts:describe:Sync Integration", "to": "efps-backend/tests/integration/sync.test.ts:fn:afterAll", "type": "contains" },
+        { "from": "efps-backend/tests/integration/sync.test.ts", "to": "efps-backend/src/app.js:fn:buildApp", "type": "tested_by" },
+        { "from": "efps-backend/tests/integration/sync.test.ts", "to": "efps-backend/src/shared/utils/token.js:fn:signAccessToken", "type": "tested_by" },
+        { "from": "efps-backend/tests/integration/sync.test.ts", "to": "efps-backend/src/jobs/sync/efps-sync.worker.js:fn:enqueueEfpsSync", "type": "tested_by" },
+        { "from": "efps-backend/tests/integration/sync.test.ts", "to": "efps-backend/src/jobs/sync/govt-data-sync.job.js:fn:enqueueGovtSync", "type": "tested_by" }
+      ]
+    }
+  ],
+  "summary": {
+    "total_requested": 5,
+    "found": 2,
+    "not_found": 3,
+    "not_found_files": [
+      "efps-backend/tests/unit/test-utils.ts",
+      "efps-backend/tests/unit/config.test.ts",
+      "efps-backend/tests/unit/dealer.test.ts"
+    ]
+  }
+}

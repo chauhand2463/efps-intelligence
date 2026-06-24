@@ -1,0 +1,317 @@
+{
+  "batchIndex": 19,
+  "totalBatches": 23,
+  "source": "user-level skill files + efps-backend/eng.traineddata",
+  "nodes": [
+    {
+      "id": "document:~/.agents/skills/find-skills/SKILL.md",
+      "type": "document",
+      "name": "find-skills skill",
+      "filePath": "C:\\Users\\chauh\\.agents\\skills\\find-skills\\SKILL.md",
+      "summary": "Agent skill for discovering and installing skills from the open agent skills ecosystem using npx skills CLI.",
+      "tags": ["skill", "skill-discovery", "CLI", "npx", "ecosystem"],
+      "complexity": "moderate",
+      "languageNotes": "Markdown documentation; 142 lines"
+    },
+    {
+      "id": "document:~/.agents/skills/insforge/SKILL.md",
+      "type": "document",
+      "name": "insforge app-integration skill",
+      "filePath": "C:\\Users\\chauh\\.agents\\skills\\insforge\\SKILL.md",
+      "summary": "Covers application code and SDK integration with InsForge: database CRUD, auth, storage, functions, OpenRouter AI, realtime, emails, Stripe payments.",
+      "tags": ["skill", "insforge", "SDK", "backend", "auth", "storage", "payments", "AI"],
+      "complexity": "complex",
+      "languageNotes": "Markdown documentation; v1.4.0; 216 lines"
+    },
+    {
+      "id": "document:~/.agents/skills/insforge-cli/SKILL.md",
+      "type": "document",
+      "name": "insforge CLI skill",
+      "filePath": "C:\\Users\\chauh\\.agents\\skills\\insforge-cli\\SKILL.md",
+      "summary": "Covers InsForge backend and cloud infrastructure management via the InsForge CLI: projects, SQL, migrations, RLS, functions, storage, deployments, secrets, schedules, branches, diagnostics.",
+      "tags": ["skill", "insforge", "CLI", "infrastructure", "database", "deployments", "branching"],
+      "complexity": "complex",
+      "languageNotes": "Markdown documentation; v1.6.0; 270 lines"
+    },
+    {
+      "id": "document:~/.agents/skills/insforge-debug/SKILL.md",
+      "type": "document",
+      "name": "insforge debug skill",
+      "filePath": "C:\\Users\\chauh\\.agents\\skills\\insforge-debug\\SKILL.md",
+      "summary": "Diagnostic skill for InsForge projects covering SDK errors, HTTP 4xx/5xx, RLS issues, auth failures, edge function errors, slow queries, deploy failures, rate limits, and proactive audits.",
+      "tags": ["skill", "insforge", "debugging", "diagnostics", "RLS", "observability"],
+      "complexity": "complex",
+      "languageNotes": "Markdown documentation; v2.0.0; 151 lines; includes symptom recipes"
+    },
+    {
+      "id": "document:~/.claude/skills/insforge-integrations/SKILL.md",
+      "type": "document",
+      "name": "insforge integrations skill",
+      "filePath": "C:\\Users\\chauh\\.claude\\skills\\insforge-integrations\\SKILL.md",
+      "summary": "Covers integrating third-party auth providers (Clerk, Auth0, WorkOS, Kinde, Stytch, Better Auth) and OKX x402 payment facilitator with InsForge for JWT-based RLS and onchain pay-per-use billing.",
+      "tags": ["skill", "insforge", "integrations", "auth", "payments", "JWT", "RLS", "web3"],
+      "complexity": "moderate",
+      "languageNotes": "Markdown documentation; v1.2.0; 111 lines"
+    },
+    {
+      "id": "document:~/.agents/skills/understand/SKILL.md",
+      "type": "document",
+      "name": "understand skill",
+      "filePath": "C:\\Users\\chauh\\.understand-anything\\repo\\understand-anything-plugin\\skills\\understand\\SKILL.md",
+      "summary": "Core skill for analyzing codebases to produce an interactive knowledge graph with project scanning, file analysis, architecture layers, guided tours, and validation.",
+      "tags": ["skill", "understand-anything", "knowledge-graph", "code-analysis", "architecture"],
+      "complexity": "complex",
+      "languageNotes": "Markdown documentation; 838 lines; 7-phase workflow"
+    },
+    {
+      "id": "document:~/.agents/skills/understand-chat/SKILL.md",
+      "type": "document",
+      "name": "understand-chat skill",
+      "filePath": "C:\\Users\\chauh\\.understand-anything\\repo\\understand-anything-plugin\\skills\\understand-chat\\SKILL.md",
+      "summary": "Skill for answering questions about a codebase using the knowledge graph with node/edge search and architectural context.",
+      "tags": ["skill", "understand-anything", "chat", "knowledge-graph", "query"],
+      "complexity": "simple",
+      "languageNotes": "Markdown documentation; 55 lines"
+    },
+    {
+      "id": "document:~/.agents/skills/understand-dashboard/SKILL.md",
+      "type": "document",
+      "name": "understand-dashboard skill",
+      "filePath": "C:\\Users\\chauh\\.understand-anything\\repo\\understand-anything-plugin\\skills\\understand-dashboard\\SKILL.md",
+      "summary": "Skill for launching the interactive web dashboard to visualize a codebase's knowledge graph via Vite dev server with token-based access.",
+      "tags": ["skill", "understand-anything", "dashboard", "visualization", "Vite"],
+      "complexity": "moderate",
+      "languageNotes": "Markdown documentation; 105 lines"
+    },
+    {
+      "id": "document:~/.agents/skills/understand-diff/SKILL.md",
+      "type": "document",
+      "name": "understand-diff skill",
+      "filePath": "C:\\Users\\chauh\\.understand-anything\\repo\\understand-anything-plugin\\skills\\understand-diff\\SKILL.md",
+      "summary": "Skill for analyzing git diffs and pull requests against the knowledge graph to identify changed components, affected nodes, and risk assessment.",
+      "tags": ["skill", "understand-anything", "diff", "PR", "git", "impact-analysis"],
+      "complexity": "simple",
+      "languageNotes": "Markdown documentation; 72 lines"
+    },
+    {
+      "id": "document:~/.agents/skills/understand-domain/SKILL.md",
+      "type": "document",
+      "name": "understand-domain skill",
+      "filePath": "C:\\Users\\chauh\\.understand-anything\\repo\\understand-anything-plugin\\skills\\understand-domain\\SKILL.md",
+      "summary": "Skill for extracting business domain knowledge from a codebase and generating an interactive domain flow graph with domains, flows, and process steps.",
+      "tags": ["skill", "understand-anything", "domain", "business-logic", "flow-graph"],
+      "complexity": "moderate",
+      "languageNotes": "Markdown documentation; 140 lines"
+    },
+    {
+      "id": "document:~/.agents/skills/understand-explain/SKILL.md",
+      "type": "document",
+      "name": "understand-explain skill",
+      "filePath": "C:\\Users\\chauh\\.understand-anything\\repo\\understand-anything-plugin\\skills\\understand-explain\\SKILL.md",
+      "summary": "Skill for providing deep-dive explanations of specific files, functions, or modules using the knowledge graph and source code reading.",
+      "tags": ["skill", "understand-anything", "explain", "code-review", "documentation"],
+      "complexity": "simple",
+      "languageNotes": "Markdown documentation; 58 lines"
+    },
+    {
+      "id": "document:~/.agents/skills/understand-knowledge/SKILL.md",
+      "type": "document",
+      "name": "understand-knowledge skill",
+      "filePath": "C:\\Users\\chauh\\.understand-anything\\repo\\understand-anything-plugin\\skills\\understand-knowledge\\SKILL.md",
+      "summary": "Skill for analyzing Karpathy-pattern LLM wiki knowledge bases — raw sources, wiki markdown with wikilinks, and schema files — to produce an interactive knowledge graph with entity extraction and topic clustering.",
+      "tags": ["skill", "understand-anything", "knowledge-base", "wiki", "Karpathy", "entity-extraction"],
+      "complexity": "moderate",
+      "languageNotes": "Markdown documentation; 132 lines"
+    },
+    {
+      "id": "document:~/.agents/skills/understand-onboard/SKILL.md",
+      "type": "document",
+      "name": "understand-onboard skill",
+      "filePath": "C:\\Users\\chauh\\.understand-anything\\repo\\understand-anything-plugin\\skills\\understand-onboard\\SKILL.md",
+      "summary": "Skill for generating comprehensive onboarding guides for new team members from the project's knowledge graph, including architecture layers, key concepts, and complexity hotspots.",
+      "tags": ["skill", "understand-anything", "onboarding", "documentation", "guide"],
+      "complexity": "simple",
+      "languageNotes": "Markdown documentation; 55 lines"
+    },
+    {
+      "id": "data:efps-backend/eng.traineddata",
+      "type": "data",
+      "name": "Tesseract OCR English traineddata",
+      "filePath": "E:\\efps\\efps-backend\\eng.traineddata",
+      "summary": "Tesseract 4+ LSTM-based OCR language data file for English. 5.2 MB binary file used by Tesseract OCR engine for document text extraction. Header indicates LSTM-only model (version 18).",
+      "tags": ["tesseract", "OCR", "traineddata", "LSTM", "english", "language-data"],
+      "complexity": "simple",
+      "languageNotes": "Binary data file; 5,199,098 bytes; LSTM version 18; last modified 2026-06-17"
+    }
+  ],
+  "edges": [
+    {
+      "source": "document:~/.agents/skills/insforge/SKILL.md",
+      "target": "document:~/.agents/skills/insforge-cli/SKILL.md",
+      "type": "related",
+      "direction": "undirected",
+      "weight": 0.7
+    },
+    {
+      "source": "document:~/.agents/skills/insforge-debug/SKILL.md",
+      "target": "document:~/.agents/skills/insforge-cli/SKILL.md",
+      "type": "related",
+      "direction": "undirected",
+      "weight": 0.7
+    },
+    {
+      "source": "document:~/.agents/skills/insforge-debug/SKILL.md",
+      "target": "document:~/.agents/skills/insforge/SKILL.md",
+      "type": "related",
+      "direction": "undirected",
+      "weight": 0.6
+    },
+    {
+      "source": "document:~/.claude/skills/insforge-integrations/SKILL.md",
+      "target": "document:~/.agents/skills/insforge/SKILL.md",
+      "type": "related",
+      "direction": "undirected",
+      "weight": 0.6
+    },
+    {
+      "source": "document:~/.claude/skills/insforge-integrations/SKILL.md",
+      "target": "document:~/.agents/skills/insforge-cli/SKILL.md",
+      "type": "related",
+      "direction": "undirected",
+      "weight": 0.6
+    },
+    {
+      "source": "document:~/.claude/skills/insforge-integrations/SKILL.md",
+      "target": "document:~/.agents/skills/insforge-debug/SKILL.md",
+      "type": "related",
+      "direction": "undirected",
+      "weight": 0.5
+    },
+    {
+      "source": "document:~/.agents/skills/understand/SKILL.md",
+      "target": "document:~/.agents/skills/understand-chat/SKILL.md",
+      "type": "related",
+      "direction": "undirected",
+      "weight": 0.7
+    },
+    {
+      "source": "document:~/.agents/skills/understand/SKILL.md",
+      "target": "document:~/.agents/skills/understand-dashboard/SKILL.md",
+      "type": "related",
+      "direction": "undirected",
+      "weight": 0.7
+    },
+    {
+      "source": "document:~/.agents/skills/understand/SKILL.md",
+      "target": "document:~/.agents/skills/understand-diff/SKILL.md",
+      "type": "related",
+      "direction": "undirected",
+      "weight": 0.7
+    },
+    {
+      "source": "document:~/.agents/skills/understand/SKILL.md",
+      "target": "document:~/.agents/skills/understand-domain/SKILL.md",
+      "type": "related",
+      "direction": "undirected",
+      "weight": 0.7
+    },
+    {
+      "source": "document:~/.agents/skills/understand/SKILL.md",
+      "target": "document:~/.agents/skills/understand-explain/SKILL.md",
+      "type": "related",
+      "direction": "undirected",
+      "weight": 0.7
+    },
+    {
+      "source": "document:~/.agents/skills/understand/SKILL.md",
+      "target": "document:~/.agents/skills/understand-knowledge/SKILL.md",
+      "type": "related",
+      "direction": "undirected",
+      "weight": 0.7
+    },
+    {
+      "source": "document:~/.agents/skills/understand/SKILL.md",
+      "target": "document:~/.agents/skills/understand-onboard/SKILL.md",
+      "type": "related",
+      "direction": "undirected",
+      "weight": 0.7
+    },
+    {
+      "source": "document:~/.agents/skills/understand-dashboard/SKILL.md",
+      "target": "document:~/.agents/skills/understand-diff/SKILL.md",
+      "type": "related",
+      "direction": "undirected",
+      "weight": 0.5
+    },
+    {
+      "source": "document:~/.agents/skills/understand-dashboard/SKILL.md",
+      "target": "document:~/.agents/skills/understand-chat/SKILL.md",
+      "type": "related",
+      "direction": "undirected",
+      "weight": 0.5
+    },
+    {
+      "source": "document:~/.agents/skills/understand-domain/SKILL.md",
+      "target": "document:~/.agents/skills/understand-dashboard/SKILL.md",
+      "type": "related",
+      "direction": "undirected",
+      "weight": 0.6
+    },
+    {
+      "source": "document:~/.agents/skills/understand-onboard/SKILL.md",
+      "target": "document:~/.agents/skills/understand-chat/SKILL.md",
+      "type": "related",
+      "direction": "undirected",
+      "weight": 0.4
+    },
+    {
+      "source": "document:~/.agents/skills/understand-onboard/SKILL.md",
+      "target": "document:~/.agents/skills/understand-explain/SKILL.md",
+      "type": "related",
+      "direction": "undirected",
+      "weight": 0.4
+    },
+    {
+      "source": "document:~/.agents/skills/understand-knowledge/SKILL.md",
+      "target": "document:~/.agents/skills/understand-dashboard/SKILL.md",
+      "type": "related",
+      "direction": "undirected",
+      "weight": 0.6
+    },
+    {
+      "source": "document:~/.agents/skills/understand-knowledge/SKILL.md",
+      "target": "document:~/.agents/skills/understand-chat/SKILL.md",
+      "type": "related",
+      "direction": "undirected",
+      "weight": 0.4
+    },
+    {
+      "source": "document:~/.agents/skills/find-skills/SKILL.md",
+      "target": "document:~/.agents/skills/insforge/SKILL.md",
+      "type": "related",
+      "direction": "undirected",
+      "weight": 0.2
+    },
+    {
+      "source": "document:~/.agents/skills/find-skills/SKILL.md",
+      "target": "document:~/.agents/skills/understand/SKILL.md",
+      "type": "related",
+      "direction": "undirected",
+      "weight": 0.2
+    },
+    {
+      "source": "data:efps-backend/eng.traineddata",
+      "target": "document:~/.agents/skills/insforge/SKILL.md",
+      "type": "related",
+      "direction": "undirected",
+      "weight": 0.2
+    },
+    {
+      "source": "data:efps-backend/eng.traineddata",
+      "target": "document:~/.agents/skills/insforge-cli/SKILL.md",
+      "type": "related",
+      "direction": "undirected",
+      "weight": 0.2
+    }
+  ]
+}

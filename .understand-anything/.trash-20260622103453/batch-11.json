@@ -1,0 +1,551 @@
+{
+  "batch": 11,
+  "totalFiles": 18,
+  "nodes": [
+    {
+      "id": "file-root-dockerfile",
+      "type": "file",
+      "label": "Dockerfile (root)",
+      "path": "efps-backend/Dockerfile",
+      "kind": "dockerfile"
+    },
+    {
+      "id": "file-dot-dockerignore",
+      "type": "file",
+      "label": ".dockerignore",
+      "path": "efps-backend/.dockerignore",
+      "kind": "config"
+    },
+    {
+      "id": "file-root-compose",
+      "type": "file",
+      "label": "docker-compose.yml (root)",
+      "path": "efps-backend/docker-compose.yml",
+      "kind": "compose"
+    },
+    {
+      "id": "file-entrypoint",
+      "type": "file",
+      "label": "docker-entrypoint.sh",
+      "path": "efps-backend/docker-entrypoint.sh",
+      "kind": "entrypoint"
+    },
+    {
+      "id": "file-docker-dockerfile",
+      "type": "file",
+      "label": "docker/Dockerfile",
+      "path": "efps-backend/docker/Dockerfile",
+      "kind": "dockerfile"
+    },
+    {
+      "id": "file-docker-dockerfile-dev",
+      "type": "file",
+      "label": "docker/Dockerfile.dev",
+      "path": "efps-backend/docker/Dockerfile.dev",
+      "kind": "dockerfile"
+    },
+    {
+      "id": "file-docker-dockerfile-worker",
+      "type": "file",
+      "label": "docker/Dockerfile.worker",
+      "path": "efps-backend/docker/Dockerfile.worker",
+      "kind": "dockerfile"
+    },
+    {
+      "id": "file-docker-compose-dev",
+      "type": "file",
+      "label": "docker/docker-compose.yml (dev)",
+      "path": "efps-backend/docker/docker-compose.yml",
+      "kind": "compose"
+    },
+    {
+      "id": "file-govt-importer-service",
+      "type": "file",
+      "label": "govt-importer.service.ts",
+      "path": "efps-backend/src/modules/sync/govt-importer.service.ts",
+      "kind": "service"
+    },
+    {
+      "id": "file-sync-controller",
+      "type": "file",
+      "label": "sync.controller.ts",
+      "path": "efps-backend/src/modules/sync/sync.controller.ts",
+      "kind": "controller"
+    },
+    {
+      "id": "file-sync-routes",
+      "type": "file",
+      "label": "sync.routes.ts",
+      "path": "efps-backend/src/modules/sync/sync.routes.ts",
+      "kind": "routes"
+    },
+    {
+      "id": "file-sync-schema",
+      "type": "file",
+      "label": "sync.schema.ts",
+      "path": "efps-backend/src/modules/sync/sync.schema.ts",
+      "kind": "schema"
+    },
+    {
+      "id": "file-sync-service",
+      "type": "file",
+      "label": "sync.service.ts",
+      "path": "efps-backend/src/modules/sync/sync.service.ts",
+      "kind": "service"
+    },
+    {
+      "id": "file-efps-sync-worker",
+      "type": "file",
+      "label": "efps-sync.worker.ts",
+      "path": "efps-backend/src/jobs/sync/efps-sync.worker.ts",
+      "kind": "worker"
+    },
+    {
+      "id": "file-govt-data-sync-job",
+      "type": "file",
+      "label": "govt-data-sync.job.ts",
+      "path": "efps-backend/src/jobs/sync/govt-data-sync.job.ts",
+      "kind": "worker"
+    },
+    {
+      "id": "file-ipds-sync-worker",
+      "type": "file",
+      "label": "ipds-sync.worker.ts",
+      "path": "efps-backend/src/jobs/sync/ipds-sync.worker.ts",
+      "kind": "worker"
+    },
+    {
+      "id": "file-sync-scheduler-job",
+      "type": "file",
+      "label": "sync-scheduler.job.ts",
+      "path": "efps-backend/src/jobs/sync/sync-scheduler.job.ts",
+      "kind": "worker"
+    },
+    {
+      "id": "service-postgres-prod",
+      "type": "service",
+      "label": "postgres (prod)",
+      "path": "efps-backend/docker-compose.yml",
+      "kind": "database"
+    },
+    {
+      "id": "service-redis-prod",
+      "type": "service",
+      "label": "redis (prod)",
+      "path": "efps-backend/docker-compose.yml",
+      "kind": "cache"
+    },
+    {
+      "id": "service-app-prod",
+      "type": "service",
+      "label": "app (prod)",
+      "path": "efps-backend/docker-compose.yml",
+      "kind": "application"
+    },
+    {
+      "id": "service-sync-worker",
+      "type": "service",
+      "label": "sync-worker (prod)",
+      "path": "efps-backend/docker-compose.yml",
+      "kind": "worker"
+    },
+    {
+      "id": "service-db-dev",
+      "type": "service",
+      "label": "db (dev)",
+      "path": "efps-backend/docker/docker-compose.yml",
+      "kind": "database"
+    },
+    {
+      "id": "service-redis-dev",
+      "type": "service",
+      "label": "redis (dev)",
+      "path": "efps-backend/docker/docker-compose.yml",
+      "kind": "cache"
+    },
+    {
+      "id": "service-app-dev",
+      "type": "service",
+      "label": "app (dev)",
+      "path": "efps-backend/docker/docker-compose.yml",
+      "kind": "application"
+    },
+    {
+      "id": "pipeline-efps-sync",
+      "type": "pipeline",
+      "label": "eFPS Sync Pipeline",
+      "path": "efps-backend/src/jobs/sync/efps-sync.worker.ts",
+      "kind": "bullmq-worker"
+    },
+    {
+      "id": "pipeline-govt-data-sync",
+      "type": "pipeline",
+      "label": "Govt Data Sync Pipeline",
+      "path": "efps-backend/src/jobs/sync/govt-data-sync.job.ts",
+      "kind": "bullmq-worker"
+    },
+    {
+      "id": "pipeline-ipds-sync",
+      "type": "pipeline",
+      "label": "IPDS Sync Pipeline",
+      "path": "efps-backend/src/jobs/sync/ipds-sync.worker.ts",
+      "kind": "bullmq-worker"
+    },
+    {
+      "id": "pipeline-sync-scheduler",
+      "type": "pipeline",
+      "label": "Sync Scheduler Pipeline",
+      "path": "efps-backend/src/jobs/sync/sync-scheduler.job.ts",
+      "kind": "bullmq-worker"
+    },
+    {
+      "id": "image-node-22-alpine",
+      "type": "image",
+      "label": "node:22-alpine",
+      "kind": "base-image"
+    },
+    {
+      "id": "image-node-22-bookworm",
+      "type": "image",
+      "label": "node:22-bookworm",
+      "kind": "base-image"
+    },
+    {
+      "id": "image-playwright",
+      "type": "image",
+      "label": "mcr.microsoft.com/playwright:v1.52.0-jammy",
+      "kind": "base-image"
+    },
+    {
+      "id": "image-postgres",
+      "type": "image",
+      "label": "postgres:16-alpine",
+      "kind": "base-image"
+    },
+    {
+      "id": "image-redis",
+      "type": "image",
+      "label": "redis:7-alpine",
+      "kind": "base-image"
+    },
+    {
+      "id": "external-efps-portal",
+      "type": "external",
+      "label": "eFPS Gujarat Portal",
+      "kind": "external-service"
+    },
+    {
+      "id": "external-ipds-portal",
+      "type": "external",
+      "label": "IPDS Gujarat Portal",
+      "kind": "external-service"
+    }
+  ],
+  "edges": [
+    {
+      "source": "file-root-dockerfile",
+      "target": "image-node-22-alpine",
+      "relation": "from"
+    },
+    {
+      "source": "file-root-dockerfile",
+      "target": "file-entrypoint",
+      "relation": "copies"
+    },
+    {
+      "source": "file-root-dockerfile",
+      "target": "service-app-prod",
+      "relation": "builds"
+    },
+    {
+      "source": "file-docker-dockerfile",
+      "target": "image-node-22-alpine",
+      "relation": "from"
+    },
+    {
+      "source": "file-docker-dockerfile-dev",
+      "target": "image-node-22-alpine",
+      "relation": "from"
+    },
+    {
+      "source": "file-docker-dockerfile-worker",
+      "target": "image-node-22-bookworm",
+      "relation": "from-builder"
+    },
+    {
+      "source": "file-docker-dockerfile-worker",
+      "target": "image-playwright",
+      "relation": "from-runner"
+    },
+    {
+      "source": "file-docker-dockerfile-worker",
+      "target": "pipeline-efps-sync",
+      "relation": "runs"
+    },
+    {
+      "source": "file-root-compose",
+      "target": "service-postgres-prod",
+      "relation": "defines"
+    },
+    {
+      "source": "file-root-compose",
+      "target": "service-redis-prod",
+      "relation": "defines"
+    },
+    {
+      "source": "file-root-compose",
+      "target": "service-app-prod",
+      "relation": "defines"
+    },
+    {
+      "source": "file-root-compose",
+      "target": "service-sync-worker",
+      "relation": "defines"
+    },
+    {
+      "source": "service-postgres-prod",
+      "target": "image-postgres",
+      "relation": "uses"
+    },
+    {
+      "source": "service-redis-prod",
+      "target": "image-redis",
+      "relation": "uses"
+    },
+    {
+      "source": "service-app-prod",
+      "target": "file-root-dockerfile",
+      "relation": "builds-from"
+    },
+    {
+      "source": "service-app-prod",
+      "target": "service-postgres-prod",
+      "relation": "depends-on"
+    },
+    {
+      "source": "service-app-prod",
+      "target": "service-redis-prod",
+      "relation": "depends-on"
+    },
+    {
+      "source": "service-sync-worker",
+      "target": "file-docker-dockerfile-worker",
+      "relation": "builds-from"
+    },
+    {
+      "source": "service-sync-worker",
+      "target": "service-postgres-prod",
+      "relation": "depends-on"
+    },
+    {
+      "source": "service-sync-worker",
+      "target": "service-redis-prod",
+      "relation": "depends-on"
+    },
+    {
+      "source": "file-docker-compose-dev",
+      "target": "service-app-dev",
+      "relation": "defines"
+    },
+    {
+      "source": "file-docker-compose-dev",
+      "target": "service-db-dev",
+      "relation": "defines"
+    },
+    {
+      "source": "file-docker-compose-dev",
+      "target": "service-redis-dev",
+      "relation": "defines"
+    },
+    {
+      "source": "service-app-dev",
+      "target": "file-docker-dockerfile-dev",
+      "relation": "builds-from"
+    },
+    {
+      "source": "service-app-dev",
+      "target": "service-db-dev",
+      "relation": "depends-on"
+    },
+    {
+      "source": "service-app-dev",
+      "target": "service-redis-dev",
+      "relation": "depends-on"
+    },
+    {
+      "source": "service-db-dev",
+      "target": "image-postgres",
+      "relation": "uses"
+    },
+    {
+      "source": "service-redis-dev",
+      "target": "image-redis",
+      "relation": "uses"
+    },
+    {
+      "source": "file-entrypoint",
+      "target": "file-root-dockerfile",
+      "relation": "entrypoint-of"
+    },
+    {
+      "source": "file-entrypoint",
+      "target": "service-app-prod",
+      "relation": "configures"
+    },
+    {
+      "source": "file-dot-dockerignore",
+      "target": "file-root-dockerfile",
+      "relation": "configures"
+    },
+    {
+      "source": "file-sync-routes",
+      "target": "file-sync-controller",
+      "relation": "imports"
+    },
+    {
+      "source": "file-sync-routes",
+      "target": "file-sync-schema",
+      "relation": "imports"
+    },
+    {
+      "source": "file-sync-controller",
+      "target": "file-sync-service",
+      "relation": "imports"
+    },
+    {
+      "source": "file-sync-controller",
+      "target": "file-govt-importer-service",
+      "relation": "imports"
+    },
+    {
+      "source": "file-sync-controller",
+      "target": "file-govt-data-sync-job",
+      "relation": "imports"
+    },
+    {
+      "source": "file-sync-controller",
+      "target": "file-sync-schema",
+      "relation": "imports"
+    },
+    {
+      "source": "file-sync-service",
+      "target": "file-efps-sync-worker",
+      "relation": "enqueues"
+    },
+    {
+      "source": "file-sync-service",
+      "target": "file-govt-data-sync-job",
+      "relation": "enqueues"
+    },
+    {
+      "source": "file-sync-service",
+      "target": "file-govt-importer-service",
+      "relation": "uses"
+    },
+    {
+      "source": "file-govt-data-sync-job",
+      "target": "file-govt-importer-service",
+      "relation": "uses"
+    },
+    {
+      "source": "file-govt-data-sync-job",
+      "target": "pipeline-govt-data-sync",
+      "relation": "implements"
+    },
+    {
+      "source": "file-efps-sync-worker",
+      "target": "pipeline-efps-sync",
+      "relation": "implements"
+    },
+    {
+      "source": "file-ipds-sync-worker",
+      "target": "pipeline-ipds-sync",
+      "relation": "implements"
+    },
+    {
+      "source": "file-sync-scheduler-job",
+      "target": "pipeline-sync-scheduler",
+      "relation": "implements"
+    },
+    {
+      "source": "file-sync-scheduler-job",
+      "target": "file-efps-sync-worker",
+      "relation": "enqueues"
+    },
+    {
+      "source": "pipeline-efps-sync",
+      "target": "service-app-prod",
+      "relation": "posts-to"
+    },
+    {
+      "source": "pipeline-efps-sync",
+      "target": "external-efps-portal",
+      "relation": "scrapes"
+    },
+    {
+      "source": "pipeline-ipds-sync",
+      "target": "service-app-prod",
+      "relation": "posts-to"
+    },
+    {
+      "source": "pipeline-ipds-sync",
+      "target": "external-ipds-portal",
+      "relation": "scrapes"
+    },
+    {
+      "source": "pipeline-efps-sync",
+      "target": "service-postgres-prod",
+      "relation": "writes"
+    },
+    {
+      "source": "pipeline-govt-data-sync",
+      "target": "service-postgres-prod",
+      "relation": "writes"
+    },
+    {
+      "source": "pipeline-ipds-sync",
+      "target": "service-postgres-prod",
+      "relation": "writes"
+    },
+    {
+      "source": "pipeline-sync-scheduler",
+      "target": "service-postgres-prod",
+      "relation": "reads"
+    },
+    {
+      "source": "pipeline-efps-sync",
+      "target": "service-redis-prod",
+      "relation": "uses"
+    },
+    {
+      "source": "pipeline-govt-data-sync",
+      "target": "service-redis-prod",
+      "relation": "uses"
+    },
+    {
+      "source": "pipeline-ipds-sync",
+      "target": "service-redis-prod",
+      "relation": "uses"
+    },
+    {
+      "source": "pipeline-sync-scheduler",
+      "target": "service-redis-prod",
+      "relation": "uses"
+    },
+    {
+      "source": "pipeline-efps-sync",
+      "target": "file-govt-importer-service",
+      "relation": "not-related"
+    },
+    {
+      "source": "pipeline-sync-scheduler",
+      "target": "pipeline-efps-sync",
+      "relation": "triggers"
+    },
+    {
+      "source": "file-sync-service",
+      "target": "service-postgres-prod",
+      "relation": "queries"
+    }
+  ]
+}
