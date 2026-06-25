@@ -76,12 +76,6 @@ export class TransactionService {
     );
 
     await query(
-      `UPDATE stock_allocations SET lifted_kg = lifted_kg + $1, updated_at = NOW()
-       WHERE dealer_id = $2 AND month = $3 AND commodity = $4`,
-      [input.quantity_kg, dealerId, input.month, input.commodity]
-    );
-
-    await query(
       `INSERT INTO inventory_movements (dealer_id, commodity, movement_type, quantity_kg, reference_id, reference_type, notes)
        VALUES ($1, $2, 'sale', $3, $4, 'transaction', 'Ration distribution')`,
       [dealerId, input.commodity, input.quantity_kg, result.rows[0]!.id]

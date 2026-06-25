@@ -20,19 +20,17 @@ export function DonutChart({ segments, size = 140, strokeWidth = 20, centerText,
   const circumference = 2 * Math.PI * radius;
   const center = size / 2;
 
-  let offset = 0;
-  const arcs = segments.map((seg) => {
+  const arcs = segments.reduce<Array<DonutSegment & { dashArray: string; dashOffset: number; fraction: number }>>((acc, seg) => {
     const fraction = seg.value / total;
     const length = fraction * circumference;
-    const dashOffset = -offset;
-    offset += length;
-    return {
+    const currentOffset = acc.reduce((sum, a) => sum + (a.fraction * circumference), 0);
+    return [...acc, {
       ...seg,
       dashArray: `${length} ${circumference - length}`,
-      dashOffset,
+      dashOffset: -currentOffset,
       fraction,
-    };
-  });
+    }];
+  }, []);
 
   return (
     <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`}>

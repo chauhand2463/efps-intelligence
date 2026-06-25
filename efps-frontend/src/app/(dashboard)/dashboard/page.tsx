@@ -25,11 +25,11 @@ const STATUS_COLORS: Record<string, string> = {
   critical: 'var(--offline-red)', low: 'var(--warning-orange)', moderate: 'var(--info-blue)', sufficient: 'var(--online-green)',
 };
 
-function StatusDot({ status }: { status: string }) {
+function StatusDot({ status }: { status: string | null }) {
   return (
     <span style={{
       display: 'inline-block', width: 8, height: 8, borderRadius: '50%',
-      backgroundColor: STATUS_COLORS[status.toLowerCase()] ?? 'var(--text-muted)',
+      backgroundColor: STATUS_COLORS[(status ?? 'unknown').toLowerCase()] ?? 'var(--text-muted)',
       flexShrink: 0,
     }} />
   );

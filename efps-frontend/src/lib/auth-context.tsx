@@ -35,7 +35,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         if (cancelled) return;
         const user: AuthUser = { id: dealer.id, role: dealer.role, fps_id: dealer.fps_id };
         setState({ user, dealer, isLoading: false, isInitialized: true });
-      } catch (err) {
+      } catch {
         if (cancelled) return;
         setState({ user: null, dealer: null, isLoading: false, isInitialized: true });
       }

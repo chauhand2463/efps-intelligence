@@ -4,9 +4,15 @@ import { ERROR_CODES } from '../../config/constants.js';
 import { parsePaginationParams, buildPaginationMeta } from '../../shared/utils/pagination.js';
 import type { IncomeInput, ExpenseInput, FinanceQueryInput } from './finance.schema.js';
 
+function defaultMonth(): string {
+  const d = new Date();
+  d.setDate(1);
+  return d.toISOString().split('T')[0]!;
+}
+
 export class FinanceService {
   async addIncome(dealerId: string, input: IncomeInput) {
-    const date = input.entry_date ?? new Date().toISOString().split('T')[0];
+    const date = input.entry_date ?? new Date().toISOString().split('T')[0]!;
     const result = await query(
       `INSERT INTO income_entries (dealer_id, source, amount, entry_date, description)
        VALUES ($1, $2, $3, $4, $5) RETURNING *`,
@@ -16,7 +22,7 @@ export class FinanceService {
   }
 
   async addExpense(dealerId: string, input: ExpenseInput) {
-    const date = input.entry_date ?? new Date().toISOString().split('T')[0];
+    const date = input.entry_date ?? new Date().toISOString().split('T')[0]!;
     const result = await query(
       `INSERT INTO expense_entries (dealer_id, category, amount, entry_date, description, bill_reference)
        VALUES ($1, $2, $3, $4, $5, $6) RETURNING *`,
@@ -92,7 +98,7 @@ export class FinanceService {
   }
 
   async getProfitLoss(dealerId: string, month?: string) {
-    const m = month ?? (() => { const d = new Date(); d.setDate(1); return d.toISOString().split('T')[0]; })();
+    const m = month ?? defaultMonth();
 
         const income = await query(
       `SELECT COALESCE(SUM(amount), 0) as total FROM income_entries
