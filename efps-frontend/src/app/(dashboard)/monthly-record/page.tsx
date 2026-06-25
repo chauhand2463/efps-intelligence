@@ -5,7 +5,7 @@ import {
 } from 'lucide-react';
 import { api } from '@/lib/api';
 import { monthToApi } from '@/lib/utils';
-import type { StockAllocation, LiftingEntry, ApiResponse } from '@/lib/types';
+import type { StockAllocation, LiftingEntry, Transaction, ApiResponse } from '@/lib/types';
 import styles from './MonthlyRecord.module.css';
 import toast from 'react-hot-toast';
 
@@ -31,16 +31,23 @@ export default function MonthlyRecordPage() {
       setLoading(true);
       setError(false);
       try {
-        const [stockResult, liftingResult] = await Promise.all([
+        const [stockResult, liftingResult, txResult] = await Promise.all([
           api.get<StockAllocation[]>('/stock'),
           api.get<LiftingEntry[]>(`/lifting?month=${monthToApi(month, year)}`),
+          api.get<Transaction[]>(`/transactions?limit=5000&month=${monthToApi(month, year)}`),
         ]);
 
         const liftingList = liftingResult ?? [];
+        const txList = txResult ?? [];
 
         const liftingByCommodity: Record<string, number> = {};
         for (const entry of liftingList) {
           liftingByCommodity[entry.commodity] = (liftingByCommodity[entry.commodity] || 0) + entry.quantity_kg;
+        }
+
+        const amountByCommodity: Record<string, number> = {};
+        for (const tx of txList) {
+          amountByCommodity[tx.commodity] = (amountByCommodity[tx.commodity] || 0) + (tx.total_amount ?? 0);
         }
 
         const computedRows: MonthlyRow[] = (stockResult ?? []).map((stock) => {
@@ -55,7 +62,7 @@ export default function MonthlyRecordPage() {
             newIncome,
             total,
             qty,
-            amount: 0,
+            amount: amountByCommodity[stock.commodity] || 0,
             closing,
           };
         });

@@ -6,7 +6,7 @@ import { CalendarDays, Eye, Printer, Copy, AlertCircle, Plus } from 'lucide-reac
 import { api } from '@/lib/api';
 import { monthToApi } from '@/lib/utils';
 import toast from 'react-hot-toast';
-import type { StockAllocation, Transaction, ApiResponse } from '@/lib/types';
+import type { StockAllocation, Transaction, LiftingEntry, ApiResponse } from '@/lib/types';
 import styles from './StockRecord.module.css';
 
 interface StockRow {
@@ -38,38 +38,51 @@ export default function StockRecordPage() {
     setActiveYear(selectedYear);
     setLoading(true);
     try {
-      const stockAllocations = await api.get<StockAllocation[]>('/stock');
-      const allocation = (stockAllocations ?? []).find(
-        (s) => s.commodity === selectedItem
-      );
+      const apiMonth = monthToApi(selectedMonth, selectedYear);
+      const monthPrefix = apiMonth.slice(0, 7);
+
+      const [stockAllocations, transactions, liftingResult] = await Promise.all([
+        api.get<StockAllocation[]>('/stock'),
+        api.get<Transaction[]>(`/transactions?month=${apiMonth}&commodity=${selectedItem}`) ?? [],
+        api.get<LiftingEntry[]>(`/lifting?commodity=${encodeURIComponent(selectedItem)}`) ?? [],
+      ]);
+
+      const allocation = (stockAllocations ?? []).find(s => s.commodity === selectedItem);
       const openingBalance = allocation?.allocated_kg ?? 0;
 
-      const transactions = await api.get<Transaction[]>(`/transactions?month=${monthToApi(selectedMonth, selectedYear)}&commodity=${selectedItem}`) ?? [];
+      const liftingByDate: Record<string, number> = {};
+      for (const entry of liftingResult) {
+        const entryMonth = entry.created_at?.slice(0, 7) ?? '';
+        if (entryMonth !== monthPrefix) continue;
+        const date = entry.created_at?.split('T')[0] ?? '';
+        liftingByDate[date] = (liftingByDate[date] || 0) + entry.quantity_kg;
+      }
 
-      const grouped: Record<string, Transaction[]> = {};
+      const txByDate: Record<string, Transaction[]> = {};
       for (const tx of transactions) {
         const date = tx.transaction_date.split('T')[0];
-        if (!grouped[date]) grouped[date] = [];
-        grouped[date].push(tx);
+        if (!txByDate[date]) txByDate[date] = [];
+        txByDate[date].push(tx);
       }
+
+      const allDates = new Set([...Object.keys(liftingByDate), ...Object.keys(txByDate)]);
+      const sortedDates = [...allDates].sort();
 
       const computedRecords: StockRow[] = [];
       let running = openingBalance;
-      const sortedDates = Object.keys(grouped).sort();
       for (const dateStr of sortedDates) {
-        const dayTxs = grouped[dateStr];
+        const inStock = liftingByDate[dateStr] || 0;
+        const dayTxs = txByDate[dateStr] || [];
         const outStock = dayTxs.reduce((sum, tx) => sum + tx.quantity_kg, 0);
         const opening = running;
-        const closing = opening - outStock;
+        const closing = opening + inStock - outStock;
         const formattedDate = new Date(dateStr + 'T00:00:00').toLocaleDateString('en-GB', {
-          day: '2-digit',
-          month: 'short',
-          year: 'numeric',
+          day: '2-digit', month: 'short', year: 'numeric',
         });
         computedRecords.push({
           date: formattedDate,
           opening: Math.round(opening * 100) / 100,
-          inStock: 0,
+          inStock: Math.round(inStock * 100) / 100,
           outStock: Math.round(outStock * 100) / 100,
           closing: Math.round(closing * 100) / 100,
           remarks: dayTxs[0]?.remarks || '—',
@@ -164,34 +177,48 @@ export default function StockRecordPage() {
         <button className={styles.accentBtn} onClick={async () => {
           toast.loading('Loading all items for print...', { id: 'print-all' });
           const items = ['Wheat', 'Rice', 'Sugar', 'Kerosene', 'Oil', 'Pulses'];
+          const apiMonth = monthToApi(selectedMonth, selectedYear);
+          const monthPrefix = apiMonth.slice(0, 7);
           const allRecords: StockRow[] = [];
           try {
             for (const item of items) {
               const stockAllocations = await api.get<StockAllocation[]>('/stock');
               const allocation = (stockAllocations ?? []).find(s => s.commodity === item);
               const opening = allocation?.allocated_kg ?? 0;
-              const transactions = await api.get<Transaction[]>(`/transactions?month=${monthToApi(selectedMonth, selectedYear)}&commodity=${item}`) ?? [];
-              const grouped: Record<string, Transaction[]> = {};
+              const [transactions, liftingResult] = await Promise.all([
+                api.get<Transaction[]>(`/transactions?month=${apiMonth}&commodity=${item}`) ?? [],
+                api.get<LiftingEntry[]>(`/lifting?commodity=${encodeURIComponent(item)}`) ?? [],
+              ]);
+              const liftingByDate: Record<string, number> = {};
+              for (const entry of liftingResult) {
+                const entryMonth = entry.created_at?.slice(0, 7) ?? '';
+                if (entryMonth !== monthPrefix) continue;
+                const date = entry.created_at?.split('T')[0] ?? '';
+                liftingByDate[date] = (liftingByDate[date] || 0) + entry.quantity_kg;
+              }
+              const txByDate: Record<string, Transaction[]> = {};
               for (const tx of transactions) {
                 const date = tx.transaction_date.split('T')[0];
-                if (!grouped[date]) grouped[date] = [];
-                grouped[date].push(tx);
+                if (!txByDate[date]) txByDate[date] = [];
+                txByDate[date].push(tx);
               }
-              let running = opening;
-              const sortedDates = Object.keys(grouped).sort();
+              const allDates = new Set([...Object.keys(liftingByDate), ...Object.keys(txByDate)]);
+              const sortedDates = [...allDates].sort();
               allRecords.push({ date: `--- ${item} ---`, opening: 0, inStock: 0, outStock: 0, closing: 0, remarks: '', isPlaceholder: true });
+              let running = opening;
               for (const dateStr of sortedDates) {
-                const dayTxs = grouped[dateStr];
+                const inStock = liftingByDate[dateStr] || 0;
+                const dayTxs = txByDate[dateStr] || [];
                 const outStock = dayTxs.reduce((sum, tx) => sum + tx.quantity_kg, 0);
                 allRecords.push({
                   date: new Date(dateStr + 'T00:00:00').toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }),
                   opening: Math.round(running * 100) / 100,
-                  inStock: 0,
+                  inStock: Math.round(inStock * 100) / 100,
                   outStock: Math.round(outStock * 100) / 100,
-                  closing: Math.round((running - outStock) * 100) / 100,
+                  closing: Math.round((running + inStock - outStock) * 100) / 100,
                   remarks: dayTxs[0]?.remarks || '—',
                 });
-                running -= outStock;
+                running = running + inStock - outStock;
               }
             }
             setRecords(allRecords);

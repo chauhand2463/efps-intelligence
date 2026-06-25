@@ -109,7 +109,7 @@ export class FinanceService {
     const commissionMonth = m.slice(0, 7);
     const commission = await query(
       `SELECT COALESCE(SUM(net_commission), 0) as total FROM commissions
-       WHERE dealer_id = $1 AND LEFT(month, 7) = $2 AND status = 'settled'`,
+       WHERE dealer_id = $1 AND LEFT(month::text, 7) = $2 AND status = 'settled'`,
       [dealerId, commissionMonth]
     );
 

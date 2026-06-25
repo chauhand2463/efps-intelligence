@@ -50,7 +50,7 @@ export default function MonthlySalesReportPage() {
           const allocated = s.allocated_kg;
           const lifted = s.lifted_kg;
           const distributed = txByCommodity[s.commodity] || 0;
-          const closing = allocated - distributed;
+          const closing = lifted - distributed;
           const variance = lifted - distributed;
           return {
             commodity: s.commodity,

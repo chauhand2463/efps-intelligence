@@ -12,6 +12,10 @@ interface ItemCommission {
   id: string;
   name: string;
   sales: number;
+  grossCommission: number;
+  tdsPercent: number;
+  tdsDeducted: number;
+  netCommission: number;
 }
 
 const displayNameMap: Record<string, string> = {
@@ -73,6 +77,10 @@ export default function CommissionCalculatorPage() {
         id: c.commodity.toLowerCase(),
         name: displayNameMap[c.commodity.toLowerCase()] || c.commodity,
         sales: c.quantity_sold_kg,
+        grossCommission: c.gross_commission,
+        tdsPercent: c.tds_percent,
+        tdsDeducted: c.tds_deducted,
+        netCommission: c.net_commission,
       }));
       setItems(itemList);
     } catch {
@@ -109,17 +117,14 @@ export default function CommissionCalculatorPage() {
 
   const calculatedRows = items.map((item, idx) => {
     const rate = rates[item.id] ?? 0;
-    const totalAmount = item.sales * rate;
-    const tds = totalAmount * 0.02;
-    const receivable = totalAmount - tds;
     return {
       sr: String(idx + 1).padStart(2, '0'),
       name: item.name,
       sales: item.sales,
       rate,
-      totalAmount,
-      tds,
-      receivable,
+      totalAmount: item.grossCommission,
+      tds: item.tdsDeducted,
+      receivable: item.netCommission,
     };
   });
 
